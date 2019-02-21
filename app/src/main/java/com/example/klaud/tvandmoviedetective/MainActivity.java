@@ -276,11 +276,11 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
     private void displaySelectedScreen(int itemId) {
-        //creating fragment object
+
         Fragment fragment = null;
         appbar.setVisibility(View.INVISIBLE);
         viewPager.setAdapter(null);
-        //initializing the fragment object which is selected
+
         if (itemId==R.id.movie){
             fragment = new MoviesResultSearch();
             currFragment=fragment;
@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             list.remove(referenceId);
             if (list.isEmpty()) {
-                //Toast.makeText(ctxt, "dokon4en0 stiahnutie vsetkzych", Toast.LENGTH_SHORT).show();
+                
                 //unregisterReceiver(this);
                 unpack.execute(st[0]+getYesterdayDate(),st[1]+getYesterdayDate(),st[2]+getYesterdayDate());
                 unregisterReceiver(onComplete); // doplnene, može padat-----------------------------------------------------------------------------------
