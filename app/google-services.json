@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "953933889964",
+    "firebase_url": "https://tvandmoviedetective.firebaseio.com",
+    "project_id": "tvandmoviedetective",
+    "storage_bucket": "tvandmoviedetective.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953933889964:android:aa98099a5a56da05",
+        "android_client_info": {
+          "package_name": "com.example.klaud.tvandmoviedetective"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "953933889964-eqp6akd699rvcv7rp212c0pduktoirrn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.klaud.tvandmoviedetective",
+            "certificate_hash": "e902eb6afb5998d03b1445c0531782797cb54435"
+          }
+        },
+        {
+          "client_id": "953933889964-s99abl554m1eu97dkfdmr73idvnhr2m3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP4vOnZrVaWYiJZ37LUiiPfA-S6LAUsTg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953933889964-s99abl554m1eu97dkfdmr73idvnhr2m3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

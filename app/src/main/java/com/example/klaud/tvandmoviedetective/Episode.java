@@ -1,0 +1,53 @@
+package com.example.klaud.tvandmoviedetective;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Episode implements Parcelable {
+    public final String name;
+    public String company;
+    public Boolean checked=false;
+    public String sea;
+    public Integer season_id;
+    public Integer episode_id;
+    public Integer series_id;
+    public Integer ep_number;
+
+    public Episode(String name, String company, String seaAndEpNum, Integer series_id, Integer sea_id, Integer ep_id, Integer ep_num) {
+        this.sea=seaAndEpNum;
+        this.name = name;
+        this.company=company;
+        this.season_id=sea_id;
+        this.episode_id=ep_id;
+        this.series_id=series_id;
+        this.ep_number=ep_num;
+    }
+
+    public void reverseChecked() { this.checked = !this.checked; }
+
+    protected Episode(Parcel in) {
+        name = in.readString();
+    }
+
+    public static final Creator<Episode> CREATOR = new Creator<Episode>() {
+        @Override
+        public Episode createFromParcel(Parcel in) {
+            return new Episode(in);
+        }
+
+        @Override
+        public Episode[] newArray(int size) {
+            return new Episode[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+    }
+}
