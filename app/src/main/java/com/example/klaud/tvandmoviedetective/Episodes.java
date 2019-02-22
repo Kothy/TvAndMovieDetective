@@ -103,7 +103,7 @@ public class Episodes extends Fragment {
         protected void onPostExecute(String result){
             try {
                 JSONObject jsonSeries =new JSONObject(result);
-                String seasonName=jsonSeries.getString("name");
+                String seasonName=jsonSeries.getString("original_name");
                 Integer id=jsonSeries.getInt("id");
                 Season compa=new Season("Seasons",new ArrayList<>());
                 companies.add(compa);
@@ -127,7 +127,9 @@ public class Episodes extends Fragment {
                             Episode prod=new Episode(epName,seasonName,"S"+seaNu+"E"+epNum,
                                     id,sea.getInt("season_number"),
                                     episod.getInt("id"),
-                                    episod.getInt("episode_number"));
+                                    episod.getInt("episode_number"),
+                                    seasonName
+                            );
                             episodes.add(prod);
                         }
                         Season comp=new Season(seaName,episodes);

@@ -20,4 +20,5 @@
     <string name="buttonAddToWatched">Watched</string>
     <string name="buttonAddToWantWatch">Want to watch</string>
     <string name="Episode_button">Episodes</string>
+    <string name="AddToFavourite">Add to favourite</string>
 </resources>

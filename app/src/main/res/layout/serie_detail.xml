@@ -60,7 +60,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView40">
+                app:layout_constraintTop_toBottomOf="@+id/button7">
 
             </ListView>
 
@@ -69,15 +69,15 @@
                 android:layout_width="88dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/cast"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/listVCast5"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="0.084"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView40" />
+                app:layout_constraintTop_toBottomOf="@+id/button7"
+                app:layout_constraintVertical_bias="0.363" />
 
             <Button
                 android:id="@+id/button6"
@@ -89,8 +89,22 @@
                 android:text="@string/Episode_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.684"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/listVCast5" />
+                app:layout_constraintTop_toBottomOf="@+id/listVCast5"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <Button
+                android:id="@+id/button7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/AddToFavourite"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.026"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView40" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

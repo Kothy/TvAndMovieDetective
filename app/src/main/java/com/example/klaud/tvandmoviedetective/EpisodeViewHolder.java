@@ -52,6 +52,13 @@ public class EpisodeViewHolder extends ChildViewHolder {
                 Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put("id",episode.episode_id);
                 dbRef.updateChildren(childUpdates);
+
+                dbRef = database.getReference("users/"+
+                        MainActivity.mail.replace(".","_")
+                        +"/series/"+episode.series_id);
+                childUpdates = new HashMap<>();
+                childUpdates.put("name",episode.series_name);
+                dbRef.updateChildren(childUpdates);
             }
             else {
                 Toast.makeText(MainActivity.ctx, "idem vymazat epiyodu s pozretych", Toast.LENGTH_SHORT).show();

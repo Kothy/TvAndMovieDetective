@@ -18,7 +18,10 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,8 +49,8 @@ public class SeriesDetails extends Fragment {
     SimpleAdapter adapter;
     ArrayList<Map<String, String>> pairs = new ArrayList<Map<String, String>>();
     public static Context ctx;
-    Button episodesButt;
-
+    Button episodesButt, addToFavouriteButton;
+    String title;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,6 +68,7 @@ public class SeriesDetails extends Fragment {
         castLv = view.findViewById(R.id.listVCast5);
         castLv.setFocusable(false);
         sv = view.findViewById(R.id.scrollView20);
+        addToFavouriteButton = view.findViewById(R.id.button7);
         sv.setOnTouchListener((vie,event) -> {
             tv.getParent().requestDisallowInterceptTouchEvent(false);
             return false;
@@ -72,6 +76,16 @@ public class SeriesDetails extends Fragment {
         castLv.setOnTouchListener((vie,event) -> {
             castLv.getParent().requestDisallowInterceptTouchEvent(true);
             return false;
+        });
+        addToFavouriteButton.setOnClickListener(click -> {
+            Toast.makeText(ctx, "Pridavam do Firebasu", Toast.LENGTH_SHORT).show();
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference dbRef = database.getReference("users/"+
+                    MainActivity.mail.replace(".","_")
+                    +"/series/"+Id);
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("name", title);
+            dbRef.updateChildren(childUpdates);
         });
         pairs.clear();
         seriesPoster =view.findViewById(R.id.imageView20);
@@ -149,7 +163,8 @@ public class SeriesDetails extends Fragment {
                 String patt="https://image.tmdb.org/t/p/w500%s";
                 if (jsonSeries.getString("overview").equals("")) tv.setText("Overview is not available.");
                 else tv.setText(jsonSeries.getString("overview"));
-                getActivity().setTitle(jsonSeries.getString("name"));
+                title=jsonSeries.getString("name");
+                getActivity().setTitle(title);
                 Pic image=new Pic();
                 numOfSeasons=jsonSeries.getJSONArray("seasons").length();
                 //Toast.makeText(ctx, numOfSeasons+" num of seasons", Toast.LENGTH_SHORT).show();

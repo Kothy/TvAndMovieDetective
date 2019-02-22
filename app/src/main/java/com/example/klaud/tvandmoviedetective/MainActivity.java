@@ -300,6 +300,9 @@ public class MainActivity extends AppCompatActivity
             setupViewPager(viewPager);
             fragment = new EmptyFragment();
             currFragment=fragment;
+        } else if (itemId == R.id.nav_myTv){
+            fragment = new MyShows();
+            currFragment=fragment;
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -348,7 +351,7 @@ public class MainActivity extends AppCompatActivity
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             list.remove(referenceId);
             if (list.isEmpty()) {
-                
+
                 //unregisterReceiver(this);
                 unpack.execute(st[0]+getYesterdayDate(),st[1]+getYesterdayDate(),st[2]+getYesterdayDate());
                 unregisterReceiver(onComplete); // doplnene, može padat-----------------------------------------------------------------------------------

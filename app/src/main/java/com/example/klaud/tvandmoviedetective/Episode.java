@@ -12,8 +12,9 @@ public class Episode implements Parcelable {
     public Integer episode_id;
     public Integer series_id;
     public Integer ep_number;
+    public String series_name;
 
-    public Episode(String name, String company, String seaAndEpNum, Integer series_id, Integer sea_id, Integer ep_id, Integer ep_num) {
+    public Episode(String name, String company, String seaAndEpNum, Integer series_id, Integer sea_id, Integer ep_id, Integer ep_num, String series_name) {
         this.sea=seaAndEpNum;
         this.name = name;
         this.company=company;
@@ -21,6 +22,7 @@ public class Episode implements Parcelable {
         this.episode_id=ep_id;
         this.series_id=series_id;
         this.ep_number=ep_num;
+        this.series_name=series_name;
     }
 
     public void reverseChecked() { this.checked = !this.checked; }
