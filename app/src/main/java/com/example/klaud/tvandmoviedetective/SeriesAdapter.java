@@ -16,9 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder> {
@@ -46,16 +44,13 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (items.get(position).getPoster_path().equals("null")) {
-            Toast.makeText(contex, "poster path je null", Toast.LENGTH_SHORT).show();
-
+            //Toast.makeText(contex, "poster path je null", Toast.LENGTH_SHORT).show();
             holder.iv.setImageResource(items.get(position).getImage_drawable());
         }
-
         else {
             String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
-
 
         holder.time.setText(items.get(position).getName());
         holder.parentLayout.setOnClickListener(click ->{
@@ -88,12 +83,9 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder
 
         public ViewHolder(View itemView) {
             super(itemView);
-
             time = (TextView) itemView.findViewById(R.id.tvTitle);
-            iv = (ImageView) itemView.findViewById(R.id.itemImage2);
+            iv = (ImageView) itemView.findViewById(R.id.itemImage);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
         }
-
-
     }
 }

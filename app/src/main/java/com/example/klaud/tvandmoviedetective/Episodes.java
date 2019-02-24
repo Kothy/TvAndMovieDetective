@@ -51,8 +51,6 @@ public class Episodes extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerviewEp);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ctx=getContext();
-
-
         MainActivity.appbar.setVisibility(View.INVISIBLE);
 
     }
@@ -107,7 +105,8 @@ public class Episodes extends Fragment {
         protected void onPostExecute(String result){
             try {
                 JSONObject jsonSeries =new JSONObject(result);
-                String seasonName=jsonSeries.getString("original_name");
+                String seasonName=jsonSeries.getString("name");
+                String poster_path=jsonSeries.getString("poster_path");
                 Integer id=jsonSeries.getInt("id");
                 Season compa=new Season("Seasons",new ArrayList<>());
                 companies.add(compa);
@@ -132,7 +131,7 @@ public class Episodes extends Fragment {
                                     id,sea.getInt("season_number"),
                                     episod.getInt("id"),
                                     episod.getInt("episode_number"),
-                                    seasonName
+                                    seasonName, poster_path
                             );
                             episodes.add(prod);
                         }

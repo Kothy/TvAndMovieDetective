@@ -1,5 +1,6 @@
 package com.example.klaud.tvandmoviedetective;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -45,14 +47,14 @@ public class TvSeriesResultSearch extends Fragment {
     public static ListView lv;
     public ProgressDialog pd;
     public static Context ctx;
-    public static RecyclerView recycler;
-    private static SeriesAdapter adapter;
-
-    public static RecyclerView recycler2;
-    private static SeriesAdapter adapter2;
-
-    TextView trendingTitle;
-    TextView airingTitle;
+    public static RecyclerView recycler,recycler2,recycler3;
+    private static SeriesAdapter adapter,adapter2;
+    public static ResultSearchAdapterSeries adapter3;
+    public static ArrayList<SeriesItem> searchedItems = new ArrayList<>();
+    public static Activity activity;
+    public static FragmentManager fm;
+    public TextView trendingTitle;
+    public TextView airingTitle;
 
     @Nullable
     @Override
@@ -69,7 +71,9 @@ public class TvSeriesResultSearch extends Fragment {
             getActivity().setTitle("Tv Shows");
         } else getActivity().setTitle("");
 
-        ctx=getContext();
+        ctx = getContext();
+        activity = getActivity();
+        fm = getFragmentManager();
 
         trendingTitle = view.findViewById(R.id.textView3);
         airingTitle = view.findViewById(R.id.textView);
@@ -86,6 +90,11 @@ public class TvSeriesResultSearch extends Fragment {
         recycler2.setAdapter(adapter2);
         recycler2.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
+        recycler3 = (RecyclerView) getView().findViewById(R.id.searchRecycler);
+        adapter3 = new ResultSearchAdapterSeries(getContext(), searchedItems, getFragmentManager(),getActivity());
+        recycler3.setAdapter(adapter3);
+        recycler3.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
         pd=new ProgressDialog(getView().getContext());
         pd.setTitle("Loading Data");
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -101,7 +110,7 @@ public class TvSeriesResultSearch extends Fragment {
         lv.setAdapter(simpleAdapter);
         if (!MainActivity.prefs.getString("search","").equals("")){ // ak bolo vyhladavane
 
-            lv.setVisibility(View.VISIBLE);
+            recycler3.setVisibility(View.VISIBLE);
             recycler.setVisibility(View.INVISIBLE);
             recycler2.setVisibility(View.INVISIBLE);
             airingTitle.setVisibility(View.INVISIBLE);
@@ -114,8 +123,8 @@ public class TvSeriesResultSearch extends Fragment {
             MainActivity.editor.putString("search","");
             MainActivity.editor.apply();
         } else { // ak sa zobrazuje iba trending
-            //Toast.makeText(ctx, "len zobrayujem trending v series", Toast.LENGTH_SHORT).show();
-            lv.setVisibility(View.INVISIBLE);
+
+            recycler3.setVisibility(View.INVISIBLE);
             recycler.setVisibility(View.VISIBLE);
             recycler2.setVisibility(View.VISIBLE);
             airingTitle.setVisibility(View.VISIBLE);
@@ -161,23 +170,34 @@ public class TvSeriesResultSearch extends Fragment {
         }
         Collections.sort(found, compareJSONObject());
         aList.clear();
+        searchedItems.clear();
         for (JSONObject js : found) {
-            HashMap<String, String> hm = new HashMap<>();
+            /*HashMap<String, String> hm = new HashMap<>();
             hm.put("listview_title", js.getString("original_name"));
             hm.put("listview_description", String.valueOf(js.getInt("id")));
             hm.put("listview_image", Integer.toString(R.drawable.bear));
             hm.put("id", String.valueOf(js.getInt("id")));
-            aList.add(hm);
+            aList.add(hm);*/
+            SeriesItem si = new SeriesItem(js.getString("original_name"),
+                    R.drawable.a, js.getInt("id"));
+            si.setPoster_path("null");
+            searchedItems.add(si);
+            String patt="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
+            int pos=searchedItems.size()-1;
+            if (pos==-1) pos=0;
+            DetailsForSearch ds=new DetailsForSearch();
+            ds.execute(String.format(patt,js.getInt("id")),pos+"","series");
+
 
         }
-        simpleAdapter.notifyDataSetChanged();
-        lv.invalidate();
+        recycler3.invalidate();
+        adapter3.notifyDataSetChanged();
     }
     public void displayList(){
         itemsTrending.clear();
         try {
             for (JSONObject json: tvTrend) {
-                SeriesItem si=new SeriesItem(json.getString("original_name"),R.drawable.a,json.getInt("id"));
+                SeriesItem si=new SeriesItem(json.getString("name"),R.drawable.a,json.getInt("id"));// zmenene z "original_name"
                 si.setPoster_path(json.getString("poster_path"));
                 itemsTrending.add(si);
 
@@ -192,7 +212,7 @@ public class TvSeriesResultSearch extends Fragment {
         itemsAiring.clear();
         try {
             for (JSONObject json: tvAir) {
-                SeriesItem si=new SeriesItem(json.getString("original_name"),R.drawable.a,json.getInt("id"));
+                SeriesItem si=new SeriesItem(json.getString("name"),R.drawable.a,json.getInt("id"));
                 si.setPoster_path(json.getString("poster_path"));
                 itemsAiring.add(si);
 

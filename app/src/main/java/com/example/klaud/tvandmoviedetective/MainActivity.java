@@ -299,13 +299,16 @@ public class MainActivity extends AppCompatActivity
         else if (itemId==-8888){// facebook fragment bude mat taketo idecko
             fragment = new Facebook();
             currFragment=fragment;
+
         } else if (itemId == R.id.nav_myMovies){
             setupViewPager(viewPager);
             fragment = new EmptyFragment();
             currFragment=fragment;
+
         } else if (itemId == R.id.nav_myTv){
             fragment = new MySeries();
             currFragment=fragment;
+
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -456,7 +459,6 @@ public class MainActivity extends AppCompatActivity
 
     private void showResults(String query) {
         MainActivity.editor.putString("search",query);
-        Toast.makeText(ctx, prefs.getString("class",""), Toast.LENGTH_SHORT).show();
         //unsetupViewPager();
         if (!Facebook.isLogged()) return;
         if (prefs.getString("class","").contains("Movie")){
@@ -466,7 +468,7 @@ public class MainActivity extends AppCompatActivity
             displaySelectedScreen(R.id.Tv_Series);
         }
 
-        //else displaySelectedScreen(R.id.movie);
+
     }
     @Override
     protected void onNewIntent(Intent intent) {

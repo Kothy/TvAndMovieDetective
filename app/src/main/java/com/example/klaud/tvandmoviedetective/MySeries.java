@@ -45,14 +45,14 @@ public class MySeries extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("My Series");
         ctx=getContext();
-        items.add(new SeriesItem("one",R.drawable.a,55));
+        /*items.add(new SeriesItem("one",R.drawable.a,55));
         items.add(new SeriesItem("two",R.drawable.bear,55));
         items.add(new SeriesItem("three",R.drawable.a,55));
         items.add(new SeriesItem("four",R.drawable.bear,55));
         items.add(new SeriesItem("four",R.drawable.bear,55));
         items.add(new SeriesItem("four",R.drawable.bear,55));
         items.add(new SeriesItem("four",R.drawable.bear,55));
-        items.add(new SeriesItem("four",R.drawable.bear,55));
+        items.add(new SeriesItem("four",R.drawable.bear,55));*/
 
         recycler=view.findViewById(R.id.recycler_my_shows);
         adapter = new MySeriesAdapter(getContext(), items, getFragmentManager(),getActivity());
@@ -86,8 +86,6 @@ public class MySeries extends Fragment {
             SeriesItem si=new SeriesItem(ds.child("name").getValue().toString(),R.drawable.a,Integer.decode(ds.getKey()));
             si.setPoster_path(ds.child("poster_path").getValue().toString());
             items.add(si);
-
-
         }
         adapter.notifyDataSetChanged();
         recycler.invalidate();

@@ -5,18 +5,14 @@ public class SeriesItem {
     private int image_drawable;
     private int id;
     private String poster_path;
+    public String release_date;
 
     public String getPoster_path() {
         return poster_path;
     }
-
-
-
     public void setPoster_path(String poster_path) {
         this.poster_path = poster_path;
     }
-
-
 
     public SeriesItem (String nam, int img, int idd){
         name=nam;

@@ -58,6 +58,7 @@ public class EpisodeViewHolder extends ChildViewHolder {
                         +"/series/"+episode.series_id);
                 childUpdates = new HashMap<>();
                 childUpdates.put("name",episode.series_name);
+                childUpdates.put("poster_path",episode.poster_path);
                 dbRef.updateChildren(childUpdates);
             }
             else {

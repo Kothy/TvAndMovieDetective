@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHolder> {
@@ -38,8 +40,7 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
 
     @Override
     public MySeriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-        view = inflater.inflate(R.layout.my_shows_recycler_item, parent, false);
+        View view = inflater.inflate(R.layout.my_shows_recycler_item, parent, false);
 
 
         MySeriesAdapter.ViewHolder holder = new MySeriesAdapter.ViewHolder(view);
@@ -49,11 +50,18 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
     @Override
     public void onBindViewHolder(MySeriesAdapter.ViewHolder holder, int position) {
 
-        holder.iv.setImageResource(items.get(position).getImage_drawable());
+        //holder.iv.setImageResource(items.get(position).getImage_drawable());
+        if (items.get(position).equals("null")){
+            holder.iv.setImageResource(R.drawable.nopicture);
+        } else {
+            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+            Picasso.get().load(url).into(holder.iv);
+        }
         holder.title.setText(items.get(position).getName());
-        holder.parentLayout.setOnClickListener(click ->{
+        holder.parentLayout.setOnClickListener(click -> {
 
-            Toast.makeText(contex, "klikla som na polozku v myshows s idom: "+items.get(position).getId(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(contex, "klikla som na polozku v myshows s idom: "+items.get(position).getPoster_path(), Toast.LENGTH_SHORT).show();
+
         });
     }
 
