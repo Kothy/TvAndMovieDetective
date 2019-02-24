@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +32,7 @@ public class Episodes extends Fragment {
     public static ArrayList<MovieItem> items= new ArrayList<>();
     public static RecyclerView recyclerView;
     public static EpisodeAdapter adapter;
+    public String poster_path;
     ArrayList<Season> companies = new ArrayList<>();
     @Nullable
     @Override
@@ -62,10 +64,12 @@ public class Episodes extends Fragment {
             String movieID = bundle.getString("id", "");
             numOfseasons=bundle.getInt("seasons", -1);
             Id=Integer.valueOf(movieID);
+            poster_path=bundle.getString("poster_path");
             String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&append_to_response=";
             for (int i=1;i<=numOfseasons;i++){
                 pattern+="season/"+i+",";
             }
+            Toast.makeText(ctx, poster_path, Toast.LENGTH_SHORT).show();
             getJsonString.execute(String.format(pattern, Id));
             //Log.d("Appendujem",String.format(pattern,Id));
         }

@@ -16,13 +16,9 @@ public class SaveToFirebase extends AsyncTask<String, String, String> {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("status", strings[1]);
         childUpdates.put("title", strings[2]);
+        childUpdates.put("poster_path", strings[3]);
         dbRef.updateChildren(childUpdates);
-
-
-        //dbRef =database.getReference("users/kada11@azet_sk/movies/297802");
-        //dbRef.toString();
-
-        return null;
+        return "done";
     }
     @Override
     protected void onPostExecute(String result){

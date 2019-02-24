@@ -177,7 +177,9 @@ public class TvSeriesResultSearch extends Fragment {
         itemsTrending.clear();
         try {
             for (JSONObject json: tvTrend) {
-                itemsTrending.add(new SeriesItem(json.getString("original_name"),R.drawable.a,json.getInt("id")));
+                SeriesItem si=new SeriesItem(json.getString("original_name"),R.drawable.a,json.getInt("id"));
+                si.setPoster_path(json.getString("poster_path"));
+                itemsTrending.add(si);
 
             }
         } catch (JSONException e) {
@@ -190,7 +192,9 @@ public class TvSeriesResultSearch extends Fragment {
         itemsAiring.clear();
         try {
             for (JSONObject json: tvAir) {
-                itemsAiring.add(new SeriesItem(json.getString("original_name"),R.drawable.a,json.getInt("id")));
+                SeriesItem si=new SeriesItem(json.getString("original_name"),R.drawable.a,json.getInt("id"));
+                si.setPoster_path(json.getString("poster_path"));
+                itemsAiring.add(si);
 
             }
         } catch (JSONException e) {

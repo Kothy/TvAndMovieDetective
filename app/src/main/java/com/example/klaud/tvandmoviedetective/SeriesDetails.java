@@ -50,7 +50,7 @@ public class SeriesDetails extends Fragment {
     ArrayList<Map<String, String>> pairs = new ArrayList<Map<String, String>>();
     public static Context ctx;
     Button episodesButt, addToFavouriteButton;
-    String title;
+    String title,poster_path;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,6 +85,7 @@ public class SeriesDetails extends Fragment {
                     +"/series/"+Id);
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("name", title);
+            childUpdates.put("poster_path",poster_path);
             dbRef.updateChildren(childUpdates);
         });
         pairs.clear();
@@ -100,6 +101,7 @@ public class SeriesDetails extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putString("id", Id+"");
             bundle.putString("title",getActivity().getTitle()+"");
+            bundle.putString("poster_path",poster_path);
             bundle.putInt("seasons",numOfSeasons);
 
             fragment.setArguments(bundle);
@@ -120,7 +122,7 @@ public class SeriesDetails extends Fragment {
         if (bundle != null) {
             String movieID = bundle.getString("id", "");
             Id=Integer.valueOf(movieID);
-            String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&append_to_response=season/1,season/2";
+            String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&";
             String pattern2="https://api.themoviedb.org/3/tv/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             getJsonString.execute(String.format(pattern, Id));
             getJsonCast.execute(String.format(pattern2, Id));
@@ -164,6 +166,7 @@ public class SeriesDetails extends Fragment {
                 if (jsonSeries.getString("overview").equals("")) tv.setText("Overview is not available.");
                 else tv.setText(jsonSeries.getString("overview"));
                 title=jsonSeries.getString("name");
+                poster_path=jsonSeries.getString("poster_path");
                 getActivity().setTitle(title);
                 Pic image=new Pic();
                 numOfSeasons=jsonSeries.getJSONArray("seasons").length();

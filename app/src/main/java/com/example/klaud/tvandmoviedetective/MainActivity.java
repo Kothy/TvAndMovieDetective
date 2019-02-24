@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -55,6 +56,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity
     ArrayList<Long> list = new ArrayList<>();
     ProgressDialog pd;
     TextView tv;
+    HashMap<String, Bitmap> posters=new HashMap<>();
     public static SharedPreferences.Editor editor;
     public static SharedPreferences prefs;
     public static Fragment currFragment;
@@ -301,7 +304,7 @@ public class MainActivity extends AppCompatActivity
             fragment = new EmptyFragment();
             currFragment=fragment;
         } else if (itemId == R.id.nav_myTv){
-            fragment = new MyShows();
+            fragment = new MySeries();
             currFragment=fragment;
         }
         if (fragment != null) {

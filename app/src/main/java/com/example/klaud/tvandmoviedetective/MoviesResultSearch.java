@@ -1,5 +1,6 @@
 package com.example.klaud.tvandmoviedetective;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,11 +22,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,17 +45,21 @@ public class MoviesResultSearch extends Fragment {
     public static ArrayList<JSONObject> mov=new ArrayList<>();
     public static ArrayList<JSONObject> movTrend=new ArrayList<>();
     public static ArrayList<MovieItem> itemsTrending = new ArrayList<>();
+    public static ArrayList<MovieItem> searchedItems = new ArrayList<>();
     private static ArrayList<MovieItem> itemsInTheatres = new ArrayList<>();
+    public static ArrayList<String> postersOfSearch=new ArrayList<>();
     public static SimpleAdapter simpleAdapter;
     public static ListView lv;
     ProgressDialog pd;
     public static Context ctx;
-    public static RecyclerView recycler;
-    public static RecyclerView recycler2;
-    private static MovieAdapter adapter;
-    private static MovieAdapter adapter2;
+    public static RecyclerView recycler, recycler2, recycler3;
+    public static MovieAdapter adapter, adapter2;
+    public static ResultSearchAdapter adapter3;
     TextView trendingTitle;
     TextView theatresTitle;
+    public static View view;
+    public static FragmentManager fm;
+    public static Activity actvity;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,9 +73,10 @@ public class MoviesResultSearch extends Fragment {
         if (MainActivity.prefs.getString("search","").equals("")){
             getActivity().setTitle("Movies");
         } else getActivity().setTitle("");
-
+        this.view=view;
+        this.fm=getFragmentManager();
         ctx=getContext();
-
+        actvity=getActivity();
         trendingTitle= view.findViewById(R.id.textView3);
         theatresTitle = view.findViewById(R.id.textView);
         theatresTitle.setVisibility(View.INVISIBLE);
@@ -81,9 +88,14 @@ public class MoviesResultSearch extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
         recycler2 = (RecyclerView) getView().findViewById(R.id.recycler2);
-        adapter2 = new MovieAdapter(getContext(), itemsInTheatres,getFragmentManager(),getActivity());
+        adapter2 = new MovieAdapter(getContext(), itemsInTheatres, getFragmentManager(),getActivity());
         recycler2.setAdapter(adapter2);
         recycler2.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        recycler3 = (RecyclerView) getView().findViewById(R.id.searchRecycler);
+        adapter3 = new ResultSearchAdapter(getContext(), searchedItems, getFragmentManager(),getActivity());
+        recycler3.setAdapter(adapter3);
+        recycler3.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
         pd=new ProgressDialog(getView().getContext());
         pd.setTitle("Loading Data");
@@ -99,9 +111,10 @@ public class MoviesResultSearch extends Fragment {
         simpleAdapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_activity, from, to);
         lv.setAdapter(simpleAdapter);
         if (!MainActivity.prefs.getString("search","").equals("")){
-            lv.setVisibility(View.VISIBLE);
+            //lv.setVisibility(View.VISIBLE);
             recycler.setVisibility(View.INVISIBLE);
             recycler2.setVisibility(View.INVISIBLE);
+            recycler3.setVisibility(View.VISIBLE);
             theatresTitle.setVisibility(View.INVISIBLE);
             trendingTitle.setVisibility(View.INVISIBLE);
             try {
@@ -113,10 +126,10 @@ public class MoviesResultSearch extends Fragment {
             MainActivity.editor.apply();
 
         } else {
-
             lv.setVisibility(View.INVISIBLE);
             recycler.setVisibility(View.VISIBLE);
             recycler2.setVisibility(View.VISIBLE);
+            recycler3.setVisibility(View.INVISIBLE);
             theatresTitle.setVisibility(View.VISIBLE);
             trendingTitle.setVisibility(View.VISIBLE);
             trendingTitle.setText("Trending now");
@@ -150,24 +163,20 @@ public class MoviesResultSearch extends Fragment {
     }
 
     public void displayList(){
-        aList.clear();
         itemsTrending.clear();
+        adapter = new MovieAdapter(getContext(), itemsTrending, getFragmentManager(),getActivity());
+        recycler.setAdapter(adapter);
         try {
             for (JSONObject json: mov) {
-                HashMap<String, String> hm = new HashMap<>();
-                hm.put("listview_title", json.getString("original_title"));
-                hm.put("listview_description", json.getString("release_date").substring(0,4));
-                hm.put("listview_image", Integer.toString(R.drawable.bear));
-                hm.put("id", String.valueOf(json.getInt("id")));
-                aList.add(hm);
-                itemsTrending.add(new MovieItem(json.getString("original_title"),R.drawable.a,json.getInt("id")));
+                MovieItem mi=new MovieItem(json.getString("original_title"),R.drawable.a,json.getInt("id"));
+                mi.setPoster_path(json.getString("poster_path"));
+                itemsTrending.add(mi);
 
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        simpleAdapter.notifyDataSetChanged();
-        lv.invalidate();
+
         adapter.notifyDataSetChanged();
         recycler.invalidate();
     }
@@ -175,7 +184,9 @@ public class MoviesResultSearch extends Fragment {
         itemsInTheatres.clear();
         try {
             for (JSONObject json: movTrend) {
-                itemsInTheatres.add(new MovieItem(json.getString("original_title"),R.drawable.a,json.getInt("id")));
+                MovieItem mi=new MovieItem(json.getString("original_title"),R.drawable.a,json.getInt("id"));
+                mi.setPoster_path(json.getString("poster_path"));
+                itemsInTheatres.add(mi);
 
             }
         } catch (JSONException e) {
@@ -185,37 +196,37 @@ public class MoviesResultSearch extends Fragment {
         recycler2.invalidate();
     }
     public static void doMySearch(String query) throws JSONException {// funguje ale je to strasne pomale
-        //Toast.makeText(ctx, " toto hladam-------- "+query, Toast.LENGTH_SHORT).show();
         ArrayList<JSONObject> found = new ArrayList<>();
         query=query.toLowerCase();
         for (int i=0; i<MainActivity.movies.size();i++) {
             String text=MainActivity.movies.get(i);
             if (text!=null && text.contains(query)){
+
                 JSONObject js=new JSONObject(text);
                 Log.d("Hladanie",text+"");
                 if (js.getBoolean("adult")==false){
                     found.add(js);
+                    postersOfSearch.add(null);
                 }
             }
         }
-
-        //Toast.makeText(ctx, "found má velkost: "+found.size(), Toast.LENGTH_SHORT).show();
+        searchedItems.clear();
         Collections.sort(found, compareJSONObject());
-        aList.clear();
-        //itemsTrending.clear();
+        lv.setVisibility(View.INVISIBLE);
         for (JSONObject js : found) {
-            HashMap<String, String> hm = new HashMap<>();
-            hm.put("listview_title", js.getString("original_title"));
-            hm.put("listview_description", String.valueOf(js.getInt("id")));
-            hm.put("listview_image", Integer.toString(R.drawable.bear));
-            hm.put("id", String.valueOf(js.getInt("id")));
-            aList.add(hm);
-            //itemsTrending.add(new MovieItem(js.getString("original_title"),R.drawable.bear,js.getInt("id")));
+            MovieItem mi=new MovieItem(js.getString("original_title"),R.drawable.a,js.getInt("id"));
+            mi.setPoster_path("null");
+            searchedItems.add(mi);
+            DetailsForSearch ds=new DetailsForSearch();
+            String patt="https://api.themoviedb.org/3/movie/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
+            int pos=searchedItems.size()-1;
+            if (pos==-1) pos=0;
+            ds.execute(String.format(patt,js.getInt("id")),pos+"");
+
         }
-        simpleAdapter.notifyDataSetChanged();
-        lv.invalidate();
-        //adapter.notifyDataSetChanged();
-        //recycler.invalidate();
+        adapter3.notifyDataSetChanged();
+        recycler3.invalidate();
+
     }
     public String randomString() {
         byte[] array = new byte[15];

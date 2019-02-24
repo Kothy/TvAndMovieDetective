@@ -27,6 +27,7 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
     private FragmentManager fm;
     private Activity activity;
 
+
     public MySeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity){
         this.contex=ctx;
         this.inflater = LayoutInflater.from(ctx);
@@ -37,8 +38,10 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
 
     @Override
     public MySeriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        view = inflater.inflate(R.layout.my_shows_recycler_item, parent, false);
 
-        View view = inflater.inflate(R.layout.my_shows_recycler_item, parent, false);
+
         MySeriesAdapter.ViewHolder holder = new MySeriesAdapter.ViewHolder(view);
         return holder;
     }
@@ -50,7 +53,7 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
         holder.title.setText(items.get(position).getName());
         holder.parentLayout.setOnClickListener(click ->{
 
-            Toast.makeText(contex, "klikla som na polozku v myshows", Toast.LENGTH_SHORT).show();
+            Toast.makeText(contex, "klikla som na polozku v myshows s idom: "+items.get(position).getId(), Toast.LENGTH_SHORT).show();
         });
     }
 

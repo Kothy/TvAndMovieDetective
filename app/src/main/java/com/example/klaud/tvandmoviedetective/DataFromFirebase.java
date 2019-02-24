@@ -68,10 +68,17 @@ public class DataFromFirebase extends AsyncTask<String, String, String> {
                 String key = keys.next();
                 if (js.get(key) instanceof JSONObject) {
                     JSONObject jsonik=js.getJSONObject(key);
-                    if (jsonik.getString("status").equals("want") && pos.equals("1"))
-                        movies.add(new MovieItem(jsonik.getString("title"), R.drawable.a,Integer.parseInt(key)));
-                    else if (jsonik.getString("status").equals("watched") && pos.equals("2"))
-                        movies.add(new MovieItem(jsonik.getString("title"),R.drawable.a,Integer.parseInt(key)));
+                    if (jsonik.getString("status").equals("want") && pos.equals("1")){
+                        MovieItem mi=new MovieItem(jsonik.getString("title"), R.drawable.a,Integer.parseInt(key));
+                        mi.setPoster_path(jsonik.getString("poster_path"));
+                        movies.add(mi);
+                    }
+
+                    else if (jsonik.getString("status").equals("watched") && pos.equals("2")){
+                        MovieItem mi=new MovieItem(jsonik.getString("title"), R.drawable.a,Integer.parseInt(key));
+                        mi.setPoster_path(jsonik.getString("poster_path"));
+                        movies.add(mi);
+                    }
                 }
             }
             ad.notifyDataSetChanged();

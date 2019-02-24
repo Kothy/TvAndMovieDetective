@@ -32,7 +32,7 @@ public class MovieDetail  extends Fragment {
     TextView tv;
     ScrollView sv;
     Integer movieId=0;
-    String title="";
+    String title="",poster_path;
     ListView castLv;
     JSONObject jsonMovie=null;
     ArrayCast castAndCrew=null;
@@ -72,12 +72,12 @@ public class MovieDetail  extends Fragment {
         watchedButton.setOnClickListener((click) -> {
 
             SaveToFirebase save=new SaveToFirebase();
-            save.execute("/users/"+maiil+"/movies/"+movieId,"watched",title);
+            save.execute("/users/"+maiil+"/movies/"+movieId,"watched",title,poster_path);
         });
         wantToWatchButton.setOnClickListener((click) -> {
 
             SaveToFirebase save=new SaveToFirebase();
-            save.execute("/users/"+maiil+"/movies/"+movieId,"want",title);
+            save.execute("/users/"+maiil+"/movies/"+movieId,"want",title,poster_path);
         });
         sv.setOnTouchListener((vie,event) -> {
             tv.getParent().requestDisallowInterceptTouchEvent(false);
@@ -124,6 +124,7 @@ public class MovieDetail  extends Fragment {
         protected String doInBackground(String... params){
             String result;
             String inputLine;
+
             try {
                 URL myUrl = new URL(params[0]);
                 HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
@@ -148,6 +149,7 @@ public class MovieDetail  extends Fragment {
         protected void onPostExecute(String result){
             try {
                 jsonMovie=new JSONObject(result);
+                poster_path=jsonMovie.getString("poster_path");
                 String patt="https://image.tmdb.org/t/p/original%s";
                 if (jsonMovie.getString("overview").equals("")) tv.setText("Overview is not available.");
                 else tv.setText(jsonMovie.getString("overview"));

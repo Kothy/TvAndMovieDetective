@@ -16,7 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
@@ -26,6 +29,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
+
     public MovieAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity){
         this.contex=ctx;
         this.inflater = LayoutInflater.from(ctx);
@@ -44,7 +48,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         View view = inflater.inflate(R.layout.recycler_item_layout, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
@@ -52,8 +55,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        if (items.get(position).getPoster_path()!=null && items.get(position).getPoster_path().equals("null")){
+            //Log.d("URLobr", String.format("null", items.get(position).getPoster_path()));
+            holder.iv.setImageResource(items.get(position).getImage_drawable());
+        } else {
+            //Log.d("URLobr", String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path()));
+            //holder.iv.setImageResource(R.drawable.bear);
+            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+            Picasso.get().load(url).into(holder.iv);
+        }
 
-        holder.iv.setImageResource(items.get(position).getImage_drawable());
         holder.time.setText(items.get(position).getName());
         holder.parentLayout.setOnClickListener(click ->{
             //Toast.makeText(contex, items.get(position).getName(), Toast.LENGTH_LONG).show();
@@ -75,7 +86,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
         holder.parentLayout.setOnLongClickListener((click) ->{
             SharedPreferences prefs= MainActivity.prefs;
             if (prefs.getString("class","").equals("MyMovies") || prefs.getString("class","").equals("MyMoviesWatched")){
-                //Toast.makeText(contex, ""+items.get(position).getId()+items.get(position).getName(), Toast.LENGTH_SHORT).show();
+
                 String mai=MainActivity.mail.replace(".","_");
                 FirebaseDatabase.getInstance().getReference("/users/"+mai+"/movies/"+items.get(position).getId()).removeValue();
 
@@ -84,9 +95,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
                 if (MyMovies.recycler != null) MyMovies.recycler.invalidate();
                 if (MyMoviesWatched.recycler != null) MyMoviesWatched.recycler.invalidate();
             }
-            //else Toast.makeText(contex, "nic nerobim", Toast.LENGTH_SHORT).show();
             return true;
         });
+
     }
 
     @Override
@@ -102,10 +113,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
         public ViewHolder(View itemView) {
             super(itemView);
+                time = (TextView) itemView.findViewById(R.id.tvTitle);
+                iv = (ImageView) itemView.findViewById(R.id.itemImage);
+                parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
 
-            time = (TextView) itemView.findViewById(R.id.tvTitle);
-            iv = (ImageView) itemView.findViewById(R.id.itemImage);
-            parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
         }
     }
 }

@@ -21,7 +21,7 @@ public class EpisodeViewHolder extends ChildViewHolder {
         super(itemView);
         view = itemView;
         mTextView = itemView.findViewById(R.id.season);
-        iv = itemView.findViewById(R.id.itemImage);
+        iv = itemView.findViewById(R.id.itemImage2);
         season=itemView.findViewById(R.id.seaAndEpNum);
     }
 
@@ -47,10 +47,10 @@ public class EpisodeViewHolder extends ChildViewHolder {
                 DatabaseReference dbRef = database.getReference("users/"+
                         MainActivity.mail.replace(".","_")
                         +"/series/"+episode.series_id
-                        +"/season_"+episode.season_id+"/"+episode.ep_number
+                        +"/season_"+episode.season_id
                 );
                 Map<String, Object> childUpdates = new HashMap<>();
-                childUpdates.put("id",episode.episode_id);
+                childUpdates.put(episode.ep_number+"",episode.episode_id);
                 dbRef.updateChildren(childUpdates);
 
                 dbRef = database.getReference("users/"+

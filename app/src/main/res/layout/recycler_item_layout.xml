@@ -26,7 +26,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/itemImage"
+            android:layout_below="@id/itemImage2"
             android:gravity="start"
             android:maxLines="2"
             android:minLines="2"
