@@ -2,6 +2,7 @@ package com.example.klaud.tvandmoviedetective;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,13 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 public class MyMoviesWatched extends Fragment {
     public Context ctx;
     public static ArrayList<MovieItem> items= new ArrayList<>();
     public static RecyclerView recycler;
-    public static MovieAdapter adapter;
+    public static MyMoviesAdapter adapter;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,23 +41,43 @@ public class MyMoviesWatched extends Fragment {
         ctx=getContext();
         recycler = (RecyclerView) getView().findViewById(R.id.recyclerVert);
         recycler.setVisibility(View.VISIBLE);
-        adapter = new MovieAdapter(getContext(), items,getFragmentManager(),getActivity());
+        adapter = new MyMoviesAdapter(getContext(), items,getFragmentManager(),getActivity());
 
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new GridLayoutManager(view.getContext(),3));
-        /*items.add(new MovieItem("film1",R.drawable.a,555));
-        items.add(new MovieItem("film2",R.drawable.a,555));
-        items.add(new MovieItem("film3",R.drawable.a,555));
 
-        adapter.notifyDataSetChanged();
-        recycler.invalidate();*/
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String mail=MainActivity.mail.replace(".","_");
+        DatabaseReference dbRef = database.getReference("users/"+mail+"/movies");
+
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                items.clear();
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    if (ds.child("status").getValue().toString().equals("watched")){
+                        MovieItem mi=new MovieItem(ds.child("title").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
+                        if (! ds.child("poster_path").getValue().toString().equals("null")){
+                            mi.setPoster_path(ds.child("poster_path").getValue().toString());
+                        }
+                        items.add(mi);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+                recycler.invalidate();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
     }
     @Override
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
         String ur="https://tvandmoviedetective.firebaseio.com/users/"+MainActivity.mail.replace(".","_")+"/movies.json";
-        DataFromFirebase data=new DataFromFirebase();
-        data.execute(ur,"2");
+        //DataFromFirebase data=new DataFromFirebase();
+        //data.execute(ur,"2");
     }
 }

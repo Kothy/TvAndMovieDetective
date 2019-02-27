@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,7 +51,13 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
     @Override
     public void onBindViewHolder(MySeriesAdapter.ViewHolder holder, int position) {
 
-        //holder.iv.setImageResource(items.get(position).getImage_drawable());
+        holder.second.setText(items.get(position).network);
+        if (items.get(position).lastSeen==null){
+            holder.third.setText("Not seen any episode");
+        } else {
+            holder.third.setText("Last seen episode: "+items.get(position).lastSeen);
+        }
+
         if (items.get(position).equals("null")){
             holder.iv.setImageResource(R.drawable.nopicture);
         } else {
@@ -60,8 +67,11 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
         holder.title.setText(items.get(position).getName());
         holder.parentLayout.setOnClickListener(click -> {
 
-            //Toast.makeText(contex, "klikla som na polozku v myshows s idom: "+items.get(position).getPoster_path(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(contex, "tu bude presmerovanie", Toast.LENGTH_SHORT).show();
 
+        });
+        holder.contextB.setOnClickListener(click ->{
+            Toast.makeText(contex, "tu vybehne contextMenu", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -75,9 +85,11 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
         TextView title, second, third;
         ImageView iv;
         ConstraintLayout parentLayout;
+        Button contextB;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            contextB = (Button) itemView.findViewById(R.id.button8);
             second = (TextView) itemView.findViewById(R.id.textView6);
             third = (TextView) itemView.findViewById(R.id.seaAndEpNum2);
             title = (TextView) itemView.findViewById(R.id.season2);

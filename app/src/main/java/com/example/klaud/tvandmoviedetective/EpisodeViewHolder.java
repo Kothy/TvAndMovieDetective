@@ -57,12 +57,22 @@ public class EpisodeViewHolder extends ChildViewHolder {
                         MainActivity.mail.replace(".","_")
                         +"/series/"+episode.series_id);
                 childUpdates = new HashMap<>();
-                childUpdates.put("name",episode.series_name);
-                childUpdates.put("poster_path",episode.poster_path);
+                childUpdates.put("name", episode.series_name);
+                childUpdates.put("poster_path", episode.poster_path);
+                childUpdates.put("networks", episode.network);
                 dbRef.updateChildren(childUpdates);
             }
             else {
-                Toast.makeText(MainActivity.ctx, "idem vymazat epiyodu s pozretych", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.ctx, "idem vymazat epiyodu s pozretych", Toast.LENGTH_SHORT).show();
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference dbRef = database.getReference("users/"+
+                        MainActivity.mail.replace(".","_")
+                        +"/series/"+episode.series_id
+                        +"/season_"+episode.season_id+"/"+episode.ep_number
+                );
+                dbRef.removeValue();
+                episode.checked=false;
+                iv.setImageResource(R.drawable.unchecked);
             }
         });
     }

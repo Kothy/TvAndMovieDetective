@@ -56,11 +56,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (items.get(position).getPoster_path()!=null && items.get(position).getPoster_path().equals("null")){
-            //Log.d("URLobr", String.format("null", items.get(position).getPoster_path()));
             holder.iv.setImageResource(items.get(position).getImage_drawable());
         } else {
-            //Log.d("URLobr", String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path()));
-            //holder.iv.setImageResource(R.drawable.bear);
             String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
@@ -83,7 +80,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         });
-        holder.parentLayout.setOnLongClickListener((click) ->{
+        /*holder.parentLayout.setOnLongClickListener((click) ->{
             SharedPreferences prefs= MainActivity.prefs;
             if (prefs.getString("class","").equals("MyMovies") || prefs.getString("class","").equals("MyMoviesWatched")){
 
@@ -96,7 +93,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
                 if (MyMoviesWatched.recycler != null) MyMoviesWatched.recycler.invalidate();
             }
             return true;
-        });
+        });*/
 
     }
 

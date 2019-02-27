@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,6 +37,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class SeriesDetails extends Fragment {
     TextView tv;
@@ -50,7 +52,8 @@ public class SeriesDetails extends Fragment {
     ArrayList<Map<String, String>> pairs = new ArrayList<Map<String, String>>();
     public static Context ctx;
     Button episodesButt, addToFavouriteButton;
-    String title,poster_path;
+    String title, poster_path, televisons;
+    TreeMap<Integer,Integer> seasonsAndEpisodes= new TreeMap<>();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -86,6 +89,9 @@ public class SeriesDetails extends Fragment {
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("name", title);
             childUpdates.put("poster_path",poster_path);
+            childUpdates.put("networks",televisons);
+
+
             dbRef.updateChildren(childUpdates);
         });
         pairs.clear();
@@ -103,6 +109,7 @@ public class SeriesDetails extends Fragment {
             bundle.putString("title",getActivity().getTitle()+"");
             bundle.putString("poster_path",poster_path);
             bundle.putInt("seasons",numOfSeasons);
+            bundle.putString("networks",televisons);
 
             fragment.setArguments(bundle);
             if (fragment != null) {
@@ -163,6 +170,19 @@ public class SeriesDetails extends Fragment {
             try {
                 jsonSeries =new JSONObject(result);
                 String patt="https://image.tmdb.org/t/p/w500%s";
+
+                JSONArray telev=jsonSeries.getJSONArray("networks");
+                for (int i=0; i<telev.length(); i++){
+                    televisons+=telev.getJSONObject(i).getString("name")+" • ";
+                }
+                JSONArray seasons=jsonSeries.getJSONArray("seasons");
+                for (int j=0; j<seasons.length(); j++){
+                    JSONObject season=seasons.getJSONObject(j);
+                    seasonsAndEpisodes.put(season.getInt("season_number"),season.getInt("episode_count"));
+                }
+                televisons=televisons.substring(0,televisons.length()-3);
+                televisons=televisons.replace("null","");
+                Toast.makeText(ctx, televisons, Toast.LENGTH_SHORT).show();
                 if (jsonSeries.getString("overview").equals("")) tv.setText("Overview is not available.");
                 else tv.setText(jsonSeries.getString("overview"));
                 title=jsonSeries.getString("name");

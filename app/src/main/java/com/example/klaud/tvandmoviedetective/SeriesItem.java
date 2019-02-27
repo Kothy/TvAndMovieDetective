@@ -6,6 +6,8 @@ public class SeriesItem {
     private int id;
     private String poster_path;
     public String release_date;
+    public String network;
+    public String lastSeen=null;
 
     public String getPoster_path() {
         return poster_path;

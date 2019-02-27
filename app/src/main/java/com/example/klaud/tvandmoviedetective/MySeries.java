@@ -24,8 +24,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class MySeries extends Fragment {
     MySeriesAdapter adapter;
@@ -45,14 +49,6 @@ public class MySeries extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("My Series");
         ctx=getContext();
-        /*items.add(new SeriesItem("one",R.drawable.a,55));
-        items.add(new SeriesItem("two",R.drawable.bear,55));
-        items.add(new SeriesItem("three",R.drawable.a,55));
-        items.add(new SeriesItem("four",R.drawable.bear,55));
-        items.add(new SeriesItem("four",R.drawable.bear,55));
-        items.add(new SeriesItem("four",R.drawable.bear,55));
-        items.add(new SeriesItem("four",R.drawable.bear,55));
-        items.add(new SeriesItem("four",R.drawable.bear,55));*/
 
         recycler=view.findViewById(R.id.recycler_my_shows);
         adapter = new MySeriesAdapter(getContext(), items, getFragmentManager(),getActivity());
@@ -62,7 +58,8 @@ public class MySeries extends Fragment {
         MainActivity.viewPager.setVisibility(View.GONE);
         MainActivity.tabLayout.setVisibility(View.GONE);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("users/kada11@azet_sk/series");
+        String mail=MainActivity.mail.replace(".","_");
+        DatabaseReference dbRef = database.getReference("users/"+mail+"/series");
 
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -80,11 +77,32 @@ public class MySeries extends Fragment {
     private void showData(DataSnapshot snapshot){
         items.clear();
         for (DataSnapshot ds: snapshot.getChildren()){
-            //Toast.makeText(ctx, "citam data s DB"+ ds.getValue(), Toast.LENGTH_SHORT).show();
-            //Log.d("DATAFire",ds.getKey());
-            Log.d("DATAFire",ds.child("name").getValue().toString());
+            //Log.d("DATAFire",ds.child("name").getValue().toString());
+            TreeMap<String,Integer> seenEpisodes=new TreeMap<>();
             SeriesItem si=new SeriesItem(ds.child("name").getValue().toString(),R.drawable.a,Integer.decode(ds.getKey()));
             si.setPoster_path(ds.child("poster_path").getValue().toString());
+            si.network=ds.child("networks").getValue().toString();
+            for (DataSnapshot child:ds.getChildren()){
+                if (child.getKey().contains("season")){
+                    String season=child.getKey().replace("season_","");
+                    if (season.length()<2) season="0"+season;
+                    for (DataSnapshot child2: child.getChildren()){
+                        String episode=child2.getKey();
+                        if (episode.length()<2) episode="0"+episode;
+                        seenEpisodes.put("S"+season+"E"+episode,Integer.decode(child2.getValue().toString()));
+                    }
+                }
+            }
+
+            //Toast.makeText(ctx, ""+seenEpisodes, Toast.LENGTH_SHORT).show();
+            Log.d("Episodes","----------------------------------------");
+            Log.d("Episodes",""+seenEpisodes);
+            Log.d("Episodes","----------------------------------------");
+            ArrayList<String> maxEpisode=new ArrayList<>(seenEpisodes.keySet());
+            if (maxEpisode.size()>0){
+                Collections.sort(maxEpisode);
+                si.lastSeen=maxEpisode.get(maxEpisode.size()-1);
+            }
             items.add(si);
         }
         adapter.notifyDataSetChanged();
