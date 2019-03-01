@@ -54,13 +54,22 @@ public class MyMoviesWatched extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 items.clear();
+                Boolean delete=false;
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    if (ds.child("status").getValue().toString().equals("watched")){
-                        MovieItem mi=new MovieItem(ds.child("title").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
-                        if (! ds.child("poster_path").getValue().toString().equals("null")){
-                            mi.setPoster_path(ds.child("poster_path").getValue().toString());
+                    if (ds.hasChild("status")){
+                        if ( ds.child("status").getValue().toString().equals("watched")){
+                            MovieItem mi=new MovieItem(ds.child("title").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
+                            if (ds.hasChild("poster_path")){
+                                if ( !ds.child("poster_path").getValue().toString().equals("null")){
+                                    mi.setPoster_path(ds.child("poster_path").getValue().toString());
+                                }
+                                items.add(mi);
+                            } else delete = true;
                         }
-                        items.add(mi);
+                    } else delete=true;
+                    if (delete) {
+                        DatabaseReference dbRef = database.getReference("users/"+mail+"/movies"+ds.getKey());
+                        dbRef.removeValue();
                     }
                 }
                 adapter.notifyDataSetChanged();

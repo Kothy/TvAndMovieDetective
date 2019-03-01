@@ -20,6 +20,10 @@
             android:id="@+id/nav_myTv"
             android:icon="@drawable/ic_menu_manage"
             android:title="My tv shows" />
+        <item
+            android:id="@+id/nav_theatres"
+            android:icon="@drawable/ic_theaters_black_24dp"
+            android:title="Theatres" />
     </group>
 
     <item android:title="Communicate">

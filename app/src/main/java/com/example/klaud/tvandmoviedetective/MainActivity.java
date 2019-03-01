@@ -65,11 +65,8 @@ public class MainActivity extends AppCompatActivity
     DownloadManager downloadManager;
     ArrayList<Long> list = new ArrayList<>();
     ProgressDialog pd;
-    TextView tv;
-    HashMap<String, Bitmap> posters=new HashMap<>();
     public static SharedPreferences.Editor editor;
     public static SharedPreferences prefs;
-    public static Fragment currFragment;
     public static ArrayList<String> movies=new ArrayList<>();
     public static ArrayList<String> series=new ArrayList<>();
     public static ArrayList<String> persons=new ArrayList<>();
@@ -83,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     public static AppBarLayout appbar;
     public static TabLayout tabLayout;
     public static ViewPager viewPager;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,21 +94,11 @@ public class MainActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        //setupViewPager(viewPager);
-
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo("com.example.klaud.tvandmoviedetective",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));}
-        } catch (PackageManager.NameNotFoundException e) {
-        } catch (NoSuchAlgorithmException e) {}
-
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+
 
         mAuth = FirebaseAuth.getInstance();
         Fragment face=new Facebook();
@@ -177,9 +165,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
         handleIntent(getIntent());
-
-
     }
+
     private void setupViewPager(ViewPager viewPager) {
         appbar.setVisibility(View.VISIBLE);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -187,10 +174,6 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(new MyMoviesWatched(), "Watched");
         viewPager.setAdapter(adapter);
     }
-    /*public static void unsetupViewPager() {
-        appbar.setVisibility(View.INVISIBLE);
-        viewPager.setAdapter(null);
-    }*/
 
     public Boolean isInternet(){
         ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -213,7 +196,6 @@ public class MainActivity extends AppCompatActivity
             else if (prefs.getString("class","").contains("Series")){
                 displaySelectedScreen(R.id.Tv_Series);
             }
-            //super.onBackPressed();
         }
     }
 
@@ -222,7 +204,7 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
@@ -242,7 +224,6 @@ public class MainActivity extends AppCompatActivity
                 opennigFragment();
             }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -250,14 +231,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Co sa stlaci v draweri - zobrazenie
-        /*int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);*/
         if (Facebook.isLogged()) displaySelectedScreen(item.getItemId());
         return true;
     }
@@ -265,10 +239,8 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         if (Facebook.isLogged()){
             fragment = new MoviesResultSearch();
-            currFragment=fragment;
         } else {
             fragment = new Facebook();
-            currFragment=fragment;
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -286,29 +258,23 @@ public class MainActivity extends AppCompatActivity
 
         if (itemId==R.id.movie){
             fragment = new MoviesResultSearch();
-            currFragment=fragment;
         }
         else if (itemId==R.id.Tv_Series){// zobrazenie trending alebo vyhladavania
             fragment = new TvSeriesResultSearch();
-            currFragment=fragment;
         }
         else if (itemId==-9999){// detail filmu bude mat taketo idecko
             fragment = new MovieDetail();
-            currFragment=fragment;
         }
         else if (itemId==-8888){// facebook fragment bude mat taketo idecko
             fragment = new Facebook();
-            currFragment=fragment;
-
         } else if (itemId == R.id.nav_myMovies){
             setupViewPager(viewPager);
             fragment = new EmptyFragment();
-            currFragment=fragment;
 
         } else if (itemId == R.id.nav_myTv){
             fragment = new MySeries();
-            currFragment=fragment;
-
+        } else if(itemId== R.id.nav_theatres){
+            fragment =new Theatres();
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -357,10 +323,8 @@ public class MainActivity extends AppCompatActivity
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             list.remove(referenceId);
             if (list.isEmpty()) {
-
-                //unregisterReceiver(this);
                 unpack.execute(st[0]+getYesterdayDate(),st[1]+getYesterdayDate(),st[2]+getYesterdayDate());
-                unregisterReceiver(onComplete); // doplnene, može padat-----------------------------------------------------------------------------------
+                unregisterReceiver(onComplete);
             }
         }
     };
@@ -451,30 +415,32 @@ public class MainActivity extends AppCompatActivity
         return  myFile.exists();
     }
     private void handleIntent(Intent intent) {
+
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             showResults(query);
+
+            searchView.setQuery("", false);
+            searchView.setIconified(true);
         }
     }
 
     private void showResults(String query) {
-        MainActivity.editor.putString("search",query);
-        //unsetupViewPager();
+        editor.putString("search",query);
+        //setTitle("Search results");
         if (!Facebook.isLogged()) return;
         if (prefs.getString("class","").contains("Movie")){
             displaySelectedScreen(R.id.movie);
-            //MoviesResultSearch.doMySearch(query);
         } else if (prefs.getString("class","").contains("Series")){
             displaySelectedScreen(R.id.Tv_Series);
         }
-
-
     }
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleIntent(intent);
     }
+
     static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();

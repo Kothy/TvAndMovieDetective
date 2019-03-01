@@ -1,10 +1,8 @@
 package com.example.klaud.tvandmoviedetective;
 
 import android.os.AsyncTask;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.HashMap;
 import java.util.Map;
 
