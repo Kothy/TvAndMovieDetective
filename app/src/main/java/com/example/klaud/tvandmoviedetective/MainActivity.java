@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
-
         mAuth = FirebaseAuth.getInstance();
         Fragment face=new Facebook();
         pd=new ProgressDialog(this);
