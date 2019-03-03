@@ -20,6 +20,7 @@
     <string name="AddToFavourite">Add to favourite</string>
 
     <string name="cities_prompt">Choose a city</string>
+    <string name="theatres_prompt">Choose a theatre</string>
 
     <string-array name="cities_array">
         <item>Choose city</item>

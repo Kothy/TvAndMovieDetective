@@ -9,19 +9,43 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (position>0){
-            String url="https://tv-program.aktuality.sk/kino/"+parent.getItemAtPosition(position).toString();
+            String url="https://tv-program.aktuality.sk/kino/";
             Log.d("URL",url);
             Toast.makeText(parent.getContext(),
                     "OnItemSelectedListener: " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
             Theatres.city=parent.getItemAtPosition(position).toString();
+            //Log.d("RESULT",edit(Theatres.city));
             GetHTMLTreeCity getHTML=new GetHTMLTreeCity();
-            getHTML.execute(url);
-            //Log.d("URL",url);
+            getHTML.execute(url+edit(Theatres.city));
+            //Log.d("RESULT",url+edit(Theatres.city));
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) { }
 
+    public String edit(String city) {
+        String result = "";
+        city=city.toLowerCase();
+        for (int i = 0; i < city.length(); i++) {
+            if (city.charAt(i) == 'š') result += "s";
+            else if (city.charAt(i) == ' ') result += "-";
+            else if (city.charAt(i) == 'á') result += "a";
+            else if (city.charAt(i) == 'č') result += "c";
+            else if (city.charAt(i) == 'í') result += "i";
+            else if (city.charAt(i) == 'ž') result += "z";
+            else if (city.charAt(i) == 'š') result += "s";
+            else if (city.charAt(i) == 'ú') result += "u";
+            else if (city.charAt(i) == 'ý') result += "y";
+            else if (city.charAt(i) == 'ň') result += "n";
+            else if (city.charAt(i) == 'é') result += "e";
+            else if (city.charAt(i) == 'ď') result += "d";
+            else if (city.charAt(i) == 'ť') result += "t";
+            else if (city.charAt(i) == 'ľ') result += "l";
+            else if (city.charAt(i) == '.') result += "";
+            else result+=city.charAt(i);
+        }
+        return result.toLowerCase();
+    }
 
 }

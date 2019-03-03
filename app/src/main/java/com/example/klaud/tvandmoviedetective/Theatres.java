@@ -1,29 +1,16 @@
 package com.example.klaud.tvandmoviedetective;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class Theatres extends Fragment {
 
@@ -56,10 +43,6 @@ public class Theatres extends Fragment {
         spinnerCities.setAdapter(adapter);
         spinnerCities.setOnItemSelectedListener(new CustomOnItemSelectedListenerCities());
 
-        tv =view.findViewById(R.id.textView7);
-        tv.setMovementMethod(new ScrollingMovementMethod());
-        //getHTMLTreeProgram.execute("https://tv-program.aktuality.sk/program-kina/bratislava/cinema-city-eurovea/");
-
         theatres.add("Choose theatre");
         adapter2= new ArrayAdapter<>(ctx, android.R.layout.simple_spinner_item, theatres); //
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -75,42 +58,4 @@ public class Theatres extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) { }
     }
-    static AsyncTask<String, Integer, String> getHTMLTreeProgram = new AsyncTask<String, Integer, String>() {
-        @Override
-        protected void onPreExecute() {
-            if (Looper.myLooper() == null) Looper.prepare();
-        }
-        @Override
-        protected String doInBackground(String... params){
-            String result;
-            String inputLine;
-            try {
-                URL myUrl = new URL(params[0]);
-                HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setReadTimeout(15000);
-                connection.setConnectTimeout(15000);
-                connection.connect();
-                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(streamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                while((inputLine = reader.readLine()) != null){
-                    stringBuilder.append(inputLine);
-                }
-                reader.close();
-                streamReader.close();
-                result = stringBuilder.toString();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-                result = null;
-            }
-            return result;
-        }
-
-        protected void onPostExecute(String result){
-
-        }
-    };
-
 }

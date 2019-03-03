@@ -3,11 +3,9 @@ package com.example.klaud.tvandmoviedetective;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.Log;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Calendar;
