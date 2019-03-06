@@ -25,32 +25,40 @@ public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
                     .maxBodySize(0)
                     .get();
             Element body=doc.body();
-            Theatres.tv.setText("");
             Timestamp ts = new Timestamp(System.currentTimeMillis());
             Calendar cal = Calendar.getInstance();
             cal.setTime(ts);
+            Theatres.data.clear();
             for (Element e: body.getElementsByTag("div")){
 
                 if (e.attributes().hasKey("id") && e.attributes().get("id").contains("premieres-board_")) {
-                    //tv.append(e.attributes().toString()+System.lineSeparator());
                     ts.setTime(cal.getTime().getTime());
-                    Log.d("RESULT","************"+cal.getTime().getDate()+"****************"+System.lineSeparator());
+                    Theatres.data.add("************"+cal.getTime().getDate()+"."+cal.getTime().getMonth()+"."+cal.getTime().getYear()+"****************");
+                    Log.d("RESULT","************"+cal.getTime().getDate()+"."+cal.getTime().getMonth()+"."+cal.getTime().getYear()+"****************"+System.lineSeparator());
                     for (Element e2:e.getElementsByTag("tr")){
                         if (e2.attributes().hasKey("class") && e2.attributes().get("class").equals("board-row")){
                             for (Element title: e2.getElementsByTag("a")){
-
+                                Theatres.data.add(title.text());
                                 Log.d("RESULT",title.text());
                             }
+                            String times="";
                             for (Element time: e2.getElementsByTag("span")){
-                                if (time.attributes().hasKey("class") && time.attr("class").contains("time"))
+                                if (time.attributes().hasKey("class") && time.attr("class").contains("time")){
                                     Log.d("RESULT",time.text());
+                                    //Theatres.data.add(time.text());
+                                    times+=time.text()+"  |  ";
+                                }
+
                             }
+                            Theatres.data.add(times);
+                            Theatres.data.add("**************************************");
                         }
                     }
-                    Log.d("RESULT","--------------------------------------"+System.lineSeparator());
+                    //Log.d("RESULT","--------------------------------------"+System.lineSeparator());
                     cal.add(Calendar.DAY_OF_WEEK,1);
                 }
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,6 +68,7 @@ public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
     }
 
     protected void onPostExecute(String result){
-
+        Theatres.adapter3.notifyDataSetChanged();
+        Theatres.lv.invalidate();
     }
 }

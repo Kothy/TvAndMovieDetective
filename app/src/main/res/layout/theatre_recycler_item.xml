@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/karticka"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:cardElevation="0dp"
+    app:cardUseCompatPadding="true"> <!--app:cardCornerRadius="5dp" ak by som chcela zahnute rohy na kartickach-->
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/parent_layoutItem3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:selectableItemBackground"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <TextView
+            android:id="@+id/title_theatres"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/itemImage2"
+            android:layout_marginEnd="8dp"
+            android:gravity="start"
+            android:maxLines="2"
+            android:paddingLeft="5dp"
+            android:paddingTop="1dp"
+            android:paddingRight="1dp"
+            android:paddingBottom="1dp"
+            android:text="Aquaman"
+            android:textAlignment="textStart"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/times_the"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lenght"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:paddingLeft="5dp"
+            android:text="PG-13"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/times_the"
+            app:layout_constraintHorizontal_bias="0.882"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pg"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/pg"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:paddingLeft="5dp"
+            android:text="115 min."
+            app:layout_constraintEnd_toStartOf="@+id/times_the"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_theatres" />
+
+        <TextView
+            android:id="@+id/times_the"
+            android:layout_width="179dp"
+            android:layout_height="0dp"
+            android:text="jjsdnjkdnjkkdncccccccccccccccccccccccccccccccccccccjknsdklmxcmklsdklsdkmsdklmklsdklkldmsksdmjkkjeddjkjksdjujsd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
