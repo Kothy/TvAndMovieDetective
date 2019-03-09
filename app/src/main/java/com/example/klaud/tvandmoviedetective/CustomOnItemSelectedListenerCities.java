@@ -11,13 +11,14 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
         if (position>0){
             String url="https://tv-program.aktuality.sk/kino/";
             Log.d("URL",url);
-            Toast.makeText(parent.getContext(),
-                    "OnItemSelectedListener: " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(parent.getContext(),"OnItemSelectedListener: " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
             Theatres.city=parent.getItemAtPosition(position).toString();
-            //Log.d("RESULT",edit(Theatres.city));
             GetHTMLTreeCity getHTML=new GetHTMLTreeCity();
             getHTML.execute(url+edit(Theatres.city));
-            //Log.d("RESULT",url+edit(Theatres.city));
+            Theatres.items.clear();
+            Theatres.rec_adapter.notifyDataSetChanged();
+            Theatres.recycler.invalidate();
+            Theatres.spinnerTheatres.setSelection(0);
         }
     }
 

@@ -33,6 +33,7 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
     @Override
     public void onBindViewHolder(TheatresAdapter.ViewHolder holder, int position) {
         holder.length.setText(items.get(position).length);
+        holder.date.setText(items.get(position).date);
         holder.pg.setText(items.get(position).pg);
         holder.times.setText(items.get(position).times.toString());
         holder.title.setText(items.get(position).title);
@@ -49,7 +50,7 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView title, length, pg, times;
+        TextView title, length, pg, times,date;
         CardView karticka;
         ConstraintLayout cl;
 
@@ -61,6 +62,7 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
             length = itemView.findViewById(R.id.lenght);
             pg = itemView.findViewById(R.id.pg);
             times = itemView.findViewById(R.id.times_the);
+            date = itemView.findViewById(R.id.theatre_date);
         }
     }
 }

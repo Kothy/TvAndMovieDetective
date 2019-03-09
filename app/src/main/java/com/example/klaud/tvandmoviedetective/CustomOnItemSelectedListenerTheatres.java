@@ -8,8 +8,7 @@ public class CustomOnItemSelectedListenerTheatres implements AdapterView.OnItemS
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (position>0){
-                Toast.makeText(parent.getContext(),
-                        "OnItemSelectedListener: " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(parent.getContext(), "OnItemSelectedListener: " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
                 GetHTMLTreeProgram program=new GetHTMLTreeProgram();
                 program.execute(Theatres.urlForTheatres.get(position));
             }

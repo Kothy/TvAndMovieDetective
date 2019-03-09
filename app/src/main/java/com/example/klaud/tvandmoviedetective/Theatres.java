@@ -19,15 +19,11 @@ public class Theatres extends Fragment {
 
     public static Context ctx;
     static Spinner spinnerCities, spinnerTheatres;
-    static TextView tv;
     static ArrayList<String> theatres=new ArrayList<>();
     static ArrayList<String> urlForTheatres=new ArrayList<>();
     static ArrayAdapter<String> adapter2;
     static ArrayAdapter<CharSequence> adapter;
-    static String city,theatre;
-    public static ArrayList<String> data=new ArrayList<>();
-    public static ArrayAdapter<String> adapter3;
-    static ListView lv;
+    static String city;
     public static RecyclerView recycler;
     public static TheatresAdapter rec_adapter;
     public static ArrayList<TheatresItem> items=new ArrayList<>();
@@ -53,36 +49,17 @@ public class Theatres extends Fragment {
         spinnerCities.setAdapter(adapter);
         spinnerCities.setOnItemSelectedListener(new CustomOnItemSelectedListenerCities());
 
-        lv=view.findViewById(R.id.theatre_movies_listview);
-
-        data.add("aaaaaraaaaa");data.add("aaawwwaaaaa");data.add("aaaaaaaaaaa");
-        data.add("aaaaaiaaaaa");data.add("aaaaaaaaaaa");data.add("aaaaaaaaaaa");
-        data.add("aaaaaaaaaaa");data.add("aaaaaaaaaaa");data.add("aaaaaaaaaaa");
-        data.add("aaaaalaaaaa");data.add("dnjdjndjjdj");data.add("aaaaaaaaaaa");
-        adapter3 = new ArrayAdapter<String>(ctx,android.R.layout.simple_list_item_1, data);
-        lv.setAdapter(adapter3);
-        lv.setVisibility(View.INVISIBLE);
 
         theatres.add("Choose theatre");
-        adapter2= new ArrayAdapter<>(ctx, R.layout.view_spinner_item, theatres); //
+        adapter2= new ArrayAdapter<>(ctx, R.layout.view_spinner_item, theatres);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTheatres.setAdapter(adapter2);
-        spinnerTheatres.setSelection(0);
         spinnerTheatres.setOnItemSelectedListener(new CustomOnItemSelectedListenerTheatres());
 
-        ArrayList<String> ahoj=new ArrayList<>();
-        items.add(new TheatresItem("Aquaman","PG-13","120 min. / subtitles","18:00  |  19:55  "));
-        items.add(new TheatresItem("Aquaman","PG-13","120 min. / subtitles","18:00  |  19:55  | 17:20  |  16:50  |  14:10  |  15:20  | 16:45 "));
-        items.add(new TheatresItem("Aquaman","PG-13","120 min. / subtitles","18:00  |  19:55  | 17:20  |  16:50  |  14:10 "));
-        items.add(new TheatresItem("Aquaman","PG-13","120 min. / subtitles","18:00  |  19:55  | 17:20  |  16:50  |  14:10 "));
-        items.add(new TheatresItem("Aquaman","PG-13","120 min. / subtitles","18:00  |  19:55  | 17:20  |  16:50  |  14:10 "));
-        items.add(new TheatresItem("Aquaman","PG-13","120 min. / subtitles","18:00  |  19:55  | 17:20  |  16:50  |  14:10 "));
-        items.add(new TheatresItem("Aquaman","PG-13","120 min. / subtitles","18:00  |  19:55  | 17:20  |  16:50  |  14:10 "));
         recycler = (RecyclerView) getView().findViewById(R.id.theatres_recycler);
         rec_adapter = new TheatresAdapter(getContext(), items);
         recycler.setAdapter(rec_adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
-
     }
 
     @Override

@@ -22,9 +22,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/itemImage2"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="start"
-            android:maxLines="2"
             android:paddingLeft="5dp"
             android:paddingTop="1dp"
             android:paddingRight="1dp"
@@ -34,8 +34,9 @@
             android:textColor="@android:color/black"
             android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/times_the"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/theatre_date" />
 
         <TextView
             android:id="@+id/lenght"
@@ -68,13 +69,26 @@
 
         <TextView
             android:id="@+id/times_the"
-            android:layout_width="179dp"
-            android:layout_height="0dp"
+            android:layout_width="126dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="8dp"
             android:text="jjsdnjkdnjkkdncccccccccccccccccccccccccccccccccccccjknsdklmxcmklsdklsdkmsdklmklsdklkldmsksdmjkkjeddjkjksdjujsd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/theatre_date"
             app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/theatre_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:text="Today"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 
