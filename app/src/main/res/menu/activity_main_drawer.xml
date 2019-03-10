@@ -9,33 +9,30 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Movie" />
         <item
-            android:id="@+id/Tv_Series"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Tv Series" />
-        <item
             android:id="@+id/nav_myMovies"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="My movies" />
         <item
+            android:id="@+id/Tv_Series"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Tv Series" />
+        <item
             android:id="@+id/nav_myTv"
             android:icon="@drawable/ic_menu_manage"
-            android:title="My tv shows" />
+            android:title="My Tv Series" />
         <item
             android:id="@+id/nav_theatres"
             android:icon="@drawable/ic_theaters_black_24dp"
             android:title="Theatres" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Others">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_friends"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Friends" />
+
         </menu>
     </item>
 

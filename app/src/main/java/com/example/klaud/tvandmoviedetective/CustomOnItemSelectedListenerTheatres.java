@@ -2,7 +2,6 @@ package com.example.klaud.tvandmoviedetective;
 
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 public class CustomOnItemSelectedListenerTheatres implements AdapterView.OnItemSelectedListener{
     @Override
@@ -12,8 +11,6 @@ public class CustomOnItemSelectedListenerTheatres implements AdapterView.OnItemS
                 GetHTMLTreeProgram program=new GetHTMLTreeProgram();
                 program.execute(Theatres.urlForTheatres.get(position));
             }
-
-
     }
 
     @Override

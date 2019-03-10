@@ -211,7 +211,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {// vyber z troch bodiek
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings && Facebook.isLogged()) {
+            displaySelectedScreen(R.id.action_settings);
             return true;
         } else if(id == R.id.logOut){
             if (Facebook.isLogged()) {
@@ -257,6 +258,9 @@ public class MainActivity extends AppCompatActivity
         if (itemId==R.id.movie){
             fragment = new MoviesResultSearch();
         }
+        else if (itemId == R.id.action_settings){
+            fragment = new Settings();
+        }
         else if (itemId==R.id.Tv_Series){// zobrazenie trending alebo vyhladavania
             fragment = new TvSeriesResultSearch();
         }
@@ -271,8 +275,10 @@ public class MainActivity extends AppCompatActivity
 
         } else if (itemId == R.id.nav_myTv){
             fragment = new MySeries();
-        } else if(itemId== R.id.nav_theatres){
+        } else if (itemId== R.id.nav_theatres){
             fragment =new Theatres();
+        } else if (itemId == R.id.nav_friends){
+            fragment= new Friends();
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -431,6 +437,9 @@ public class MainActivity extends AppCompatActivity
             displaySelectedScreen(R.id.movie);
         } else if (prefs.getString("class","").contains("Series")){
             displaySelectedScreen(R.id.Tv_Series);
+        } else if (prefs.getString("class","").contains("Friends")){
+            Toast.makeText(ctx, "hladam v useroch: "+query, Toast.LENGTH_SHORT).show();
+            Friends.searchResult(query);
         }
     }
     @Override

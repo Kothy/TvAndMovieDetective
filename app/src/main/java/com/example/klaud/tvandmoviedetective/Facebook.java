@@ -22,11 +22,15 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Facebook extends Fragment {
     CallbackManager callbackManager;
@@ -56,9 +60,16 @@ public class Facebook extends Fragment {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getContext(), "Prihlasenie sa podarilo", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Prihlasenie sa podarilo", Toast.LENGTH_SHORT).show();
                 accessToken= AccessToken.getCurrentAccessToken();
                 setMailToDrawer();
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference dbRef = database.getReference("users/"+MainActivity.mail.replace(".","_")+"/settings");
+                Map<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put("private", "false");
+                childUpdates.put("nickname", "");
+                childUpdates.put("friends", "");
+                dbRef.updateChildren(childUpdates);
                 openMovieFragment();
             }
 
@@ -90,6 +101,7 @@ public class Facebook extends Fragment {
     public static AccessToken getAccessToken(){
         return AccessToken.getCurrentAccessToken();
     }
+
     public static Boolean isLogged(){
         AccessToken at= AccessToken.getCurrentAccessToken();
         return at != null && !at.isExpired();
