@@ -63,11 +63,15 @@ public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapte
             Picasso.get().load(url).into(holder.iv);
         }
         holder.parentLayout.setOnClickListener(click ->{
+            for (DetailsForSearch ds: MoviesResultSearch.detailsPool){
+                ds.cancel(true);
+            }
+
             Fragment fragment = null;
             fragment = new MovieDetail();
             Bundle bundle = new Bundle();
             bundle.putString("id", items.get(position).getId().toString());
-            bundle.putString("title",items.get(position).getName());
+            bundle.putString("title",items.get(position).getName());// toto vlozi title s malymi pismenkami
 
             fragment.setArguments(bundle);
             if (fragment != null) {

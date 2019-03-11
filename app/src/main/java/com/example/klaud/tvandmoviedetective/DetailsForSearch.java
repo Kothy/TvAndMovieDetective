@@ -49,21 +49,17 @@ public class DetailsForSearch extends AsyncTask<String, String, String> {
                 if (series==false){
                     MoviesResultSearch.searchedItems.get(position).setPoster_path(json.getString("poster_path"));
                     MoviesResultSearch.searchedItems.get(position).release_date=json.getString("release_date");
-                    //MoviesResultSearch.adapter3 = new ResultSearchAdapter(MoviesResultSearch.ctx, MoviesResultSearch.searchedItems, MoviesResultSearch.fm, MoviesResultSearch.actvity);
-                    //MoviesResultSearch.recycler3.setAdapter(MoviesResultSearch.adapter3);
                     MoviesResultSearch.adapter3.notifyItemChanged(position);
                     MoviesResultSearch.recycler3.invalidateItemDecorations();
                     MoviesResultSearch.recycler3.invalidate();
-                    Log.d("Dokoncenie","dokoncil som pracu");
+                    //Log.d("Dokoncenie","dokoncil som pracu");
                 } else {
                     TvSeriesResultSearch.searchedItems.get(position).setPoster_path(json.getString("poster_path"));
                     TvSeriesResultSearch.searchedItems.get(position).release_date = json.getString("first_air_date");
-                    //TvSeriesResultSearch.adapter3 = new ResultSearchAdapterSeries(TvSeriesResultSearch.ctx, TvSeriesResultSearch.searchedItems, TvSeriesResultSearch.fm, TvSeriesResultSearch.activity);
-                    //TvSeriesResultSearch.recycler3.setAdapter(TvSeriesResultSearch.adapter3);
                     TvSeriesResultSearch.adapter3.notifyItemChanged(position);
                     TvSeriesResultSearch.recycler3.invalidateItemDecorations();
                     TvSeriesResultSearch.recycler3.invalidate();
-                    Log.d("Dokoncenie","dokoncil som pracu");
+                    //Log.d("Dokoncenie","dokoncil som pracu");
                 }
 
             }

@@ -1,7 +1,9 @@
 package com.example.klaud.tvandmoviedetective;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
@@ -81,12 +85,28 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
 
         holder.parentLayout.setOnLongClickListener((click) ->{
             String mail=MainActivity.mail.replace(".","_");
-            FirebaseDatabase.getInstance().getReference("/users/"+mail+"/movies/"+items.get(position).getId()).removeValue();
 
-            items.remove(position);
-            notifyDataSetChanged();
-            if (MyMovies.recycler != null) MyMovies.recycler.invalidate();
-            if (MyMoviesWatched.recycler != null) MyMoviesWatched.recycler.invalidate();
+            AlertDialog.Builder builder = new AlertDialog.Builder(contex);
+            builder.setMessage("Are you sure you want to remove this item ?")
+                    .setCancelable(false)
+
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            FirebaseDatabase.getInstance().getReference("/users/"+mail+"/movies/"+items.get(position).getId()).removeValue();
+                            items.remove(position);
+                            notifyDataSetChanged();
+                            if (MyMovies.recycler != null) MyMovies.recycler.invalidate();
+                            if (MyMoviesWatched.recycler != null) MyMoviesWatched.recycler.invalidate();
+                        }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+
             return true;
         });
 

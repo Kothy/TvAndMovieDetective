@@ -55,6 +55,7 @@ public class TvSeriesResultSearch extends Fragment {
     public static FragmentManager fm;
     public TextView trendingTitle;
     public TextView airingTitle;
+    public static ArrayList<DetailsForSearch> searchPool=new ArrayList<>();
 
     @Nullable
     @Override
@@ -186,10 +187,10 @@ public class TvSeriesResultSearch extends Fragment {
             int pos=searchedItems.size()-1;
             if (pos==-1) pos=0;
             DetailsForSearch ds=new DetailsForSearch();
+            searchPool.add(ds);
             ds.execute(String.format(patt,js.getInt("id")),pos+"","series");
-
-
         }
+
         recycler3.invalidate();
         adapter3.notifyDataSetChanged();
     }

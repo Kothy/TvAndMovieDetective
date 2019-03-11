@@ -74,8 +74,6 @@ public class MovieDetail  extends Fragment {
         pd.setTitle("Please wait");
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(false);
-        //pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
-        pd.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large);
         pd.setMax(100);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("users/"+maiil+"/movies");
@@ -175,17 +173,14 @@ public class MovieDetail  extends Fragment {
             String pattern2="https://api.themoviedb.org/3/movie/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             getJsonString.execute(String.format(pattern, movieId));
             getJsonCast.execute(String.format(pattern2, movieId));
-
         }
-        //Toast.makeText(getContext(), "Idem zobrazovat film s id: "+movieId, Toast.LENGTH_LONG).show();
-
     }
 
     AsyncTask<String, Integer, String> getJsonString = new AsyncTask<String, Integer, String>() {
         @Override
         protected void onPreExecute() {
             if (Looper.myLooper() == null) Looper.prepare();
-            pd.show();
+            //pd.show();
         }
         @Override
         protected String doInBackground(String... params){
@@ -219,11 +214,11 @@ public class MovieDetail  extends Fragment {
                 jsonMovie=new JSONObject(result);
                 poster_path=jsonMovie.getString("poster_path");
                 String patt="https://image.tmdb.org/t/p/original%s";
+                title=jsonMovie.getString("original_title");
                 if (jsonMovie.getString("overview").equals("")) tv.setText("Overview is not available.");
                 else tv.setText(jsonMovie.getString("overview"));
-                getActivity().setTitle(jsonMovie.getString("original_title"));
+                getActivity().setTitle(title);
                 Pic image=new Pic();
-
 
                 if (jsonMovie.getString("backdrop_path").equals("null")){
                     moviePoster.setBackgroundResource(R.drawable.no_backdrop);

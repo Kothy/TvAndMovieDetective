@@ -63,6 +63,9 @@ public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearch
         }
         holder.parentLayout.setOnClickListener(click ->{
             //Toast.makeText(contex, items.get(position).getPoster_path(), Toast.LENGTH_SHORT).show();
+            for (DetailsForSearch ds:TvSeriesResultSearch.searchPool){
+                ds.cancel(true);
+            }
             Fragment fragment = null;
             fragment = new SeriesDetails();
             Bundle bundle = new Bundle();

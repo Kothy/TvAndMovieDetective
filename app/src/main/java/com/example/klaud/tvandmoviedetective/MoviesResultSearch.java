@@ -60,6 +60,7 @@ public class MoviesResultSearch extends Fragment {
     public static View view;
     public static FragmentManager fm;
     public static Activity actvity;
+    public static ArrayList<DetailsForSearch> detailsPool=new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -218,6 +219,7 @@ public class MoviesResultSearch extends Fragment {
             mi.setPoster_path("null");
             searchedItems.add(mi);
             DetailsForSearch ds=new DetailsForSearch();
+            detailsPool.add(ds);
             String patt="https://api.themoviedb.org/3/movie/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             int pos=searchedItems.size()-1;
             if (pos==-1) pos=0;
