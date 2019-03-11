@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(false);
         pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+        //pd.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large);
         pd.setMax(100);
         prefs = getSharedPreferences("INFO", MODE_PRIVATE);
         editor = getSharedPreferences("INFO", MODE_PRIVATE).edit();

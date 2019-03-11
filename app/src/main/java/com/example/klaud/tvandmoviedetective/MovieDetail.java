@@ -1,5 +1,6 @@
 package com.example.klaud.tvandmoviedetective;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
@@ -54,6 +56,7 @@ public class MovieDetail  extends Fragment {
     Boolean run=true;
     DatabaseReference dbRef;
     DataSnapshot data;
+    ProgressDialog pd;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,7 +70,13 @@ public class MovieDetail  extends Fragment {
         getActivity().setTitle("Movie Details");
         ctx=getContext();
         String maiil=MainActivity.mail.replace(".","_");
-
+        pd=new ProgressDialog(ctx);
+        pd.setTitle("Please wait");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setCancelable(false);
+        //pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+        pd.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large);
+        pd.setMax(100);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("users/"+maiil+"/movies");
 
@@ -88,10 +97,8 @@ public class MovieDetail  extends Fragment {
         watchedButton = view.findViewById(R.id.button3);
         wantToWatchButton = view.findViewById(R.id.button4);
         ratingBar = view.findViewById(R.id.ratingBar);
+
         ratingBar.setOnRatingBarChangeListener( (rat,num,user) ->{
-            //SaveToFirebase save=new SaveToFirebase();
-            //save.execute("/users/"+maiil+"/movies/"+movieId,"watched",title,poster_path,num+"");
-            //Toast.makeText(ctx, ""+num, Toast.LENGTH_SHORT).show();
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
             Map<String, Object> childUpdates = new HashMap<>();
@@ -124,6 +131,7 @@ public class MovieDetail  extends Fragment {
             dbRef.updateChildren(childUpdates);
 
         });
+
         wantToWatchButton.setOnClickListener((click) -> {
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
@@ -134,10 +142,12 @@ public class MovieDetail  extends Fragment {
             childUpdates.put("rating","0");
             dbRef.updateChildren(childUpdates);
         });
+
         sv.setOnTouchListener((vie,event) -> {
             tv.getParent().requestDisallowInterceptTouchEvent(false);
             return false;
         });
+
         castLv.setOnTouchListener((vie,event) -> {
             castLv.getParent().requestDisallowInterceptTouchEvent(true);
             return false;
@@ -175,6 +185,7 @@ public class MovieDetail  extends Fragment {
         @Override
         protected void onPreExecute() {
             if (Looper.myLooper() == null) Looper.prepare();
+            pd.show();
         }
         @Override
         protected String doInBackground(String... params){
@@ -228,8 +239,12 @@ public class MovieDetail  extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            if (pd.isShowing()){
+                pd.dismiss();
+            }
         }
     };
+
     AsyncTask<String, Integer, String> getJsonCast = new AsyncTask<String, Integer, String>() {
         @Override
         protected void onPreExecute() {
