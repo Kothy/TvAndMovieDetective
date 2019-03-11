@@ -60,6 +60,7 @@ public class EpisodeViewHolder extends ChildViewHolder {
                 childUpdates.put("name", episode.series_name);
                 childUpdates.put("poster_path", episode.poster_path);
                 childUpdates.put("networks", episode.network);
+                childUpdates.put("rating", "");
                 dbRef.updateChildren(childUpdates);
             }
             else {

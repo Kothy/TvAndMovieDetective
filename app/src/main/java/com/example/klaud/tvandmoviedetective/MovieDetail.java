@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,9 +13,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.json.JSONException;
@@ -41,6 +50,10 @@ public class MovieDetail  extends Fragment {
     ArrayList<Map<String, String>> pairs = new ArrayList<Map<String, String>>();
     public static Context ctx;
     Button watchedButton, wantToWatchButton;
+    RatingBar ratingBar;
+    Boolean run=true;
+    DatabaseReference dbRef;
+    DataSnapshot data;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,12 +66,43 @@ public class MovieDetail  extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Movie Details");
         ctx=getContext();
+        String maiil=MainActivity.mail.replace(".","_");
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference("users/"+maiil+"/movies");
+
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                data=dataSnapshot;
+                run=false;
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
         tv = view.findViewById(R.id.textView4);
         castLv = view.findViewById(R.id.listVCast);
         castLv.setFocusable(false);
         sv = view.findViewById(R.id.scrollView2);
         watchedButton = view.findViewById(R.id.button3);
         wantToWatchButton = view.findViewById(R.id.button4);
+        ratingBar = view.findViewById(R.id.ratingBar);
+        ratingBar.setOnRatingBarChangeListener( (rat,num,user) ->{
+            //SaveToFirebase save=new SaveToFirebase();
+            //save.execute("/users/"+maiil+"/movies/"+movieId,"watched",title,poster_path,num+"");
+            //Toast.makeText(ctx, ""+num, Toast.LENGTH_SHORT).show();
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("status", "watched");
+            childUpdates.put("title", title);
+            childUpdates.put("poster_path", poster_path);
+            childUpdates.put("rating",""+num);
+            dbRef.updateChildren(childUpdates);
+
+        });
+
         if (MyMovies.recycler!= null) {
             MyMovies.recycler.setVisibility(View.INVISIBLE);
         }
@@ -68,16 +112,27 @@ public class MovieDetail  extends Fragment {
         if (MainActivity.appbar !=null){
             MainActivity.appbar.setVisibility(View.INVISIBLE);
         }
-        String maiil=MainActivity.mail.replace(".","_");
-        watchedButton.setOnClickListener((click) -> {
 
-            SaveToFirebase save=new SaveToFirebase();
-            save.execute("/users/"+maiil+"/movies/"+movieId,"watched",title,poster_path);
+        watchedButton.setOnClickListener((click) -> {
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("status", "watched");
+            childUpdates.put("title", title);
+            childUpdates.put("poster_path", poster_path);
+
+            dbRef.updateChildren(childUpdates);
+
         });
         wantToWatchButton.setOnClickListener((click) -> {
-
-            SaveToFirebase save=new SaveToFirebase();
-            save.execute("/users/"+maiil+"/movies/"+movieId,"want",title,poster_path);
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("status", "want");
+            childUpdates.put("title", title);
+            childUpdates.put("poster_path", poster_path);
+            childUpdates.put("rating","0");
+            dbRef.updateChildren(childUpdates);
         });
         sv.setOnTouchListener((vie,event) -> {
             tv.getParent().requestDisallowInterceptTouchEvent(false);
@@ -110,6 +165,7 @@ public class MovieDetail  extends Fragment {
             String pattern2="https://api.themoviedb.org/3/movie/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             getJsonString.execute(String.format(pattern, movieId));
             getJsonCast.execute(String.format(pattern2, movieId));
+
         }
         //Toast.makeText(getContext(), "Idem zobrazovat film s id: "+movieId, Toast.LENGTH_LONG).show();
 
@@ -144,6 +200,7 @@ public class MovieDetail  extends Fragment {
                 e.printStackTrace();
                 result = null;
             }
+            while (run==true){}
             return result;
         }
         protected void onPostExecute(String result){
@@ -161,6 +218,13 @@ public class MovieDetail  extends Fragment {
                     moviePoster.setBackgroundResource(R.drawable.no_backdrop);
                 } else image.execute(String.format(patt,jsonMovie.getString("backdrop_path")));
 
+                if (data.hasChild(movieId+"/rating")){
+
+                    String rating=data.child(movieId+"/rating").getValue().toString();
+                    if (!rating.equals("")){
+                        ratingBar.setRating(Float.valueOf(rating));
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -58,7 +58,7 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
             super(itemView);
             cl = itemView.findViewById(R.id.parent_layoutItem3);
             karticka = itemView.findViewById(R.id.karticka);
-            title = itemView.findViewById(R.id.title_theatres);
+            title = itemView.findViewById(R.id.friend_name);
             length = itemView.findViewById(R.id.lenght);
             pg = itemView.findViewById(R.id.pg);
             times = itemView.findViewById(R.id.times_the);

@@ -15,6 +15,10 @@ public class SaveToFirebase extends AsyncTask<String, String, String> {
         childUpdates.put("status", strings[1]);
         childUpdates.put("title", strings[2]);
         childUpdates.put("poster_path", strings[3]);
+        if (strings.length>4){
+            childUpdates.put("rating", strings[4]);
+        }
+
         dbRef.updateChildren(childUpdates);
         return "done";
     }
