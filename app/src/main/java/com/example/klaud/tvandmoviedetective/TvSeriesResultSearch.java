@@ -183,7 +183,7 @@ public class TvSeriesResultSearch extends Fragment {
                     R.drawable.a, js.getInt("id"));
             si.setPoster_path("null");
             searchedItems.add(si);
-            String patt="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
+            String patt="https://api.themoviedb.org/3/overview/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             int pos=searchedItems.size()-1;
             if (pos==-1) pos=0;
             DetailsForSearch ds=new DetailsForSearch();
@@ -236,7 +236,7 @@ public class TvSeriesResultSearch extends Fragment {
             String result;
             String inputLine;
             try {
-                URL myUrl = new URL("https://api.themoviedb.org/3/trending/tv/day?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4");
+                URL myUrl = new URL("https://api.themoviedb.org/3/trending/overview/day?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4");
                 HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(15000);
@@ -285,7 +285,7 @@ public class TvSeriesResultSearch extends Fragment {
             String result;
             String inputLine;
             try {
-                URL myUrl = new URL("https://api.themoviedb.org/3/tv/airing_today?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&page=1");
+                URL myUrl = new URL("https://api.themoviedb.org/3/overview/airing_today?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&page=1");
                 HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(15000);

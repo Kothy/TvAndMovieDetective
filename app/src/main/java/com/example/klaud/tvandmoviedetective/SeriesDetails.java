@@ -129,8 +129,8 @@ public class SeriesDetails extends Fragment {
         if (bundle != null) {
             String movieID = bundle.getString("id", "");
             Id=Integer.valueOf(movieID);
-            String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&";
-            String pattern2="https://api.themoviedb.org/3/tv/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
+            String pattern="https://api.themoviedb.org/3/overview/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&";
+            String pattern2="https://api.themoviedb.org/3/overview/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             getJsonString.execute(String.format(pattern, Id));
             getJsonCast.execute(String.format(pattern2, Id));
         }

@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity
         }
         protected  void loadSingle(String name){
             if (name.contains("movie")) movies.clear();
-            if (name.contains("tv")) series.clear();
+            if (name.contains("overview")) series.clear();
             if (name.contains("person")) persons.clear();
             try(BufferedReader br = new BufferedReader(new FileReader(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/Detective/"+name+".json"))) {
                 String line = br.readLine();
@@ -406,7 +406,7 @@ public class MainActivity extends AppCompatActivity
                     if (line!=null){
                         line=line.toLowerCase();
                         if (name.contains("movie")) movies.add(line);
-                        if (name.contains("tv")) series.add(line);
+                        if (name.contains("overview")) series.add(line);
                         if (name.contains("person")) persons.add(line);
                     }
                 }

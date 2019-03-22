@@ -14,12 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MovieDetail  extends Fragment {
-    TextView tv;
+    TextView overview, tv_release_date, tv_genres,tv_rating;
     ScrollView sv;
     Integer movieId=0;
     String title="",poster_path;
@@ -88,7 +88,10 @@ public class MovieDetail  extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
-        tv = view.findViewById(R.id.textView4);
+        overview = view.findViewById(R.id.overview);
+        tv_rating = view.findViewById(R.id.tv_rating);
+        tv_genres = view.findViewById(R.id.tv_genres);
+        tv_release_date = view.findViewById(R.id.tv_release_date);
         castLv = view.findViewById(R.id.listVCast);
         castLv.setFocusable(false);
         sv = view.findViewById(R.id.scrollView2);
@@ -142,7 +145,7 @@ public class MovieDetail  extends Fragment {
         });
 
         sv.setOnTouchListener((vie,event) -> {
-            tv.getParent().requestDisallowInterceptTouchEvent(false);
+            overview.getParent().requestDisallowInterceptTouchEvent(false);
             return false;
         });
 
@@ -213,10 +216,21 @@ public class MovieDetail  extends Fragment {
             try {
                 jsonMovie=new JSONObject(result);
                 poster_path=jsonMovie.getString("poster_path");
+                String [] date=jsonMovie.getString("release_date").split("-");
+                tv_release_date.setText(date[2]+"."+date[1]+"."+date[0]);
+                tv_rating.setText(((int)(jsonMovie.getDouble("vote_average")*10))+"%");
+
+                JSONArray genres=jsonMovie.getJSONArray("genres");
+                String stringGenres="";
+                for(int i=0;i<genres.length();i++){
+                    stringGenres+=genres.getJSONObject(i).getString("name")+" | ";
+                }
+                tv_genres.setText(stringGenres);
+
                 String patt="https://image.tmdb.org/t/p/original%s";
                 title=jsonMovie.getString("original_title");
-                if (jsonMovie.getString("overview").equals("")) tv.setText("Overview is not available.");
-                else tv.setText(jsonMovie.getString("overview"));
+                if (jsonMovie.getString("overview").equals("")) overview.setText("Overview is not available.");
+                else overview.setText(jsonMovie.getString("overview"));
                 getActivity().setTitle(title);
                 Pic image=new Pic();
 

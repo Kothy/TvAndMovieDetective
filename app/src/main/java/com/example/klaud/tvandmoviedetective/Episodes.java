@@ -87,7 +87,7 @@ public class Episodes extends Fragment {
                     Id=Integer.valueOf(movieID);
                     poster_path=bundle.getString("poster_path");
                     networks=bundle.getString("networks");
-                    String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&append_to_response=";
+                    String pattern="https://api.themoviedb.org/3/overview/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&append_to_response=";
                     for (int i=1;i<=numOfseasons;i++){
                         pattern+="season/"+i+",";
                     }

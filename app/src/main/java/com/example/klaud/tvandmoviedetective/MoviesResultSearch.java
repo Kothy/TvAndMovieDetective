@@ -55,8 +55,7 @@ public class MoviesResultSearch extends Fragment {
     public static RecyclerView recycler, recycler2, recycler3;
     public static MovieAdapter adapter, adapter2;
     public static ResultSearchAdapter adapter3;
-    TextView trendingTitle;
-    TextView theatresTitle;
+    TextView theatresTitle, trendingTitle;//
     public static View view;
     public static FragmentManager fm;
     public static Activity actvity;
@@ -78,8 +77,8 @@ public class MoviesResultSearch extends Fragment {
         this.fm=getFragmentManager();
         ctx=getContext();
         actvity=getActivity();
-        trendingTitle= view.findViewById(R.id.textView3);
-        theatresTitle = view.findViewById(R.id.textView);
+        trendingTitle= view.findViewById(R.id.textView);
+        theatresTitle = view.findViewById(R.id.textView3);
         theatresTitle.setVisibility(View.INVISIBLE);
         trendingTitle.setVisibility(View.INVISIBLE);
 
@@ -288,7 +287,7 @@ public class MoviesResultSearch extends Fragment {
             return result;
         }
         protected void onPostExecute(String result){
-            //tv.setText(result);
+            //overview.setText(result);
             try {
                 JSONObject js=new JSONObject(result);
                 JSONArray arr=js.getJSONArray("results");
@@ -339,7 +338,7 @@ public class MoviesResultSearch extends Fragment {
             return result;
         }
         protected void onPostExecute(String result){
-            //tv.setText(result);
+            //overview.setText(result);
             try {
                 JSONObject js=new JSONObject(result);
                 JSONArray arr=js.getJSONArray("results");

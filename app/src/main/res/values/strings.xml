@@ -7,7 +7,6 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="search_title">Search</string>
-    <string name="cast">Cast</string>
     <string name="movie_detail_image_des">Movie poster</string>
     <string name="facebook_app_id">2197533486969708</string>
     <string name="fb_login_protocol_scheme">fb2197533486969708</string>
@@ -18,10 +17,10 @@
     <string name="buttonAddToWantWatch">Want to watch</string>
     <string name="Episode_button">Episodes</string>
     <string name="AddToFavourite">Add to favourite</string>
+    <string name="cast">Cast</string>
 
     <string name="cities_prompt">Choose a city</string>
     <string name="theatres_prompt">Choose a theatre</string>
-
     <string-array name="cities_array">
         <item>Choose city</item>
         <item>Bratislava</item>

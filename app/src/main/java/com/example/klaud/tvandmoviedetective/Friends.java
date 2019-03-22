@@ -76,12 +76,12 @@ public class Friends extends Fragment {
                 /*if (ds.hasChild("settings/nickname") && !ds.child("settings/nickname").getValue().equals("")
                         && ds.child("settings/nickname").getValue().toString().toLowerCase().contains(query.toLowerCase())) {
                     if (ds.child("settings/private").getValue().toString().equals("false")){
-                        tv.append(ds.child("settings/nickname").getValue().toString()+System.lineSeparator());
+                        overview.append(ds.child("settings/nickname").getValue().toString()+System.lineSeparator());
                     }
 
                 }  else if (ds.child("settings/private").getValue().toString().equals("false")){
                     //items.add(new FriendsItem(ds.getKey(),ds.getKey().split("@")[0]));
-                    tv.append(ds.getKey().split("@")[0]+System.lineSeparator());
+                    overview.append(ds.getKey().split("@")[0]+System.lineSeparator());
                 }*/
                 if (ds.hasChild("settings/private") && ds.child("settings/private").getValue().toString().equals("false")
                         && ds.hasChild("settings/nickname") && ds.child("settings/nickname").getValue().toString().toLowerCase().contains(query.toLowerCase()) ){
