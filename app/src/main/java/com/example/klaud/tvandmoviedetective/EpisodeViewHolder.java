@@ -62,6 +62,12 @@ public class EpisodeViewHolder extends ChildViewHolder {
                 childUpdates.put("networks", episode.network);
                 childUpdates.put("rating", "");
                 dbRef.updateChildren(childUpdates);
+
+                String maiil=MainActivity.mail.replace(".","_");
+                dbRef = database.getReference("/users/"+maiil+"/recent/");
+                childUpdates = new HashMap<>();
+                childUpdates.put(System.currentTimeMillis()+"", " mark "+episode.series_name+" "+episode.toString()+" as watched");
+                dbRef.updateChildren(childUpdates);
             }
             else {
                 //Toast.makeText(MainActivity.ctx, "idem vymazat epiyodu s pozretych", Toast.LENGTH_SHORT).show();

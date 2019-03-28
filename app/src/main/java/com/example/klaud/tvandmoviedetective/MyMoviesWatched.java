@@ -85,8 +85,6 @@ public class MyMoviesWatched extends Fragment {
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
-        String ur="https://tvandmoviedetective.firebaseio.com/users/"+MainActivity.mail.replace(".","_")+"/movies.json";
-        //DataFromFirebase data=new DataFromFirebase();
-        //data.execute(ur,"2");
+
     }
 }

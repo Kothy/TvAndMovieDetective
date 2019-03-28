@@ -46,6 +46,9 @@ public class Episode implements Parcelable {
             return new Episode[size];
         }
     };
+    public String toString(){
+        return sea;
+    }
 
     @Override
     public int describeContents() {

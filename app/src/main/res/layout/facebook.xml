@@ -7,11 +7,10 @@
     android:layout_height="match_parent">
 
 
-
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
-        android:layout_width="173dp"
-        android:layout_height="45dp"
+        android:layout_width="216dp"
+        android:layout_height="25dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"

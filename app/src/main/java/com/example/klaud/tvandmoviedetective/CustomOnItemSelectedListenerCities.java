@@ -9,9 +9,9 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (position>0){
-            String url="https://overview-program.aktuality.sk/kino/";
+            String url="https://tv-program.aktuality.sk/kino/";
             Log.d("URL",url);
-            //Toast.makeText(parent.getContext(),"OnItemSelectedListener: " + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+
             Theatres.city=parent.getItemAtPosition(position).toString();
             GetHTMLTreeCity getHTML=new GetHTMLTreeCity();
             getHTML.execute(url+edit(Theatres.city));

@@ -25,12 +25,23 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
+    public Boolean resize=false;
+
     public SeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity){
         this.contex=ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
         this.fm=fm;
         this.activity=activity;
+    }
+
+    public SeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity,boolean boo){
+        this.contex=ctx;
+        this.inflater = LayoutInflater.from(ctx);
+        this.items = imageModelArrayList;
+        this.fm=fm;
+        this.activity=activity;
+        this.resize=boo;
     }
 
     @Override
@@ -86,6 +97,11 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder
             time = (TextView) itemView.findViewById(R.id.tvTitle);
             iv = (ImageView) itemView.findViewById(R.id.itemImage);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
+
+            if (resize){
+                iv.getLayoutParams().height=180;
+                iv.getLayoutParams().width=160;
+            }
         }
     }
 }

@@ -49,7 +49,6 @@ public class Theatres extends Fragment {
         spinnerCities.setAdapter(adapter);
         spinnerCities.setOnItemSelectedListener(new CustomOnItemSelectedListenerCities());
 
-
         theatres.add("Choose theatre");
         adapter2= new ArrayAdapter<>(ctx, R.layout.view_spinner_item, theatres);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

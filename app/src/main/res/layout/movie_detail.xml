@@ -67,7 +67,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="spread_inside"
                 tools:srcCompat="@tools:sample/avatars" />
-            <!-- Hello,-->
+
             <TextView
                 android:id="@+id/overview"
                 android:layout_width="0dp"
@@ -90,23 +90,29 @@
                 android:id="@+id/listVCast"
                 android:layout_width="wrap_content"
                 android:layout_height="192dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_cast_title">
 
             </ListView>
 
             <Button
                 android:id="@+id/button3"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/round_rectangle"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:text="@string/buttonAddToWatched"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -123,21 +129,23 @@
                 android:text="@string/cast"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/listVCast"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button3"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/button3" />
 
             <Button
                 android:id="@+id/button4"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/round_rectangle"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:text="@string/buttonAddToWantWatch"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.968"
                 app:layout_constraintStart_toStartOf="parent"
@@ -145,13 +153,15 @@
 
             <RatingBar
                 android:id="@+id/ratingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="234dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.567"
+                app:layout_constraintHorizontal_bias="0.496"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
 
@@ -165,7 +175,7 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="sdnmnsdmnmsdnm"
+                android:text=""
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
@@ -194,7 +204,7 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="adjjabjhbsdbh"
+                android:text=""
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
@@ -223,7 +233,7 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="TextView"
+                android:text=""
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -236,10 +246,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/round_rectangle"
+                android:textColor="@color/white"
                 android:gravity="center_vertical"
                 android:padding="4dp"
                 android:text="Release Date"
-                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
 

@@ -46,11 +46,13 @@ public class MyMovies extends Fragment {
         MainActivity.tabLayout.setVisibility(View.VISIBLE);
         return inflater.inflate(R.layout.my_movies, container, false);
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("My movies");
         ctx=getContext();
+
         recycler = (RecyclerView) getView().findViewById(R.id.recyclerVert);
         recycler.setVisibility(View.VISIBLE);
         adapter = new MyMoviesAdapter(getContext(), items,getFragmentManager(),getActivity());
@@ -87,10 +89,7 @@ public class MyMovies extends Fragment {
     @Override
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        Bundle bundle = this.getArguments();
-        String ur="https://tvandmoviedetective.firebaseio.com/users/"+MainActivity.mail.replace(".","_")+"/movies.json";
-        //DataFromFirebase data=new DataFromFirebase();
-        //data.execute(ur,"1");
+
     }
 
 }

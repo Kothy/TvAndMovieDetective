@@ -47,16 +47,16 @@ public class MovieDetail  extends Fragment {
     ListView castLv;
     JSONObject jsonMovie=null;
     ArrayCast castAndCrew=null;
-    public static ImageView moviePoster;
+    static ImageView moviePoster;
     SimpleAdapter adapter;
     ArrayList<Map<String, String>> pairs = new ArrayList<Map<String, String>>();
-    public static Context ctx;
+    static Context ctx;
     Button watchedButton, wantToWatchButton;
     RatingBar ratingBar;
     Boolean run=true;
     DatabaseReference dbRef;
     DataSnapshot data;
-    ProgressDialog pd;
+    ProgressDialog progressDialog;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,11 +70,13 @@ public class MovieDetail  extends Fragment {
         getActivity().setTitle("Movie Details");
         ctx=getContext();
         String maiil=MainActivity.mail.replace(".","_");
-        pd=new ProgressDialog(ctx);
-        pd.setTitle("Please wait");
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.setCancelable(false);
-        pd.setMax(100);
+
+        progressDialog =new ProgressDialog(ctx);
+        progressDialog.setTitle("Please wait");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setMax(100);
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("users/"+maiil+"/movies");
 
@@ -109,6 +111,11 @@ public class MovieDetail  extends Fragment {
             childUpdates.put("rating",""+num);
             dbRef.updateChildren(childUpdates);
 
+            dbRef = db.getReference("/users/"+maiil+"/recent/");
+            childUpdates = new HashMap<>();
+            childUpdates.put(System.currentTimeMillis()+"", " rated "+title+" "+num);
+            dbRef.updateChildren(childUpdates);
+
         });
 
         if (MyMovies.recycler!= null) {
@@ -131,6 +138,11 @@ public class MovieDetail  extends Fragment {
 
             dbRef.updateChildren(childUpdates);
 
+            dbRef = db.getReference("/users/"+maiil+"/recent/");
+            childUpdates = new HashMap<>();
+            childUpdates.put(System.currentTimeMillis()+"", " watched "+title);
+            dbRef.updateChildren(childUpdates);
+
         });
 
         wantToWatchButton.setOnClickListener((click) -> {
@@ -140,7 +152,12 @@ public class MovieDetail  extends Fragment {
             childUpdates.put("status", "want");
             childUpdates.put("title", title);
             childUpdates.put("poster_path", poster_path);
-            childUpdates.put("rating","0");
+            childUpdates.put("rating","");
+            dbRef.updateChildren(childUpdates);
+
+            dbRef = db.getReference("/users/"+maiil+"/recent/");
+            childUpdates = new HashMap<>();
+            childUpdates.put(System.currentTimeMillis()+"", " want to watch "+title);
             dbRef.updateChildren(childUpdates);
         });
 
@@ -183,7 +200,7 @@ public class MovieDetail  extends Fragment {
         @Override
         protected void onPreExecute() {
             if (Looper.myLooper() == null) Looper.prepare();
-            //pd.show();
+            progressDialog.show();
         }
         @Override
         protected String doInBackground(String... params){
@@ -248,8 +265,8 @@ public class MovieDetail  extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (pd.isShowing()){
-                pd.dismiss();
+            if (progressDialog.isShowing()){
+                progressDialog.dismiss();
             }
         }
     };

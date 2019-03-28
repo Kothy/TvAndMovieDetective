@@ -159,7 +159,7 @@ public class TvSeriesResultSearch extends Fragment {
     public static void doMySearch(String query) throws JSONException {
         ArrayList<JSONObject> found = new ArrayList<>();
         query=query.toLowerCase();
-        //Toast.makeText(ctx,  MainActivity.series.size()+" je size series", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "main act má clenov: "+MainActivity.series.size(), Toast.LENGTH_SHORT).show();
         for (int i=0; i<MainActivity.series.size();i++) {
             String text=MainActivity.series.get(i);
             if (text!=null && text.contains(query)){
@@ -173,17 +173,12 @@ public class TvSeriesResultSearch extends Fragment {
         aList.clear();
         searchedItems.clear();
         for (JSONObject js : found) {
-            /*HashMap<String, String> hm = new HashMap<>();
-            hm.put("listview_title", js.getString("original_name"));
-            hm.put("listview_description", String.valueOf(js.getInt("id")));
-            hm.put("listview_image", Integer.toString(R.drawable.bear));
-            hm.put("id", String.valueOf(js.getInt("id")));
-            aList.add(hm);*/
+            Log.d("Hladanie", js.toString());
             SeriesItem si = new SeriesItem(js.getString("original_name"),
                     R.drawable.a, js.getInt("id"));
             si.setPoster_path("null");
             searchedItems.add(si);
-            String patt="https://api.themoviedb.org/3/overview/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
+            String patt="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             int pos=searchedItems.size()-1;
             if (pos==-1) pos=0;
             DetailsForSearch ds=new DetailsForSearch();
@@ -206,6 +201,7 @@ public class TvSeriesResultSearch extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         adapter.notifyDataSetChanged();
         recycler.invalidate();
     }
@@ -221,6 +217,7 @@ public class TvSeriesResultSearch extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         adapter2.notifyDataSetChanged();
         recycler2.invalidate();
     }
@@ -236,7 +233,7 @@ public class TvSeriesResultSearch extends Fragment {
             String result;
             String inputLine;
             try {
-                URL myUrl = new URL("https://api.themoviedb.org/3/trending/overview/day?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4");
+                URL myUrl = new URL("https://api.themoviedb.org/3/trending/tv/day?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4");
                 HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(15000);
@@ -253,6 +250,7 @@ public class TvSeriesResultSearch extends Fragment {
                 result = stringBuilder.toString();
             }
             catch(IOException e){
+                //Toast.makeText(ctx, "nastala nejaka chyba", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 result = null;
             }
@@ -269,6 +267,7 @@ public class TvSeriesResultSearch extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            //Toast.makeText(ctx, tvTrend.size()+"", Toast.LENGTH_SHORT).show();
             pd.dismiss();
             Collections.sort(tvTrend, compareJSONObject());
             displayList();
@@ -285,7 +284,7 @@ public class TvSeriesResultSearch extends Fragment {
             String result;
             String inputLine;
             try {
-                URL myUrl = new URL("https://api.themoviedb.org/3/overview/airing_today?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&page=1");
+                URL myUrl = new URL("https://api.themoviedb.org/3/tv/airing_today?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&page=1");
                 HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(15000);
@@ -302,7 +301,7 @@ public class TvSeriesResultSearch extends Fragment {
                 result = stringBuilder.toString();
             }
             catch(IOException e){
-                Toast.makeText(ctx, "nieco je zle", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ctx, "nieco je zle", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 result = null;
             }
@@ -320,6 +319,7 @@ public class TvSeriesResultSearch extends Fragment {
                 e.printStackTrace();
             }
             pd.dismiss();
+
             Collections.sort(tvAir, compareJSONObject());
 
             displayList2();

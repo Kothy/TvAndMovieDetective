@@ -32,6 +32,7 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
     private FragmentManager fm;
     private Activity activity;
     private int position;
+    boolean resize=false;
 
     public MyMoviesAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity){
         this.contex=ctx;
@@ -39,6 +40,14 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
         this.items = imageModelArrayList;
         this.fm=fm;
         this.activity=activity;
+    }
+    public MyMoviesAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity, boolean boo){
+        this.contex=ctx;
+        this.inflater = LayoutInflater.from(ctx);
+        this.items = imageModelArrayList;
+        this.fm=fm;
+        this.activity=activity;
+        resize=boo;
     }
 
     public int getPosition() {
@@ -128,6 +137,10 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
             time = (TextView) itemView.findViewById(R.id.tvTitle);
             iv = (ImageView) itemView.findViewById(R.id.itemImage);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
+            if (resize){
+                iv.getLayoutParams().height=180;
+                iv.getLayoutParams().width=160;
+            }
 
         }
     }

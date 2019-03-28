@@ -1,9 +1,11 @@
 package com.example.klaud.tvandmoviedetective;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,13 +17,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -40,7 +46,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class SeriesDetails extends Fragment {
-    TextView tv;
+    TextView tv,genresTv,lastAirTv,ratingTv, seasonsTv, episodesCountTv, networkTv;
     ScrollView sv;
     Integer Id=0;
     ListView castLv;
@@ -54,6 +60,12 @@ public class SeriesDetails extends Fragment {
     Button episodesButt, addToFavouriteButton;
     String title, poster_path, televisons;
     TreeMap<Integer,Integer> seasonsAndEpisodes= new TreeMap<>();
+    RatingBar ratingBar;
+    DatabaseReference dbRef;
+    DataSnapshot data;
+    Boolean run=true;
+    ProgressDialog progressDialog;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,6 +80,24 @@ public class SeriesDetails extends Fragment {
         getActivity().setTitle("Series Details");
         ctx=getContext();
         tv = view.findViewById(R.id.textView40);
+
+        String maiil=MainActivity.mail.replace(".","_");
+
+        progressDialog=new ProgressDialog(ctx);
+        progressDialog.setTitle("Please wait");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setMax(100);
+
+        genresTv = view.findViewById(R.id.series_genres_tv);
+        lastAirTv = view.findViewById(R.id.series_last_air_tv);
+        ratingTv = view.findViewById(R.id.series_rating_tv);
+        seasonsTv = view.findViewById(R.id.series_season_count_tv);
+        episodesCountTv = view.findViewById(R.id.series_episodes_count_tv);
+        networkTv = view.findViewById(R.id.series_network_tv);
+
+        ratingBar = view.findViewById(R.id.series_rating_bar);
+
         castLv = view.findViewById(R.id.listVCast5);
         castLv.setFocusable(false);
         sv = view.findViewById(R.id.scrollView20);
@@ -80,6 +110,37 @@ public class SeriesDetails extends Fragment {
             castLv.getParent().requestDisallowInterceptTouchEvent(true);
             return false;
         });
+
+        FirebaseDatabase dab = FirebaseDatabase.getInstance();
+        dbRef = dab.getReference("users/"+maiil+"/series");
+
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                data=dataSnapshot;
+                run=false;
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
+        ratingBar.setOnRatingBarChangeListener( (rat,num,user) ->{
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+
+            DatabaseReference dbRef = db.getReference("/users/"+maiil+"/series/"+Id);
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("name", title);
+            childUpdates.put("poster_path", poster_path);
+            childUpdates.put("rating",""+num);
+            dbRef.updateChildren(childUpdates);
+
+            dbRef = db.getReference("/users/"+maiil+"/recent/");
+            childUpdates = new HashMap<>();
+            childUpdates.put(System.currentTimeMillis()+"", " rated "+title+" "+num);
+            dbRef.updateChildren(childUpdates);
+
+        });
+
         addToFavouriteButton.setOnClickListener(click -> {
             Toast.makeText(ctx, "Pridavam do Firebasu", Toast.LENGTH_SHORT).show();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -91,7 +152,11 @@ public class SeriesDetails extends Fragment {
             childUpdates.put("poster_path",poster_path);
             childUpdates.put("networks",televisons);
 
+            dbRef.updateChildren(childUpdates);
 
+            dbRef = database.getReference("/users/"+maiil+"/recent/");
+            childUpdates = new HashMap<>();
+            childUpdates.put(System.currentTimeMillis()+"", " mark "+title+" as his/her favourite show");
             dbRef.updateChildren(childUpdates);
         });
         pairs.clear();
@@ -106,7 +171,7 @@ public class SeriesDetails extends Fragment {
             fragment = new Episodes();
             Bundle bundle = new Bundle();
             bundle.putString("id", Id+"");
-            bundle.putString("title",getActivity().getTitle()+"");
+            bundle.putString("title",title);
             bundle.putString("poster_path",poster_path);
             bundle.putInt("seasons",numOfSeasons);
             bundle.putString("networks",televisons);
@@ -129,8 +194,8 @@ public class SeriesDetails extends Fragment {
         if (bundle != null) {
             String movieID = bundle.getString("id", "");
             Id=Integer.valueOf(movieID);
-            String pattern="https://api.themoviedb.org/3/overview/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&";
-            String pattern2="https://api.themoviedb.org/3/overview/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
+            String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&";
+            String pattern2="https://api.themoviedb.org/3/tv/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             getJsonString.execute(String.format(pattern, Id));
             getJsonCast.execute(String.format(pattern2, Id));
         }
@@ -139,6 +204,7 @@ public class SeriesDetails extends Fragment {
     AsyncTask<String, Integer, String> getJsonString = new AsyncTask<String, Integer, String>() {
         @Override
         protected void onPreExecute() {
+            progressDialog.show();
             if (Looper.myLooper() == null) Looper.prepare();
         }
         @Override
@@ -164,8 +230,10 @@ public class SeriesDetails extends Fragment {
                 e.printStackTrace();
                 result = null;
             }
+            while (run==true){}
             return result;
         }
+
         protected void onPostExecute(String result){
             try {
                 jsonSeries =new JSONObject(result);
@@ -175,6 +243,7 @@ public class SeriesDetails extends Fragment {
                 for (int i=0; i<telev.length(); i++){
                     televisons+=telev.getJSONObject(i).getString("name")+" • ";
                 }
+
                 JSONArray seasons=jsonSeries.getJSONArray("seasons");
                 for (int j=0; j<seasons.length(); j++){
                     JSONObject season=seasons.getJSONObject(j);
@@ -182,7 +251,19 @@ public class SeriesDetails extends Fragment {
                 }
                 televisons=televisons.substring(0,televisons.length()-3);
                 televisons=televisons.replace("null","");
-                Toast.makeText(ctx, televisons, Toast.LENGTH_SHORT).show();
+
+                JSONArray genres=jsonSeries.getJSONArray("genres");
+                String stringGenres="";
+                for(int i=0;i<genres.length();i++){
+                    stringGenres+=genres.getJSONObject(i).getString("name")+" | ";
+                }
+                genresTv.setText(stringGenres);
+
+                networkTv.setText(televisons);
+                ratingTv.setText((((int)jsonSeries.getDouble("vote_average"))*10)+"%");
+                lastAirTv.setText(jsonSeries.getString("last_air_date"));
+                episodesCountTv.setText(jsonSeries.getString("number_of_episodes"));
+
                 if (jsonSeries.getString("overview").equals("")) tv.setText("Overview is not available.");
                 else tv.setText(jsonSeries.getString("overview"));
                 title=jsonSeries.getString("name");
@@ -190,10 +271,20 @@ public class SeriesDetails extends Fragment {
                 getActivity().setTitle(title);
                 Pic image=new Pic();
                 numOfSeasons=jsonSeries.getJSONArray("seasons").length();
-                //Toast.makeText(ctx, numOfSeasons+" num of seasons", Toast.LENGTH_SHORT).show();
+                seasonsTv.setText(numOfSeasons+"");
+
                 if (jsonSeries.getString("backdrop_path").equals("null")){
                     seriesPoster.setBackgroundResource(R.drawable.no_backdrop);
                 } else image.execute(String.format(patt, jsonSeries.getString("backdrop_path")),"series");
+
+                if (data.hasChild(Id+"/rating")){
+
+                    String rating=data.child(Id+"/rating").getValue().toString();
+                    if (!rating.equals("")){
+                        ratingBar.setRating(Float.valueOf(rating));
+                    }
+                }
+                progressDialog.dismiss();
 
             } catch (JSONException e) {
                 e.printStackTrace();

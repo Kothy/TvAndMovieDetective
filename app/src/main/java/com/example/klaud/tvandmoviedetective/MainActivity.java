@@ -1,6 +1,7 @@
 package com.example.klaud.tvandmoviedetective;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -78,9 +79,10 @@ public class MainActivity extends AppCompatActivity
     private static FirebaseAuth mAuth;
     public static Context ctx;
     public static AppBarLayout appbar;
-    public static TabLayout tabLayout;
-    public static ViewPager viewPager;
+    public static TabLayout tabLayout, tabLayout2;
+    public static ViewPager viewPager, viewPager2;
     SearchView searchView;
+    static FragmentManager fragManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,20 +90,25 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ctx=getApplicationContext();
 
-        appbar =findViewById(R.id.barWithTabs);
+
+
+        fragManager=getSupportFragmentManager();
+        appbar = findViewById(R.id.barWithTabs);
         appbar.setVisibility(View.INVISIBLE);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
 
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+
 
         mAuth = FirebaseAuth.getInstance();
         Fragment face=new Facebook();
         pd=new ProgressDialog(this);
-        ctx=getApplicationContext();
+
         pd.setTitle("Please wait");
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(false);
@@ -168,9 +175,13 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         appbar.setVisibility(View.VISIBLE);
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        //viewPager.setSaveFromParentEnabled(false);
         adapter.addFragment(new MyMovies(), "Want to watch");
         adapter.addFragment(new MyMoviesWatched(), "Watched");
+
         viewPager.setAdapter(adapter);
     }
 
@@ -397,8 +408,7 @@ public class MainActivity extends AppCompatActivity
         }
         protected  void loadSingle(String name){
             if (name.contains("movie")) movies.clear();
-            if (name.contains("overview")) series.clear();
-            if (name.contains("person")) persons.clear();
+            if (name.contains("series")) series.clear();
             try(BufferedReader br = new BufferedReader(new FileReader(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/Detective/"+name+".json"))) {
                 String line = br.readLine();
                 while (line != null) {
@@ -406,8 +416,7 @@ public class MainActivity extends AppCompatActivity
                     if (line!=null){
                         line=line.toLowerCase();
                         if (name.contains("movie")) movies.add(line);
-                        if (name.contains("overview")) series.add(line);
-                        if (name.contains("person")) persons.add(line);
+                        if (name.contains("series")) series.add(line);
                     }
                 }
             } catch (IOException e) {
@@ -447,34 +456,5 @@ public class MainActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleIntent(intent);
-    }
-
-    static class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
     }
 }

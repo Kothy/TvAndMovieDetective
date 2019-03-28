@@ -48,14 +48,14 @@ public class DetailsForSearch extends AsyncTask<String, String, String> {
                 JSONObject json=new JSONObject(result);
                 if (series==false){
                     MoviesResultSearch.searchedItems.get(position).setPoster_path(json.getString("poster_path"));
-                    MoviesResultSearch.searchedItems.get(position).release_date=json.getString("release_date");
+                    if (json.getString("release_date").length() > 5) MoviesResultSearch.searchedItems.get(position).release_date=json.getString("release_date").substring(0,4);
                     MoviesResultSearch.adapter3.notifyItemChanged(position);
                     MoviesResultSearch.recycler3.invalidateItemDecorations();
                     MoviesResultSearch.recycler3.invalidate();
                     //Log.d("Dokoncenie","dokoncil som pracu");
                 } else {
                     TvSeriesResultSearch.searchedItems.get(position).setPoster_path(json.getString("poster_path"));
-                    TvSeriesResultSearch.searchedItems.get(position).release_date = json.getString("first_air_date");
+                    if (json.getString("first_air_date").length() > 5) TvSeriesResultSearch.searchedItems.get(position).release_date = json.getString("first_air_date").substring(0,4);
                     TvSeriesResultSearch.adapter3.notifyItemChanged(position);
                     TvSeriesResultSearch.recycler3.invalidateItemDecorations();
                     TvSeriesResultSearch.recycler3.invalidate();

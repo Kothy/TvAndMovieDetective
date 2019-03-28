@@ -32,6 +32,7 @@ public class Episodes extends Fragment {
     public Context ctx;
     Integer Id=-1;
     Integer numOfseasons=-1;
+    String showtitle;
     public static ArrayList<MovieItem> items= new ArrayList<>();
     public static RecyclerView recyclerView;
     public static EpisodeAdapter adapter;
@@ -82,16 +83,17 @@ public class Episodes extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 dSnapshot=dataSnapshot;
                 if (bundle != null ) {
+                    showtitle=bundle.getString("title", "");
+                    getActivity().setTitle(showtitle+"'s episodes");
                     String movieID = bundle.getString("id", "");
                     numOfseasons=bundle.getInt("seasons", -1);
                     Id=Integer.valueOf(movieID);
                     poster_path=bundle.getString("poster_path");
                     networks=bundle.getString("networks");
-                    String pattern="https://api.themoviedb.org/3/overview/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&append_to_response=";
+                    String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&append_to_response=";
                     for (int i=1;i<=numOfseasons;i++){
                         pattern+="season/"+i+",";
                     }
-
                     getJsonString.execute(String.format(pattern, Id));
 
                 }
@@ -137,6 +139,7 @@ public class Episodes extends Fragment {
                 String poster_path=jsonSeries.getString("poster_path");
                 Integer id=jsonSeries.getInt("id");
                 Season compa=new Season("Seasons",new ArrayList<>());
+
                 companies.add(compa);
                 for(int j=0;j<=numOfseasons;j++){
 
