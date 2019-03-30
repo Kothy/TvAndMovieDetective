@@ -55,13 +55,6 @@ public class Friends extends Fragment {
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
-        /*myFriendsItems.add(new FriendsItem("kothzz","klaudia.turcekova"));
-        myFriendsItems.add(new FriendsItem("kothzz","klaudia.turcekova"));
-        myFriendsItems.add(new FriendsItem("kothzz","klaudia.turcekova"));
-        myFriendsItems.add(new FriendsItem("kothzz","klaudia.turcekova"));
-        myFriendsItems.add(new FriendsItem("kothzz","klaudia.turcekova"));
-        myFriendsItems.add(new FriendsItem("kothzz","klaudia.turcekova"));*/
-
         myFriendsRec = getView().findViewById(R.id.my_friedns_recycler);
         adapter2 = new MyFriendAdapter(ctx,myFriendsItems, getFragmentManager(),getActivity());
         myFriendsRec.setAdapter(adapter2);
@@ -76,8 +69,7 @@ public class Friends extends Fragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference("users/");
 
-
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

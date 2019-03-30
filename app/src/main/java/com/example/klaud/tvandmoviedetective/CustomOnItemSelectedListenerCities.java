@@ -10,7 +10,6 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (position>0){
             String url="https://tv-program.aktuality.sk/kino/";
-            Log.d("URL",url);
 
             Theatres.city=parent.getItemAtPosition(position).toString();
             GetHTMLTreeCity getHTML=new GetHTMLTreeCity();
@@ -18,7 +17,7 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
             Theatres.items.clear();
             Theatres.rec_adapter.notifyDataSetChanged();
             Theatres.recycler.invalidate();
-            Theatres.spinnerTheatres.setSelection(0);
+
         }
     }
 

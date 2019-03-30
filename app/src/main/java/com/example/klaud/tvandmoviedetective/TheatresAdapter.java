@@ -37,7 +37,7 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
         holder.pg.setText(items.get(position).pg);
         holder.times.setText(items.get(position).times.toString());
         holder.title.setText(items.get(position).title);
-        holder.cl.setBackgroundColor(contex.getResources().getColor(R.color.gray));
+        //holder.cl.setBackgroundColor(contex.getResources().getColor(R.color.gray));
         holder.karticka.setOnClickListener( click ->{
             Toast.makeText(contex, "kliknute na film", Toast.LENGTH_SHORT).show();
         });

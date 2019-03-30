@@ -3,6 +3,9 @@ package com.example.klaud.tvandmoviedetective;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -75,6 +78,7 @@ public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
             }
 
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,6 +87,12 @@ public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
     }
 
     protected void onPostExecute(String result){
+        if (Theatres.items.size()==0){
+            Toast.makeText(MainActivity.ctx, "Selected cinema have no program for next days", Toast.LENGTH_SHORT).show();
+            Theatres.noProgram.setText("Selected cinema have no program for next days");
+            Theatres.noProgram.setVisibility(View.VISIBLE);
+
+        }
         Theatres.rec_adapter.notifyDataSetChanged();
         Theatres.recycler.invalidate();
     }

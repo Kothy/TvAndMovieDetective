@@ -7,13 +7,13 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     app:cardElevation="0dp"
-    app:cardUseCompatPadding="true"> <!--app:cardCornerRadius="5dp" ak by som chcela zahnute rohy na kartickach-->
+    app:cardUseCompatPadding="true">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/parent_layoutItem3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:padding="0dp">
 
@@ -70,9 +70,9 @@
         <TextView
             android:id="@+id/times_the"
             android:layout_width="126dp"
-            android:layout_height="80dp"
+            android:layout_height="75dp"
             android:layout_marginTop="8dp"
-            android:text="jjsdnjkdnjkkdncccccccccccccccccccccccccccccccccccccjknsdklmxcmklsdklsdkmsdklmklsdklkldmsksdmjkkjeddjkjksdjujsd"
+            android:text=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/theatre_date"

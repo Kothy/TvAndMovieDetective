@@ -22,12 +22,12 @@ public class Theatres extends Fragment {
     static ArrayList<String> theatres=new ArrayList<>();
     static ArrayList<String> urlForTheatres=new ArrayList<>();
     static ArrayAdapter<String> adapter2;
-    static ArrayAdapter<CharSequence> adapter;
+    static ArrayAdapter<String> adapter;
     static String city;
     public static RecyclerView recycler;
     public static TheatresAdapter rec_adapter;
     public static ArrayList<TheatresItem> items=new ArrayList<>();
-
+    static TextView noProgram;
 
     @Nullable
     @Override
@@ -42,14 +42,44 @@ public class Theatres extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Theatres");
         ctx=getContext();
+
+        theatres.clear();
+        String[] cities={"Choose city", "Bratislava",
+                "Košice", "Trnava", "Banská Bystrica", "Nitra",
+                "Prešov", "Trenčín", "Žilina", "Bánovce nad Bebravou",
+                "Banská Štiavnica", "Bardejovské Kúpele", "Brezno", "Bytča",
+                "Častá", "Detva", "Dolný Kubín", "Dunajská Streda",
+                "Galanta", "Handlová", "Hlohovec",
+                "Hriňová", "Humenné", "Kežmarok", "Kremnica",
+                "Krupina", "Kysucké Nové Mesto",
+                "Levice", "Levoča", "Liptovský Mikuláš", "Lučenec",
+                "Malacky", "Martin", "Michalovce", "Modra",
+                "Myjava", "Námestovo", "Nová Dubnica", "Nováky",
+                "Nové Mesto nad Váhom", "Nové Zámky",
+                "Nový Smokovec", "Partizánske", "Pezinok", "Piešťany",
+                "Poprad", "Prievidza", "Púchov", "Revúca",
+                "Rimavská Sobota", "Ružomberok", "Sabinov", "Senec",
+                "Senica", "Sereď", "Skalica", "Snina",
+                "Sobrance", "Spišská N. Ves", "Stará Ľubovňa",
+                "Stupava","Svidník","Šaľa",
+                "Štúrovo", "Tatranská Lomnica", "Topoľčany", "Trebišov",
+                "Trenčianske Teplice", "Turčianske Teplice",
+                "Turzovka", "Tvrdošín", "Veľký Krtíš", "Vráble",
+                "Vranov nad Topľou", "Zlaté Moravce", "Zvolen", "Žarnovica"};
+
         spinnerCities = view.findViewById(R.id.spinner);
         spinnerTheatres = view.findViewById(R.id.spinner2);
-        adapter = ArrayAdapter.createFromResource(ctx, R.array.cities_array, R.layout.view_spinner_item);
+
+        theatres.add("Choose theatre");
+
+        noProgram= view.findViewById(R.id.no_program);
+        noProgram.setVisibility(View.INVISIBLE);
+
+        adapter= new ArrayAdapter<>(ctx, R.layout.view_spinner_item, cities);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCities.setAdapter(adapter);
         spinnerCities.setOnItemSelectedListener(new CustomOnItemSelectedListenerCities());
 
-        theatres.add("Choose theatre");
         adapter2= new ArrayAdapter<>(ctx, R.layout.view_spinner_item, theatres);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTheatres.setAdapter(adapter2);
@@ -59,6 +89,9 @@ public class Theatres extends Fragment {
         rec_adapter = new TheatresAdapter(getContext(), items);
         recycler.setAdapter(rec_adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
+        spinnerTheatres.setVisibility(View.VISIBLE);
+        spinnerCities.setVisibility(View.VISIBLE);
     }
 
     @Override

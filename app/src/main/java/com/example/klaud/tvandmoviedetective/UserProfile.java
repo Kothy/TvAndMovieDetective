@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ public class UserProfile extends Fragment {
     public static MyMoviesAdapter adapter, adapter2;
     private static SeriesAdapter adapter3;
     ScrollView scrollView;
-    TextView tv,tv2,tv3, emailTextView;
+    TextView tvMoviesWatched,tvMoviesWant,tvSeries;
 
     @Nullable
     @Override
@@ -46,14 +47,21 @@ public class UserProfile extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ctx=getContext();
 
+        tvMoviesWant = view.findViewById(R.id.users_movies_want);
+        tvMoviesWatched = view.findViewById(R.id.users_movies_watched);
+        tvSeries = view.findViewById(R.id.users_series_tv);
+
+        tvMoviesWant.setVisibility(View.VISIBLE);
+        tvMoviesWatched.setVisibility(View.VISIBLE);
+        tvSeries.setVisibility(View.VISIBLE);
 
         recycler = (RecyclerView) getView().findViewById(R.id.users_want_movies);
-        adapter = new MyMoviesAdapter(getContext(), watchedItems, getFragmentManager(), getActivity(), true);
+        adapter = new MyMoviesAdapter(getContext(), wantItems, getFragmentManager(), getActivity(), true);
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
         recycler2 = (RecyclerView) getView().findViewById(R.id.users_watched_movies);
-        adapter2 = new MyMoviesAdapter(getContext(), wantItems, getFragmentManager(), getActivity(), true);
+        adapter2 = new MyMoviesAdapter(getContext(), watchedItems, getFragmentManager(), getActivity(), true);
         recycler2.setAdapter(adapter2);
         recycler2.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -62,37 +70,12 @@ public class UserProfile extends Fragment {
         recycler3.setAdapter(adapter3);
         recycler3.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
-
         SeriesItem sm=new SeriesItem("harry",R.drawable.nopicture,0);
         sm.setPoster_path("null");
 
         seriesItems.add(sm);
 
         scrollView = view.findViewById(R.id.users_scroll);
-
-        /*scrollView.setOnTouchListener((vieww, touch) ->{
-            recycler.getParent().requestDisallowInterceptTouchEvent(false);
-            recycler2.getParent().requestDisallowInterceptTouchEvent(false);
-            recycler3.getParent().requestDisallowInterceptTouchEvent(false);
-            return false;
-        });
-
-        recycler.setOnTouchListener((vieww, touch) ->{
-            recycler.getParent().requestDisallowInterceptTouchEvent(true);
-            return false;
-        });
-
-        recycler2.setOnTouchListener((vieww, touch) ->{
-            recycler2.getParent().requestDisallowInterceptTouchEvent(true);
-            return false;
-        });
-
-        recycler3.setOnTouchListener((vieww, touch) ->{
-            recycler3.getParent().requestDisallowInterceptTouchEvent(true);
-            return false;
-        });*/
-
-        //tv = view.findViewById(R.id.textView9);
 
 
     }
@@ -104,6 +87,10 @@ public class UserProfile extends Fragment {
             nick = bundle.getString("nickname");
             email = bundle.getString("email");
             getActivity().setTitle(nick+"'s profile");
+
+            tvSeries.setText(nick+"'s series");
+            tvMoviesWatched.setText(nick+"'s movies watched");
+            tvMoviesWant.setText(nick+"'s movies want to watch");
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = database.getReference("users/"+email);
@@ -130,14 +117,14 @@ public class UserProfile extends Fragment {
                                     mi.setPoster_path(ds.child("poster_path").getValue().toString());
                                 }
                                 wantItems.add(mi);
-                                wantItems.add(mi);
-                                wantItems.add(mi);
-                                wantItems.add(mi);
-                                wantItems.add(mi);
-                                wantItems.add(mi);
-                                wantItems.add(mi);
-                                wantItems.add(mi);
+
                             }
+                        }
+                        if (wantItems.size()==0){
+                            tvMoviesWant.setVisibility(View.GONE);
+                        }
+                        if (watchedItems.size()==0){
+                            tvMoviesWatched.setVisibility(View.GONE);
                         }
                         adapter.notifyDataSetChanged();
                         recycler.invalidate();
@@ -151,17 +138,20 @@ public class UserProfile extends Fragment {
                             SeriesItem si=new SeriesItem(ds.child("name").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
                             si.setPoster_path(ds.child("poster_path").getValue().toString());
                             seriesItems.add(si);
-                            seriesItems.add(si);
-                            seriesItems.add(si);
-                            seriesItems.add(si);
-                            seriesItems.add(si);
-                            seriesItems.add(si);
-                            seriesItems.add(si);
+
+                        }
+                        if (seriesItems.size()==0){
+                            tvSeries.setVisibility(View.GONE);
                         }
                         adapter3.notifyDataSetChanged();
                         recycler3.invalidate();
                     }
-
+                    if (watchedItems.size()==0 && wantItems.size()==0 && seriesItems.size()==0){
+                        tvMoviesWant.setVisibility(View.GONE);
+                        tvMoviesWant.setText("User have nothing to show");
+                        tvSeries.setVisibility(View.GONE);
+                        tvMoviesWatched.setVisibility(View.GONE);
+                    }
 
                 }
 
