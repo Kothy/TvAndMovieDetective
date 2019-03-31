@@ -1,5 +1,6 @@
 package com.example.klaud.tvandmoviedetective;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -74,16 +75,22 @@ public class Facebook extends Fragment {
             public void onSuccess(LoginResult loginResult) {
                 accessToken= AccessToken.getCurrentAccessToken();
                 setMailToDrawer();
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+
+                ProgressDialog pd=new ProgressDialog(ctx);
+
+                pd.setTitle("Logging in...");
+                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pd.setCancelable(false);
+                pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+                pd.setMax(100);
+                pd.show();
+
                 while (MainActivity.mail== null || MainActivity.mail.equals("")){}
-                DatabaseReference dbRef = database.getReference("users/"+MainActivity.mail.replace(".","_")+"/settings");
-                //handleLogin(MainActivity.mail);
-                //handleFacebookAccessToken(loginResult.getAccessToken());
-                Map<String, Object> childUpdates = new HashMap<>();
-                childUpdates.put("private", "false");
-                childUpdates.put("nickname", "");
-                childUpdates.put("friends", "");
-                dbRef.updateChildren(childUpdates);
+
+                handleLogin(MainActivity.mail);
+
+                pd.dismiss();
                 openMovieFragment();
             }
 
@@ -138,6 +145,16 @@ public class Facebook extends Fragment {
     }
 
     private void handleRegister(String mai) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("users/"+MainActivity.mail.replace(".","_")+"/settings");
+        handleLogin(MainActivity.mail);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("private", "false");
+        childUpdates.put("nickname", "");
+        childUpdates.put("friends", "");
+        dbRef.updateChildren(childUpdates);
+
         mAuth.createUserWithEmailAndPassword(mai, "000000")
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

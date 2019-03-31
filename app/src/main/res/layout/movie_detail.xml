@@ -11,8 +11,7 @@
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="0dp"
-        android:layout_height="519dp"
-        android:layout_marginBottom="40dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -48,18 +47,18 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:textColor="@color/white"
                 android:text="Genres"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
             <ImageView
                 android:id="@+id/imageView3"
                 android:layout_width="0dp"
-                android:layout_height="228dp"
+                android:layout_height="220dp"
                 android:contentDescription="@string/movie_detail_image_des"
                 android:fadingEdge="horizontal"
-                android:scaleType="fitEnd"
+                android:scaleType="fitXY"
                 app:layout_constraintBottom_toTopOf="@+id/overview"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -246,10 +245,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/round_rectangle"
-                android:textColor="@color/white"
                 android:gravity="center_vertical"
                 android:padding="4dp"
                 android:text="Release Date"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
