@@ -33,10 +33,12 @@ public class Friends extends Fragment {
     public static ArrayList<FriendsItem> myFriendsItems = new ArrayList<>();
     DatabaseReference dbRef;
     public static String maiil;
+    TextView noFriends;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","Friends");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.friends_layout, container, false);
@@ -48,6 +50,11 @@ public class Friends extends Fragment {
         getActivity().setTitle("Friends");
         ctx = getContext();
         maiil = MainActivity.mail.replace(".","_");
+
+        noFriends = view.findViewById(R.id.no_friends_tv);
+        noFriends.setVisibility(View.INVISIBLE);
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         recycler = (RecyclerView) getView().findViewById(R.id.friends_recycler);
         adapter = new FriendsAdapter(getContext(), items, getFragmentManager(),getActivity());
@@ -82,6 +89,9 @@ public class Friends extends Fragment {
                 }
                 adapter2.notifyDataSetChanged();
                 myFriendsRec.invalidate();
+                if (myFriendsItems.size() == 0){
+                    noFriends.setVisibility(View.VISIBLE);
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }

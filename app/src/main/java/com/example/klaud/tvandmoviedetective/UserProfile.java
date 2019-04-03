@@ -37,6 +37,7 @@ public class UserProfile extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","User profile");
         MainActivity.editor.apply();
 
@@ -46,6 +47,8 @@ public class UserProfile extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ctx=getContext();
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         tvMoviesWant = view.findViewById(R.id.users_movies_want);
         tvMoviesWatched = view.findViewById(R.id.users_movies_watched);
@@ -86,6 +89,10 @@ public class UserProfile extends Fragment {
         if (bundle != null) {
             nick = bundle.getString("nickname");
             email = bundle.getString("email");
+            MainActivity.editor.putString("nickBP",nick);
+            MainActivity.editor.putString("emailBP",email);
+            MainActivity.editor.apply();
+
             getActivity().setTitle(nick+"'s profile");
 
             tvSeries.setText(nick+"'s series");

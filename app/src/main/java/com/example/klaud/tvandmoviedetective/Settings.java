@@ -31,6 +31,7 @@ public class Settings extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","Settings");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.settings, container, false);
@@ -44,6 +45,8 @@ public class Settings extends Fragment {
         et = view.findViewById(R.id.editText);
         button = view.findViewById(R.id.button9);
         swit = view.findViewById(R.id.switch1);
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         button.setOnClickListener(click ->{
             FirebaseDatabase database = FirebaseDatabase.getInstance();

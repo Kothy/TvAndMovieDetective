@@ -13,8 +13,8 @@
     <string name="menuLogOut">Log out</string>
     <string name="empty"></string>
     <string name="no_internet">No internet connection</string>
-    <string name="buttonAddToWatched">Watched</string>
-    <string name="buttonAddToWantWatch">Want to watch</string>
+    <string name="buttonAddToWatched">Add to Watch list</string>
+    <string name="buttonAddToWantWatch">Add to Wish list</string>
     <string name="Episode_button">Episodes</string>
     <string name="AddToFavourite">Add to favourite</string>
     <string name="cast">Cast</string>

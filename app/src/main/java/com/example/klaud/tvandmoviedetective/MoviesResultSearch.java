@@ -63,20 +63,26 @@ public class MoviesResultSearch extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        MainActivity.editor.putString("class","Movie");
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
+        MainActivity.editor.putString("class","MovieResultSearch");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.movies_search_result_layout, container, false);
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         if (MainActivity.prefs.getString("search","").equals("")){
             getActivity().setTitle("Movies");
         } else getActivity().setTitle("");
+
         this.view=view;
         this.fm=getFragmentManager();
         ctx=getContext();
         actvity=getActivity();
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+
         trendingTitle= view.findViewById(R.id.textView);
         theatresTitle = view.findViewById(R.id.textView3);
         theatresTitle.setVisibility(View.INVISIBLE);

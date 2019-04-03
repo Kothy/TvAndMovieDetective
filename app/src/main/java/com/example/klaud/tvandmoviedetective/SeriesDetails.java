@@ -46,7 +46,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class SeriesDetails extends Fragment {
-    TextView tv,genresTv,lastAirTv,ratingTv, seasonsTv, episodesCountTv, networkTv;
+    TextView tv,genresTv,lastAirTv,ratingTv, seasonsTv, episodesCountTv,
+            networkTv,genresTitleTv, inProductionTv,myRatingTitleTv;
     ScrollView sv;
     Integer Id=0;
     ListView castLv;
@@ -69,6 +70,7 @@ public class SeriesDetails extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","SeriesDetail");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.serie_detail, container, false);
@@ -77,9 +79,11 @@ public class SeriesDetails extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Series Details");
+        //getActivity().setTitle("Series Details");
         ctx=getContext();
         tv = view.findViewById(R.id.textView40);
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         String maiil=MainActivity.mail.replace(".","_");
 
@@ -95,8 +99,13 @@ public class SeriesDetails extends Fragment {
         seasonsTv = view.findViewById(R.id.series_season_count_tv);
         episodesCountTv = view.findViewById(R.id.series_episodes_count_tv);
         networkTv = view.findViewById(R.id.series_network_tv);
+        genresTitleTv = view.findViewById(R.id.textView12);
+        inProductionTv = view.findViewById(R.id.in_production_tv);
+        myRatingTitleTv = view.findViewById(R.id.textView24);
 
         ratingBar = view.findViewById(R.id.series_rating_bar);
+        ratingBar.setVisibility(View.GONE);
+        myRatingTitleTv.setVisibility(View.GONE);
 
         castLv = view.findViewById(R.id.listVCast5);
         castLv.setFocusable(false);
@@ -114,11 +123,23 @@ public class SeriesDetails extends Fragment {
         FirebaseDatabase dab = FirebaseDatabase.getInstance();
         dbRef = dab.getReference("users/"+maiil+"/series");
 
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 data=dataSnapshot;
                 run=false;
+                if (data.hasChild(Id+"/rating")){
+
+                    String rating=data.child(Id+"/rating").getValue().toString();
+                    if (!rating.equals("")){
+                        ratingBar.setRating(Float.valueOf(rating));
+                    }
+                }
+                if (data.hasChild(Id+"")){
+                    addToFavouriteButton.setVisibility(View.INVISIBLE);
+                    ratingBar.setVisibility(View.VISIBLE);
+                    myRatingTitleTv.setVisibility(View.VISIBLE);
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
@@ -165,6 +186,7 @@ public class SeriesDetails extends Fragment {
         int[] to = { android.R.id.text1, android.R.id.text2 };
         adapter=new SimpleAdapter(getContext(), pairs,android.R.layout.simple_list_item_2, from, to);
         castLv.setAdapter(adapter);
+
         episodesButt = view.findViewById(R.id.button6);
         episodesButt.setOnClickListener(click ->{
             Fragment fragment = null;
@@ -193,7 +215,11 @@ public class SeriesDetails extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             String movieID = bundle.getString("id", "");
+            MainActivity.editor.putString("idSeriesBP",movieID);
+            MainActivity.editor.apply();
             Id=Integer.valueOf(movieID);
+
+            //MainActivity.editor.putInt("id",Id);
             String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&";
             String pattern2="https://api.themoviedb.org/3/tv/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             getJsonString.execute(String.format(pattern, Id));
@@ -230,16 +256,21 @@ public class SeriesDetails extends Fragment {
                 e.printStackTrace();
                 result = null;
             }
-            while (run==true){}
+            //while (run==true){}
             return result;
         }
 
         protected void onPostExecute(String result){
             try {
                 jsonSeries =new JSONObject(result);
-                String patt="https://image.tmdb.org/t/p/w500%s";
+                String patt="https://image.tmdb.org/t/p/original%s";
 
                 JSONArray telev=jsonSeries.getJSONArray("networks");
+
+                Boolean in_production = jsonSeries.getBoolean("in_production");
+                if (in_production) inProductionTv.setText("Yes");
+                else inProductionTv.setText("No");
+
                 for (int i=0; i<telev.length(); i++){
                     televisons+=telev.getJSONObject(i).getString("name")+" • ";
                 }
@@ -259,9 +290,19 @@ public class SeriesDetails extends Fragment {
                 }
                 genresTv.setText(stringGenres);
 
+                final float scale = getContext().getResources().getDisplayMetrics().density;
+                int numLines = genresTv.getLineCount();
+                if (numLines > 1){
+                    int pixels = (int) ((genresTv.getLineCount() * 24) * scale + 0.5f);
+                    genresTv.getLayoutParams().height=pixels;
+                    genresTitleTv.getLayoutParams().height=pixels;
+                }
+
                 networkTv.setText(televisons);
                 ratingTv.setText((((int)jsonSeries.getDouble("vote_average"))*10)+"%");
-                lastAirTv.setText(jsonSeries.getString("last_air_date"));
+                String date=jsonSeries.getString("last_air_date");
+                String [] parsedDate=date.split("-");
+                lastAirTv.setText(parsedDate[2]+"."+parsedDate[1]+"."+parsedDate[0]);
                 episodesCountTv.setText(jsonSeries.getString("number_of_episodes"));
 
                 if (jsonSeries.getString("overview").equals("")) tv.setText("Overview is not available.");
@@ -277,13 +318,7 @@ public class SeriesDetails extends Fragment {
                     seriesPoster.setBackgroundResource(R.drawable.no_backdrop);
                 } else image.execute(String.format(patt, jsonSeries.getString("backdrop_path")),"series");
 
-                if (data.hasChild(Id+"/rating")){
 
-                    String rating=data.child(Id+"/rating").getValue().toString();
-                    if (!rating.equals("")){
-                        ratingBar.setRating(Float.valueOf(rating));
-                    }
-                }
                 progressDialog.dismiss();
 
             } catch (JSONException e) {

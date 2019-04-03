@@ -76,21 +76,18 @@ public class Facebook extends Fragment {
                 accessToken= AccessToken.getCurrentAccessToken();
                 setMailToDrawer();
 
-
-                ProgressDialog pd=new ProgressDialog(ctx);
+                /*ProgressDialog pd=new ProgressDialog(ctx);
 
                 pd.setTitle("Logging in...");
                 pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 pd.setCancelable(false);
                 pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
                 pd.setMax(100);
-                pd.show();
+                pd.show();*/
 
-                while (MainActivity.mail== null || MainActivity.mail.equals("")){}
+                //while (MainActivity.mail== null || MainActivity.mail.equals("")){}
 
-                handleLogin(MainActivity.mail);
-
-                pd.dismiss();
+                //pd.dismiss();
                 openMovieFragment();
             }
 
@@ -125,15 +122,15 @@ public class Facebook extends Fragment {
         return at != null && !at.isExpired();
     }
 
-    private void handleLogin(String mai) {
+    private static void handleLogin(String mai) {
+
+        mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(mai, "000000")
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-
                             //Toast.makeText(ctx, "prihlaseny uspesne", Toast.LENGTH_SHORT).show();
-
                         }
                         else {
                             handleRegister(mai);
@@ -144,24 +141,23 @@ public class Facebook extends Fragment {
 
     }
 
-    private void handleRegister(String mai) {
+    private static void handleRegister(String mai) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference("users/"+MainActivity.mail.replace(".","_")+"/settings");
-        handleLogin(MainActivity.mail);
+        handleLogin(mai);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("private", "false");
         childUpdates.put("nickname", "");
         childUpdates.put("friends", "");
         dbRef.updateChildren(childUpdates);
-
+        mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(mai, "000000")
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             //Toast.makeText(ctx, "Uspesne zaregistrovany pouzivatel", Toast.LENGTH_SHORT).show();
-
                         }
                         else {
                             //Toast.makeText(ctx, "Uzivatel asi uz existuje alebo nastala chyba", Toast.LENGTH_SHORT).show();
@@ -170,31 +166,20 @@ public class Facebook extends Fragment {
                 });
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-
-                        } else {
-                            Toast.makeText(ctx, "neuspesne", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-
     public static void setMailToDrawer(){
         GraphRequest request = GraphRequest.newMeRequest(getAccessToken(), (JSONObject object, GraphResponse response) ->{
             try {
                 MainActivity.mail=object.getString("email");
                 email = object.getString("email");
+
                 View headerView = MainActivity.navigationView.getHeaderView(0);
                 TextView navUsername = (TextView) headerView.findViewById(R.id.drawerEmailTextView);
                 navUsername.setText(email);
+
+                if (email!= null || !email.equals(null)) {
+                    //Toast.makeText(MainActivity.ctx, "handlujem usera", Toast.LENGTH_SHORT).show();
+                    handleLogin(email);
+                }
 
 
             } catch (JSONException e) {

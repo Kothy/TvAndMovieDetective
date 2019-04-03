@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity
     public static DrawerLayout drawer;
     public static TextView noInt;
     public static String mail=null;
-    private static FirebaseAuth mAuth;
+    //private static FirebaseAuth mAuth;
     public static Context ctx;
     public static AppBarLayout appbar;
-    public static TabLayout tabLayout, tabLayout2;
-    public static ViewPager viewPager, viewPager2;
+    public static TabLayout tabLayout;
+    public static ViewPager viewPager;
     SearchView searchView;
     static FragmentManager fragManager;
 
@@ -92,8 +92,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         ctx=getApplicationContext();
 
-
-
         fragManager=getSupportFragmentManager();
         appbar = findViewById(R.id.barWithTabs);
         appbar.setVisibility(View.INVISIBLE);
@@ -103,9 +101,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
-
-        mAuth = FirebaseAuth.getInstance();
+        //mAuth = FirebaseAuth.getInstance();
         Fragment face=new Facebook();
         pd=new ProgressDialog(this);
 
@@ -115,11 +111,13 @@ public class MainActivity extends AppCompatActivity
         pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
         //pd.setProgressStyle(android.R.style.Widget_DeviceDefault_Light_ProgressBar_Large);
         pd.setMax(100);
+
         prefs = getSharedPreferences("INFO", MODE_PRIVATE);
         editor = getSharedPreferences("INFO", MODE_PRIVATE).edit();
         editor.putString("class","");
         editor.putString("search","");
         editor.apply();
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -139,12 +137,13 @@ public class MainActivity extends AppCompatActivity
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // toto budem este riesit
                 int hasReadContactPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
                 if (hasReadContactPermission != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+                    requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity
             download();
         } else if (isInternet()) {
             unregisterReceiver(onComplete);
-            if (unpack.getStatus()!=AsyncTask.Status.RUNNING) unpack.execute(st[0]+getYesterdayDate(),st[1]+getYesterdayDate(),"load","load"); // iba nacitava reporty
+            if (unpack.getStatus() != AsyncTask.Status.RUNNING) unpack.execute(st[0] + getYesterdayDate(), st[1] + getYesterdayDate(), "load","load"); // iba nacitava reporty
             //Toast.makeText(this, "subor existuje--*---*---*--- iba nacitavam", Toast.LENGTH_LONG).show();
             noInt.setVisibility(View.INVISIBLE);
         } else {
@@ -179,8 +178,8 @@ public class MainActivity extends AppCompatActivity
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         //viewPager.setSaveFromParentEnabled(false);
-        adapter.addFragment(new MyMovies(), "Want to watch");
-        adapter.addFragment(new MyMoviesWatched(), "Watched");
+        adapter.addFragment(new MyMovies(),"Wish list");
+        adapter.addFragment(new MyMoviesWatched(),"Watch list");
 
         viewPager.setAdapter(adapter);
     }
@@ -192,21 +191,6 @@ public class MainActivity extends AppCompatActivity
            return true;
         }
         else return false;
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if(prefs.getString("class","").contains("Movie")){
-                displaySelectedScreen(R.id.movie);
-            }
-            else if (prefs.getString("class","").contains("Series")){
-                displaySelectedScreen(R.id.Tv_Series);
-            }
-        }
     }
 
     @Override
@@ -242,7 +226,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Co sa stlaci v draweri - zobrazenie
-
+        Toast.makeText(ctx, ""+(item.getItemId()==R.id.nav_myMovies), Toast.LENGTH_SHORT).show();
         if (Facebook.isLogged()) displaySelectedScreen(item.getItemId());
         return true;
     }
@@ -269,17 +253,13 @@ public class MainActivity extends AppCompatActivity
 
         if (itemId==R.id.movie){
             fragment = new MoviesResultSearch();
-        }
-        else if (itemId == R.id.action_settings){
+        } else if (itemId == R.id.action_settings){
             fragment = new Settings();
-        }
-        else if (itemId==R.id.Tv_Series){// zobrazenie trending alebo vyhladavania
+        } else if (itemId == R.id.Tv_Series){// zobrazenie trending alebo vyhladavania
             fragment = new TvSeriesResultSearch();
-        }
-        else if (itemId==-9999){// detail filmu bude mat taketo idecko
+        } else if (itemId==-9999){// detail filmu bude mat taketo idecko
             fragment = new MovieDetail();
-        }
-        else if (itemId==-8888){// facebook fragment bude mat taketo idecko
+        } else if (itemId ==- 8888){// facebook fragment bude mat taketo idecko
             fragment = new Facebook();
         } else if (itemId == R.id.nav_myMovies){
             setupViewPager(viewPager);
@@ -287,10 +267,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (itemId == R.id.nav_myTv){
             fragment = new MySeries();
-        } else if (itemId== R.id.nav_theatres){
+        } else if (itemId == R.id.nav_theatres){
             fragment =new Theatres();
         } else if (itemId == R.id.nav_friends){
             fragment= new Friends();
+        } else if (itemId == -987654321){
+            fragment= new MyMoviesWatched();
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -299,6 +281,87 @@ public class MainActivity extends AppCompatActivity
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Bundle bundle = new Bundle();
+
+        Fragment fragment = null;
+        //appbar.setVisibility(View.INVISIBLE);
+        //viewPager.setAdapter(null);
+
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+
+        else if (prefs.getString("prev class","").contains("MyMovies")){
+            setupViewPager(viewPager);
+            displaySelectedScreen(R.id.nav_myMovies);
+
+        } else if (prefs.getString("prev class","").equals("MovieDetail")){
+            fragment = new MovieDetail();
+            bundle.putString("id", MainActivity.prefs.getString("idBP",""));
+            bundle.putString("title", MainActivity.prefs.getString("titleBP",""));
+
+            fragment.setArguments(bundle);
+
+
+        } else if (prefs.getString("prev class","").equals("SeriesDetail")){
+            fragment = new SeriesDetails();
+            bundle.putString("id", MainActivity.prefs.getString("idSeriesBP",""));
+            //bundle.putString("title", MainActivity.prefs.getString("titleBP",""));
+
+            fragment.setArguments(bundle);
+
+
+        } else if (prefs.getString("prev class","").equals("Theatres")){
+            displaySelectedScreen(R.id.nav_theatres);
+
+        }   else if (prefs.getString("prev class","").equals("Friends")){
+            displaySelectedScreen(R.id.nav_friends);
+
+        } else if (prefs.getString("prev class","").equals("MovieResultSearch")){//
+            displaySelectedScreen(R.id.movie);
+
+        } else if (prefs.getString("prev class","").equals("SeriesResultSearch")){
+            displaySelectedScreen(R.id.Tv_Series);
+
+        } else if (prefs.getString("prev class","").equals("Settings")){
+            displaySelectedScreen(R.id.action_settings);
+
+        } else if (prefs.getString("prev class","").equals("User profile")){
+            fragment = new UserProfile();
+
+            bundle.putString("nick", MainActivity.prefs.getString("nickBP",""));
+            bundle.putString("email", MainActivity.prefs.getString("emailBP",""));
+
+            fragment.setArguments(bundle);
+        } else if (prefs.getString("prev class","").equals("Episodes")){
+            fragment = new Episodes();
+
+            bundle.putString("title", MainActivity.prefs.getString("titleEpBP",""));
+            bundle.putString("id", MainActivity.prefs.getString("idEpBP",""));
+            bundle.putInt("seasons", MainActivity.prefs.getInt("seasonsEpBP",-1));
+            bundle.putString("poster_path", MainActivity.prefs.getString("poster_pathEpBP",""));
+            bundle.putString("networks", MainActivity.prefs.getString("networksEpBP",""));
+
+            fragment.setArguments(bundle);
+
+        } else {
+            moveTaskToBack(true);
+        }
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+        /*MainActivity.editor.putString("titleEpBP",showtitle);
+        MainActivity.editor.putString("idEpBP",movieID);
+        MainActivity.editor.putString("seasonsEpBP",numOfseasons.toString());
+        MainActivity.editor.putString("poster_pathEpBP",poster_path);
+        MainActivity.editor.putString("networksEpBP",networks);*/
+
     }
 
     void deleteAlllFilesInFolder(File dir) {

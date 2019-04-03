@@ -40,6 +40,7 @@ public class MySeries extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","MySeries");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.my_shows, container, false);
@@ -54,6 +55,8 @@ public class MySeries extends Fragment {
         adapter = new MySeriesAdapter(getContext(), items, getFragmentManager(),getActivity());
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         MainActivity.viewPager.setVisibility(View.GONE);
         MainActivity.tabLayout.setVisibility(View.GONE);

@@ -60,7 +60,8 @@ public class TvSeriesResultSearch extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        MainActivity.editor.putString("class","Series");
+        MainActivity.editor.putString("prev class", MainActivity.prefs.getString("class",""));
+        MainActivity.editor.putString("class","SeriesResultSearch");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.movies_search_result_layout, container, false);
     }
@@ -69,12 +70,14 @@ public class TvSeriesResultSearch extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (MainActivity.prefs.getString("search","").equals("")){
-            getActivity().setTitle("Tv Shows");
+            getActivity().setTitle("Tv Series");
         } else getActivity().setTitle("");
 
         ctx = getContext();
         activity = getActivity();
         fm = getFragmentManager();
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         trendingTitle = view.findViewById(R.id.textView3);
         airingTitle = view.findViewById(R.id.textView);

@@ -18,6 +18,7 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,12 +36,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MovieDetail  extends Fragment {
-    TextView overview, tv_release_date, tv_genres,tv_rating;
+    TextView overview, tv_release_date, tv_genres,tv_rating, inList, tv_my_rating, tv_length, tv_genre_title;
     ScrollView sv;
     Integer movieId=0;
     String title="",poster_path;
@@ -57,9 +61,11 @@ public class MovieDetail  extends Fragment {
     DatabaseReference dbRef;
     DataSnapshot data;
     ProgressDialog progressDialog;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","MovieDetail");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.movie_detail, container, false);
@@ -71,37 +77,71 @@ public class MovieDetail  extends Fragment {
         ctx=getContext();
         String maiil=MainActivity.mail.replace(".","_");
 
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+
         progressDialog =new ProgressDialog(ctx);
         progressDialog.setTitle("Please wait");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
         progressDialog.setMax(100);
 
+        overview = view.findViewById(R.id.overview);
+        tv_rating = view.findViewById(R.id.tv_rating);
+        tv_genres = view.findViewById(R.id.tv_genres);
+        tv_release_date = view.findViewById(R.id.tv_release_date);
+        tv_my_rating = view.findViewById(R.id.textView11);
+        tv_length = view.findViewById(R.id.length_tv);
+        tv_genre_title = view.findViewById(R.id.textView2);
+        castLv = view.findViewById(R.id.listVCast);
+        castLv.setFocusable(false);
+        sv = view.findViewById(R.id.scrollView2);
+        watchedButton = view.findViewById(R.id.button3);
+        watchedButton.setVisibility(View.VISIBLE);
+        wantToWatchButton = view.findViewById(R.id.button4);
+        wantToWatchButton.setVisibility(View.VISIBLE);
+        ratingBar = view.findViewById(R.id.ratingBar);
+        moviePoster=view.findViewById(R.id.imageView3);
+        inList = view.findViewById(R.id.inList);
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("users/"+maiil+"/movies");
 
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 data=dataSnapshot;
+                inList.setText("Nowhere");
+                wantToWatchButton.setVisibility(View.VISIBLE);
+                watchedButton.setVisibility(View.VISIBLE);
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    int id=Integer.parseInt(ds.getKey());
+                    //Toast.makeText(ctx, (movieId==id)+"", Toast.LENGTH_SHORT).show();
+
+                    if (movieId==id){
+                        if (ds.hasChild("rating") && !ds.child("rating").getValue().toString().equals("")){
+                            //Toast.makeText(ctx, "", Toast.LENGTH_SHORT).show();
+                            ratingBar.setRating(Float.valueOf(ds.child("rating").getValue().toString()));
+                        }
+                        if (ds.child("status").getValue().equals("want")){
+                            inList.setText("Wish list");
+                            wantToWatchButton.setVisibility(View.INVISIBLE);
+                        }
+                        else if (ds.child("status").getValue().equals("watched")){
+                            inList.setText("Watch list");
+                            watchedButton.setVisibility(View.INVISIBLE);
+                        }
+
+                    }
+                }
                 run=false;
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
-        overview = view.findViewById(R.id.overview);
-        tv_rating = view.findViewById(R.id.tv_rating);
-        tv_genres = view.findViewById(R.id.tv_genres);
-        tv_release_date = view.findViewById(R.id.tv_release_date);
-        castLv = view.findViewById(R.id.listVCast);
-        castLv.setFocusable(false);
-        sv = view.findViewById(R.id.scrollView2);
-        watchedButton = view.findViewById(R.id.button3);
-        wantToWatchButton = view.findViewById(R.id.button4);
-        ratingBar = view.findViewById(R.id.ratingBar);
 
         ratingBar.setOnRatingBarChangeListener( (rat,num,user) ->{
+            //Toast.makeText(ctx, "You rated "+title+" "+num, Toast.LENGTH_SHORT).show();
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
             Map<String, Object> childUpdates = new HashMap<>();
@@ -129,6 +169,7 @@ public class MovieDetail  extends Fragment {
         }
 
         watchedButton.setOnClickListener((click) -> {
+            Toast.makeText(ctx, title+ " added to your watch list", Toast.LENGTH_SHORT).show();
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
             Map<String, Object> childUpdates = new HashMap<>();
@@ -146,6 +187,7 @@ public class MovieDetail  extends Fragment {
         });
 
         wantToWatchButton.setOnClickListener((click) -> {
+            Toast.makeText(ctx, title+ " added to your wish list", Toast.LENGTH_SHORT).show();
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
             Map<String, Object> childUpdates = new HashMap<>();
@@ -172,7 +214,6 @@ public class MovieDetail  extends Fragment {
         });
 
         pairs.clear();
-        moviePoster=view.findViewById(R.id.imageView3);
         String[] from = {"actor", "role"};// symbolické mená riadkov
         int[] to = { android.R.id.text1, android.R.id.text2 };
         adapter=new SimpleAdapter(getContext(), pairs,android.R.layout.simple_list_item_2, from, to);
@@ -188,6 +229,11 @@ public class MovieDetail  extends Fragment {
         if (bundle != null) {
             String movieID = bundle.getString("id", "");
             title=bundle.getString("title", "");
+
+            MainActivity.editor.putString("idBP", movieID);
+            MainActivity.editor.putString("titleBP", title);
+            MainActivity.editor.apply();
+
             movieId=Integer.valueOf(movieID);
             String pattern="https://api.themoviedb.org/3/movie/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
             String pattern2="https://api.themoviedb.org/3/movie/%d/credits?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
@@ -233,16 +279,44 @@ public class MovieDetail  extends Fragment {
             try {
                 jsonMovie=new JSONObject(result);
                 poster_path=jsonMovie.getString("poster_path");
-                String [] date=jsonMovie.getString("release_date").split("-");
+
+                String dateInBaseFormat=jsonMovie.getString("release_date");
+                String [] date=dateInBaseFormat.split("-");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date datedate = sdf.parse(dateInBaseFormat);
+                if (datedate.getTime() >= System.currentTimeMillis()){
+                    //Toast.makeText(ctx, "este nevyslo", Toast.LENGTH_SHORT).show();
+                    wantToWatchButton.setVisibility(View.INVISIBLE);
+                    ratingBar.setVisibility(View.GONE);
+                    tv_my_rating.setVisibility(View.GONE);
+                }
+                tv_length.setText(jsonMovie.getString("runtime")+" min.");
                 tv_release_date.setText(date[2]+"."+date[1]+"."+date[0]);
                 tv_rating.setText(((int)(jsonMovie.getDouble("vote_average")*10))+"%");
 
                 JSONArray genres=jsonMovie.getJSONArray("genres");
                 String stringGenres="";
-                for(int i=0;i<genres.length();i++){
-                    stringGenres+=genres.getJSONObject(i).getString("name")+" | ";
+                for (int i = 0; i < genres.length(); i++){
+                    if (genres.getJSONObject(i).getString("name").equals("Science Fiction")){
+                        stringGenres+="Sci-Fi | ";
+                    }
+                    else {
+                        stringGenres+=genres.getJSONObject(i).getString("name")+" | ";
+                    }
+                }
+                if (stringGenres.length() > 2){
+                    stringGenres = stringGenres.substring(0, stringGenres.length() - 3);
                 }
                 tv_genres.setText(stringGenres);
+                //Toast.makeText(ctx, ""+tv_genres.getLineCount(), Toast.LENGTH_SHORT).show();
+
+                final float scale = getContext().getResources().getDisplayMetrics().density;
+                int numLines = tv_genres.getLineCount();
+                if (numLines > 1){
+                    int pixels = (int) ((tv_genres.getLineCount() * 24) * scale + 0.5f);
+                    tv_genres.getLayoutParams().height=pixels;
+                    tv_genre_title.getLayoutParams().height=pixels;
+                }
 
                 String patt="https://image.tmdb.org/t/p/original%s";
                 title=jsonMovie.getString("original_title");
@@ -255,14 +329,9 @@ public class MovieDetail  extends Fragment {
                     moviePoster.setBackgroundResource(R.drawable.no_backdrop);
                 } else image.execute(String.format(patt,jsonMovie.getString("backdrop_path")));
 
-                if (data.hasChild(movieId+"/rating")){
-
-                    String rating=data.child(movieId+"/rating").getValue().toString();
-                    if (!rating.equals("")){
-                        ratingBar.setRating(Float.valueOf(rating));
-                    }
-                }
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
             if (progressDialog.isShowing()){

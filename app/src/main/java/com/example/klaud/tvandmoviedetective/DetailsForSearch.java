@@ -52,16 +52,14 @@ public class DetailsForSearch extends AsyncTask<String, String, String> {
                     MoviesResultSearch.adapter3.notifyItemChanged(position);
                     MoviesResultSearch.recycler3.invalidateItemDecorations();
                     MoviesResultSearch.recycler3.invalidate();
-                    //Log.d("Dokoncenie","dokoncil som pracu");
+
                 } else {
                     TvSeriesResultSearch.searchedItems.get(position).setPoster_path(json.getString("poster_path"));
                     if (json.getString("first_air_date").length() > 5) TvSeriesResultSearch.searchedItems.get(position).release_date = json.getString("first_air_date").substring(0,4);
                     TvSeriesResultSearch.adapter3.notifyItemChanged(position);
                     TvSeriesResultSearch.recycler3.invalidateItemDecorations();
                     TvSeriesResultSearch.recycler3.invalidate();
-                    //Log.d("Dokoncenie","dokoncil som pracu");
                 }
-
             }
 
         } catch (JSONException e) {

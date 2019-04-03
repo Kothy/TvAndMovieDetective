@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +40,7 @@ public class MyMovies extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","MyMovies");
         MainActivity.editor.apply();
         MainActivity.appbar.setVisibility(View.VISIBLE);
@@ -59,6 +61,8 @@ public class MyMovies extends Fragment {
 
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new GridLayoutManager(view.getContext(),3));
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         String mail=MainActivity.mail.replace(".","_");

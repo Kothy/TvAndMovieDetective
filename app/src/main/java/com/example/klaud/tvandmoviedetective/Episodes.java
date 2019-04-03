@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +45,8 @@ public class Episodes extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        MainActivity.editor.putString("class","MySeries");
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
+        MainActivity.editor.putString("class","Episodes");
         MainActivity.editor.apply();
         MainActivity.appbar.setVisibility(View.VISIBLE);
         MainActivity.viewPager.setVisibility(View.VISIBLE);
@@ -57,6 +60,9 @@ public class Episodes extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerviewEp);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ctx=getContext();
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+
         MainActivity.appbar.setVisibility(View.INVISIBLE);
 
     }
@@ -90,6 +96,14 @@ public class Episodes extends Fragment {
                     Id=Integer.valueOf(movieID);
                     poster_path=bundle.getString("poster_path");
                     networks=bundle.getString("networks");
+
+                    MainActivity.editor.putString("titleEpBP",showtitle);
+                    MainActivity.editor.putString("idEpBP",movieID);
+                    MainActivity.editor.putInt("seasonsEpBP",numOfseasons);
+                    MainActivity.editor.putString("poster_pathEpBP",poster_path);
+                    MainActivity.editor.putString("networksEpBP",networks);
+                    MainActivity.editor.apply();
+
                     String pattern="https://api.themoviedb.org/3/tv/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US&append_to_response=";
                     for (int i=1;i<=numOfseasons;i++){
                         pattern+="season/"+i+",";

@@ -10,8 +10,7 @@
     <ScrollView
         android:id="@+id/scrollView20"
         android:layout_width="0dp"
-        android:layout_height="580dp"
-        android:layout_marginBottom="40dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -40,10 +39,10 @@
             <ImageView
                 android:id="@+id/imageView20"
                 android:layout_width="0dp"
-                android:layout_height="228dp"
+                android:layout_height="220dp"
                 android:contentDescription="@string/movie_detail_image_des"
                 android:fadingEdge="horizontal"
-                android:scaleType="fitEnd"
+                android:scaleType="fitXY"
                 app:layout_constraintBottom_toTopOf="@+id/textView40"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -152,7 +151,7 @@
                 android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/series_network_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/in_production_tv" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -178,7 +177,6 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="TextView"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView12"
@@ -208,7 +206,6 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="TextView"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView14"
@@ -238,7 +235,6 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="TextView"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView16"
@@ -268,7 +264,6 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="TextView"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView18"
@@ -298,7 +293,6 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="TextView"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView20"
@@ -319,6 +313,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
             <TextView
+                android:id="@+id/textView13"
+                android:layout_width="110dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/round_rectangle"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:text="In production"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView22" />
+
+            <TextView
                 android:id="@+id/series_network_tv"
                 android:layout_width="0dp"
                 android:layout_height="30dp"
@@ -328,11 +336,25 @@
                 android:background="@drawable/round_rectangle"
                 android:gravity="center_vertical"
                 android:padding="4dp"
-                android:text="TextView"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView22"
                 app:layout_constraintTop_toBottomOf="@+id/series_episodes_count_tv" />
+
+            <TextView
+                android:id="@+id/in_production_tv"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/round_rectangle"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView13"
+                app:layout_constraintTop_toBottomOf="@+id/series_network_tv" />
 
             <RatingBar
                 android:id="@+id/series_rating_bar"
@@ -341,6 +363,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="8dp"
+                android:numStars="5"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 app:layout_constraintEnd_toEndOf="parent"

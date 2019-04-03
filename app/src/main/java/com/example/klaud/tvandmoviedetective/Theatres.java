@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class Theatres extends Fragment {
@@ -32,6 +34,7 @@ public class Theatres extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
         MainActivity.editor.putString("class","Theatres");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.theatres_layout, container, false);
@@ -42,6 +45,8 @@ public class Theatres extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Theatres");
         ctx=getContext();
+
+        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         theatres.clear();
         String[] cities={"Choose city", "Bratislava",
