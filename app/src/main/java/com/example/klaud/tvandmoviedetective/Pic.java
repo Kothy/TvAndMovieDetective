@@ -37,6 +37,5 @@ public  class Pic extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPreExecute() {  }
-
 }
 

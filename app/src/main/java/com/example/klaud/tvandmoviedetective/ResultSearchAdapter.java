@@ -83,7 +83,6 @@ public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapte
             drawer.closeDrawer(GravityCompat.START);
 
         });
-
     }
 
     @Override
@@ -103,7 +102,6 @@ public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapte
             time = (TextView) itemView.findViewById(R.id.movie_title);
             iv = (ImageView) itemView.findViewById(R.id.itemImage2);
             parentLayout = itemView.findViewById(R.id.parent_layoutItem);
-
         }
     }
 }

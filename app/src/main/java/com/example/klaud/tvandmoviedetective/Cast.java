@@ -12,5 +12,4 @@ public class Cast {
     @SerializedName("character")
     @Expose
     public String character;
-
 }

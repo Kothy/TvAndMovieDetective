@@ -96,7 +96,5 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
             iv = (ImageView) itemView.findViewById(R.id.itemImage2);
             parentLayout = (ConstraintLayout) itemView.findViewById(R.id.parent_layoutItem2);
         }
-
-
     }
 }

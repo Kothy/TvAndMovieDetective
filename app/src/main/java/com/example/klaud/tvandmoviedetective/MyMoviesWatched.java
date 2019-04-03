@@ -89,6 +89,5 @@ public class MyMoviesWatched extends Fragment {
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
-
     }
 }

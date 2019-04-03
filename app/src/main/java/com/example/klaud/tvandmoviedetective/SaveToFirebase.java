@@ -23,11 +23,8 @@ public class SaveToFirebase extends AsyncTask<String, String, String> {
         return "done";
     }
     @Override
-    protected void onPostExecute(String result){
-
-    }
+    protected void onPostExecute(String result){ }
 
     @Override
-    protected void onPreExecute() {
-    }
+    protected void onPreExecute() { }
 }

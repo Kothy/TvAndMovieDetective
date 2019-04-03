@@ -95,5 +95,4 @@ public class MyMovies extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
-
 }

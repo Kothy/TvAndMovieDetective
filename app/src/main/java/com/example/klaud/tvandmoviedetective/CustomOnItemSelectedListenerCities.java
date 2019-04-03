@@ -17,7 +17,6 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
             Theatres.items.clear();
             Theatres.rec_adapter.notifyDataSetChanged();
             Theatres.recycler.invalidate();
-
         }
     }
 
@@ -47,5 +46,4 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
         }
         return result.toLowerCase();
     }
-
 }

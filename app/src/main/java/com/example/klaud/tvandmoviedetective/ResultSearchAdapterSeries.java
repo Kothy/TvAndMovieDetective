@@ -72,7 +72,6 @@ public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearch
             bundle.putString("id", items.get(position).getId().toString());
             bundle.putString("title",items.get(position).getName());
 
-
             fragment.setArguments(bundle);
             if (fragment != null) {
                 FragmentTransaction ft = fm.beginTransaction();
@@ -83,7 +82,6 @@ public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearch
             drawer.closeDrawer(GravityCompat.START);
 
         });
-
     }
 
     @Override

@@ -31,7 +31,6 @@ public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHo
     private FragmentManager fm;
     private Activity activity;
 
-
     public MyFriendAdapter(Context ctx, ArrayList<FriendsItem> imageModelArrayList, FragmentManager fm, Activity activity){
         this.contex=ctx;
         this.inflater = LayoutInflater.from(ctx);
@@ -43,7 +42,6 @@ public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHo
     @Override
     public MyFriendAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.my_friend_item, parent, false);
-
 
         MyFriendAdapter.ViewHolder holder = new MyFriendAdapter.ViewHolder(view);
         return holder;
@@ -60,7 +58,6 @@ public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHo
             Bundle bundle = new Bundle();
             bundle.putString("email", items.get(position).email);
             bundle.putString("nickname",items.get(position).nickname);
-
 
             fragment.setArguments(bundle);
 
@@ -89,7 +86,5 @@ public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHo
             nickname = (TextView) itemView.findViewById(R.id.friends_name);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem55);
         }
-
-
     }
 }

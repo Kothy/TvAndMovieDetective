@@ -22,14 +22,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder>{
     private LayoutInflater inflater;
     private ArrayList<FriendsItem> items;
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
-
 
     public FriendsAdapter(Context ctx, ArrayList<FriendsItem> imageModelArrayList, FragmentManager fm, Activity activity){
         this.contex=ctx;
@@ -42,7 +40,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     @Override
     public FriendsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.friend_item, parent, false);
-
 
         FriendsAdapter.ViewHolder holder = new FriendsAdapter.ViewHolder(view);
         return holder;
@@ -73,7 +70,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
             fragment.setArguments(bundle);
 
-
             if (fragment != null) {
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
@@ -82,11 +78,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
             DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         });
-
-
     }
-
-
 
     @Override
     public int getItemCount() {
@@ -105,7 +97,5 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
             nickname = (TextView) itemView.findViewById(R.id.friend_name);
             parentLayout = (ConstraintLayout) itemView.findViewById(R.id.parent_layoutItem4);
         }
-
-
     }
 }

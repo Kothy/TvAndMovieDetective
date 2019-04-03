@@ -118,8 +118,5 @@ public class MySeries extends Fragment {
         if (bundle != null) {
 
         }
-
-
     }
-
 }
