@@ -58,7 +58,7 @@ public class SeriesDetails extends Fragment {
     SimpleAdapter adapter;
     ArrayList<Map<String, String>> pairs = new ArrayList<Map<String, String>>();
     public static Context ctx;
-    Button episodesButt, addToFavouriteButton;
+    Button episodesButt, addToFavouriteButton, removeFromFavourite;
     String title, poster_path, televisons;
     TreeMap<Integer,Integer> seasonsAndEpisodes= new TreeMap<>();
     RatingBar ratingBar;
@@ -111,6 +111,9 @@ public class SeriesDetails extends Fragment {
         castLv.setFocusable(false);
         sv = view.findViewById(R.id.scrollView20);
         addToFavouriteButton = view.findViewById(R.id.button7);
+        removeFromFavourite = view.findViewById(R.id.remove_from_favourite);
+        removeFromFavourite.setVisibility(View.INVISIBLE);
+
         sv.setOnTouchListener((vie,event) -> {
             tv.getParent().requestDisallowInterceptTouchEvent(false);
             return false;
@@ -118,6 +121,10 @@ public class SeriesDetails extends Fragment {
         castLv.setOnTouchListener((vie,event) -> {
             castLv.getParent().requestDisallowInterceptTouchEvent(true);
             return false;
+        });
+
+        removeFromFavourite.setOnClickListener( click ->{
+            FirebaseDatabase.getInstance().getReference("/users/"+maiil+"/series/"+Id).removeValue();
         });
 
         FirebaseDatabase dab = FirebaseDatabase.getInstance();
@@ -133,12 +140,19 @@ public class SeriesDetails extends Fragment {
                     String rating=data.child(Id+"/rating").getValue().toString();
                     if (!rating.equals("")){
                         ratingBar.setRating(Float.valueOf(rating));
+
                     }
                 }
                 if (data.hasChild(Id+"")){
                     addToFavouriteButton.setVisibility(View.INVISIBLE);
                     ratingBar.setVisibility(View.VISIBLE);
                     myRatingTitleTv.setVisibility(View.VISIBLE);
+                    removeFromFavourite.setVisibility(View.VISIBLE);
+                } else {
+                    removeFromFavourite.setVisibility(View.INVISIBLE);
+                    addToFavouriteButton.setVisibility(View.VISIBLE);
+                    ratingBar.setVisibility(View.GONE);
+                    myRatingTitleTv.setVisibility(View.GONE);
                 }
             }
             @Override

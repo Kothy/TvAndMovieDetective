@@ -113,26 +113,25 @@ public class MovieDetail  extends Fragment {
                 inList.setText("Nowhere");
                 wantToWatchButton.setVisibility(View.VISIBLE);
                 watchedButton.setVisibility(View.VISIBLE);
-                for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    int id=Integer.parseInt(ds.getKey());
-                    //Toast.makeText(ctx, (movieId==id)+"", Toast.LENGTH_SHORT).show();
 
-                    if (movieId==id){
-                        if (ds.hasChild("rating") && !ds.child("rating").getValue().toString().equals("")){
-                            //Toast.makeText(ctx, "", Toast.LENGTH_SHORT).show();
-                            ratingBar.setRating(Float.valueOf(ds.child("rating").getValue().toString()));
-                        }
-                        if (ds.child("status").getValue().equals("want")){
-                            inList.setText("Wish list");
-                            wantToWatchButton.setVisibility(View.INVISIBLE);
-                        }
-                        else if (ds.child("status").getValue().equals("watched")){
-                            inList.setText("Watch list");
-                            watchedButton.setVisibility(View.INVISIBLE);
-                        }
-
-                    }
+                if (data.hasChild(movieId+"/rating") && !data.child(movieId+"/rating").getValue().toString().equals("")){
+                    ratingBar.setRating(Float.valueOf(data.child("rating").getValue().toString()));
                 }
+                if (data.hasChild(movieId+"/status") && data.child(movieId+"/status").getValue().equals("want")){
+                    inList.setText("Wish list");
+                    wantToWatchButton.setVisibility(View.INVISIBLE);
+                    ratingBar.setVisibility(View.GONE);
+                    tv_my_rating.setVisibility(View.GONE);
+                }
+                else if (data.hasChild(movieId+"/status")  && data.child(movieId+"/status").getValue().equals("watched")){
+                    inList.setText("Watch list");
+                    watchedButton.setVisibility(View.INVISIBLE);
+                    ratingBar.setVisibility(View.VISIBLE);
+                    tv_my_rating.setVisibility(View.VISIBLE);
+                }
+
+
+
                 run=false;
             }
             @Override
