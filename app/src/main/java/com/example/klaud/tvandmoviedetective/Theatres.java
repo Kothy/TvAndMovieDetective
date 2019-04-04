@@ -46,7 +46,7 @@ public class Theatres extends Fragment {
         getActivity().setTitle("Theatres");
         ctx=getContext();
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         theatres.clear();
         String[] cities={"Choose city", "Bratislava",

@@ -113,9 +113,13 @@ public class MovieDetail  extends Fragment {
                 inList.setText("Nowhere");
                 wantToWatchButton.setVisibility(View.VISIBLE);
                 watchedButton.setVisibility(View.VISIBLE);
+                ratingBar.setVisibility(View.GONE);
+                tv_my_rating.setVisibility(View.GONE);
 
-                if (data.hasChild(movieId+"/rating") && !data.child(movieId+"/rating").getValue().toString().equals("")){
-                    ratingBar.setRating(Float.valueOf(data.child("rating").getValue().toString()));
+                if (data.hasChild(movieId+"/rating")){
+                    String rating=data.child(movieId+"/rating").getValue().toString();
+                    Toast.makeText(ctx, "rating je:"+rating+"**", Toast.LENGTH_SHORT).show();
+                    //ratingBar.setRating(Float.valueOf(data.child("rating").getValue().toString()));
                 }
                 if (data.hasChild(movieId+"/status") && data.child(movieId+"/status").getValue().equals("want")){
                     inList.setText("Wish list");
@@ -129,9 +133,6 @@ public class MovieDetail  extends Fragment {
                     ratingBar.setVisibility(View.VISIBLE);
                     tv_my_rating.setVisibility(View.VISIBLE);
                 }
-
-
-
                 run=false;
             }
             @Override

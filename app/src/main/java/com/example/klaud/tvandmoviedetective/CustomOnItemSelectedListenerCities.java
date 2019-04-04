@@ -14,7 +14,7 @@ public class CustomOnItemSelectedListenerCities implements AdapterView.OnItemSel
             Theatres.city=parent.getItemAtPosition(position).toString();
             GetHTMLTreeCity getHTML=new GetHTMLTreeCity();
             getHTML.execute(url+edit(Theatres.city));
-            Theatres.items.clear();
+            //Theatres.items.clear();
             Theatres.rec_adapter.notifyDataSetChanged();
             Theatres.recycler.invalidate();
         }

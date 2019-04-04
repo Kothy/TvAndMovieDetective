@@ -330,6 +330,9 @@ public class MainActivity extends AppCompatActivity
         } else if (prefs.getString("prev class","").equals("Settings")){
             displaySelectedScreen(R.id.action_settings);
 
+        }  else if (prefs.getString("prev class","").equals("MySeries")){
+            displaySelectedScreen(R.id.nav_myTv);
+
         } else if (prefs.getString("prev class","").equals("User profile")){
             fragment = new UserProfile();
 
@@ -356,12 +359,6 @@ public class MainActivity extends AppCompatActivity
             ft.replace(R.id.content_frame, fragment);
             ft.commit();
         }
-        /*MainActivity.editor.putString("titleEpBP",showtitle);
-        MainActivity.editor.putString("idEpBP",movieID);
-        MainActivity.editor.putString("seasonsEpBP",numOfseasons.toString());
-        MainActivity.editor.putString("poster_pathEpBP",poster_path);
-        MainActivity.editor.putString("networksEpBP",networks);*/
-
     }
 
     void deleteAlllFilesInFolder(File dir) {

@@ -67,7 +67,19 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
         holder.title.setText(items.get(position).getName());
         holder.parentLayout.setOnClickListener(click -> {
 
-            Toast.makeText(contex, "tu bude presmerovanie", Toast.LENGTH_SHORT).show();
+            Fragment fragment;
+            fragment = new SeriesDetails();
+            Bundle bundle = new Bundle();
+            bundle.putString("id", items.get(position).getId().toString());
+
+            fragment.setArguments(bundle);
+            if (fragment != null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.commit();
+            }
+            DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
 
         });
         holder.contextB.setOnClickListener(click ->{

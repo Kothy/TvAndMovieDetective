@@ -2,6 +2,7 @@ package com.example.klaud.tvandmoviedetective;
 
 import android.os.AsyncTask;
 import android.os.Looper;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import java.io.IOException;
+import java.time.chrono.ThaiBuddhistChronology;
 
 public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
     @Override
@@ -28,7 +30,8 @@ public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
 
             Element body=doc.body();
             Theatres.items.clear();
-            String date="blaaa";
+            String date="";
+            //Theatres.noProgram.setVisibility(View.INVISIBLE);
             for (Element e: body.getElementsByTag("div")){
                 if (e.hasClass("place-premieres-head")){
                     String [] arr= e.text().split("-");
@@ -76,9 +79,6 @@ public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
 
                 }
             }
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,11 +88,11 @@ public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
 
     protected void onPostExecute(String result){
         if (Theatres.items.size()==0){
-            Toast.makeText(MainActivity.ctx, "Selected cinema have no program for next days", Toast.LENGTH_SHORT).show();
-            Theatres.noProgram.setText("Selected cinema have no program for next days");
+            //Toast.makeText(MainActivity.ctx, "Selected cinema have no program for next days", Toast.LENGTH_SHORT).show();
+            Theatres.noProgram.setText("Selected cinema have no program for next days.");
             Theatres.noProgram.setVisibility(View.VISIBLE);
 
-        }
+        } else Theatres.noProgram.setVisibility(View.INVISIBLE);
         Theatres.rec_adapter.notifyDataSetChanged();
         Theatres.recycler.invalidate();
     }

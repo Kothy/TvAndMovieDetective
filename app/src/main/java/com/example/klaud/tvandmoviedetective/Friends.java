@@ -33,7 +33,6 @@ public class Friends extends Fragment {
     public static ArrayList<FriendsItem> myFriendsItems = new ArrayList<>();
     DatabaseReference dbRef;
     public static String maiil;
-    TextView noFriends;
 
     @Nullable
     @Override
@@ -51,10 +50,7 @@ public class Friends extends Fragment {
         ctx = getContext();
         maiil = MainActivity.mail.replace(".","_");
 
-        noFriends = view.findViewById(R.id.no_friends_tv);
-        noFriends.setVisibility(View.INVISIBLE);
-
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         recycler = (RecyclerView) getView().findViewById(R.id.friends_recycler);
         adapter = new FriendsAdapter(getContext(), items, getFragmentManager(),getActivity());
@@ -79,7 +75,7 @@ public class Friends extends Fragment {
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                myFriendsItems.clear();
                 data=dataSnapshot;
                 myFriendsItems.clear();
                 for (DataSnapshot ds: data.child(maiil+"/settings/friends").getChildren()){
@@ -90,7 +86,7 @@ public class Friends extends Fragment {
                 adapter2.notifyDataSetChanged();
                 myFriendsRec.invalidate();
                 if (myFriendsItems.size() == 0){
-                    noFriends.setVisibility(View.VISIBLE);
+                    Toast.makeText(ctx, "You have no friends. :'( \nClick to magnifying glass to find one.", Toast.LENGTH_LONG).show();
                 }
             }
             @Override

@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.select.Evaluator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +57,7 @@ public class MySeries extends Fragment {
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         MainActivity.viewPager.setVisibility(View.GONE);
         MainActivity.tabLayout.setVisibility(View.GONE);
@@ -68,48 +69,45 @@ public class MySeries extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 showData(dataSnapshot);
-
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
     }
     private void showData(DataSnapshot snapshot){
         items.clear();
-        for (DataSnapshot ds: snapshot.getChildren()){
-            //Log.d("DATAFire",ds.child("name").getValue().toString());
-            TreeMap<String,Integer> seenEpisodes=new TreeMap<>();
-            SeriesItem si=new SeriesItem(ds.child("name").getValue().toString(),R.drawable.a,Integer.decode(ds.getKey()));
-            si.setPoster_path(ds.child("poster_path").getValue().toString());
-            si.network=ds.child("networks").getValue().toString();
-            for (DataSnapshot child:ds.getChildren()){
-                if (child.getKey().contains("season")){
-                    String season=child.getKey().replace("season_","");
-                    if (season.length()<2) season="0"+season;
-                    for (DataSnapshot child2: child.getChildren()){
-                        String episode=child2.getKey();
-                        if (episode.length()<2) episode="0"+episode;
-                        seenEpisodes.put("S"+season+"E"+episode,Integer.decode(child2.getValue().toString()));
+        if (this.isVisible()){
+            for (DataSnapshot ds: snapshot.getChildren()){
+                TreeMap<String,Integer> seenEpisodes=new TreeMap<>();
+                SeriesItem si=new SeriesItem(ds.child("name").getValue().toString(),R.drawable.a,Integer.decode(ds.getKey()));
+                si.setPoster_path(ds.child("poster_path").getValue().toString());
+                si.network=ds.child("networks").getValue().toString();
+
+                for (DataSnapshot child:ds.getChildren()){
+                    if (child.getKey().contains("season")){
+                        String season=child.getKey().replace("season_","");
+                        if (season.length()<2) season="0"+season;
+                        for (DataSnapshot child2: child.getChildren()){
+                            String episode=child2.getKey();
+                            if (episode.length()<2) episode="0"+episode;
+                            seenEpisodes.put("S"+season+"E"+episode,Integer.decode(child2.getValue().toString()));
+                        }
                     }
                 }
+                Log.d("Episodes","----------------------------------------"+ds.getKey());
+                Log.d("Episodes",""+seenEpisodes);
+                Log.d("Episodes","----------------------------------------");
+                ArrayList<String> maxEpisode=new ArrayList<>(seenEpisodes.keySet());
+                if (maxEpisode.size() > 0){
+                    Collections.sort(maxEpisode);
+                    si.lastSeen=maxEpisode.get(maxEpisode.size()-1);
+                }
+                items.add(si);
             }
-
-            //Toast.makeText(ctx, ""+seenEpisodes, Toast.LENGTH_SHORT).show();
-            Log.d("Episodes","----------------------------------------");
-            Log.d("Episodes",""+seenEpisodes);
-            Log.d("Episodes","----------------------------------------");
-            ArrayList<String> maxEpisode=new ArrayList<>(seenEpisodes.keySet());
-            if (maxEpisode.size()>0){
-                Collections.sort(maxEpisode);
-                si.lastSeen=maxEpisode.get(maxEpisode.size()-1);
-            }
-            items.add(si);
+            adapter.notifyDataSetChanged();
+            recycler.invalidate();
         }
-        adapter.notifyDataSetChanged();
-        recycler.invalidate();
     }
     @Override
     public void onActivityCreated (Bundle savedInstanceState){
