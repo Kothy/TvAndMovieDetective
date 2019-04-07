@@ -17,11 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHolder>{

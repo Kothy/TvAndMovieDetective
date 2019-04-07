@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
         holder.nickname.setText(items.get(position).nickname);
         holder.followButton.setOnClickListener(click ->{
-            Toast.makeText(contex, "followuj kamoša", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(contex, "followuj kamoša", Toast.LENGTH_SHORT).show();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = database.getReference("users/"+MainActivity.mail.replace(".","_")+"/settings/friends");
@@ -60,7 +59,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
         });
         holder.parentLayout.setOnClickListener(click -> {
-            Toast.makeText(contex, "presmerovanie na profil", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(contex, "presmerovanie na profil", Toast.LENGTH_SHORT).show();
             Fragment fragment;
             fragment = new UserProfile();
 

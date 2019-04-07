@@ -2,16 +2,12 @@ package com.example.klaud.tvandmoviedetective;
 
 import android.os.AsyncTask;
 import android.os.Looper;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import java.io.IOException;
-import java.time.chrono.ThaiBuddhistChronology;
 
 public class GetHTMLTreeProgram  extends AsyncTask<String, Integer,String> {
     @Override

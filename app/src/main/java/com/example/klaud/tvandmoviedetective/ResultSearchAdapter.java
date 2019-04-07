@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapter.ViewHolder>{

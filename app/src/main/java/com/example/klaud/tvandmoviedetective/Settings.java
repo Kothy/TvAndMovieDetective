@@ -11,22 +11,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Settings extends Fragment {
     public static Context ctx;
     public EditText et;
-    Button button;
+    Button button, clearRecent;
     Switch swit;
+    DataSnapshot data;
 
     @Nullable
     @Override
@@ -45,14 +44,40 @@ public class Settings extends Fragment {
         et = view.findViewById(R.id.editText);
         button = view.findViewById(R.id.button9);
         swit = view.findViewById(R.id.switch1);
+        clearRecent = view.findViewById(R.id.clear_recent_button);
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        if (MainActivity.mail.equals("kada11@azet.sk")){
+            clearRecent.setVisibility(View.VISIBLE);
+        }
+        else clearRecent.setVisibility(View.INVISIBLE);
+
+        clearRecent.setOnClickListener( click ->{
+            if (data != null){
+                for (DataSnapshot ds: data.getChildren()){
+                    if (ds.hasChild("recent")){
+
+                        ArrayList<DataSnapshot> children = new ArrayList<>();
+                        for (DataSnapshot child: ds.child("recent").getChildren()){
+                            children.add(child);
+                        }
+                        //Toast.makeText(ctx, "pocet deti: "+children.size(), Toast.LENGTH_SHORT).show();
+                        while(children.size() > 5){
+                            children.get(0).getRef().removeValue();
+                            children.remove(0);
+                        }
+                    }
+                }
+            }
+
+        });
+
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         button.setOnClickListener(click ->{
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             String mail=MainActivity.mail.replace(".","_");
             DatabaseReference dbRef = database.getReference("users/"+mail+"/settings");
-            Toast.makeText(ctx, et.getText()+" "+swit.isChecked(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(ctx, et.getText()+" "+swit.isChecked(), Toast.LENGTH_SHORT).show();
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("nickname", et.getText().toString());
             childUpdates.put("private",swit.isChecked()+"");
@@ -83,6 +108,17 @@ public class Settings extends Fragment {
                         swit.setChecked(true);
                     }
                 }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
+        dbRef = database.getReference("users/");
+
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                data=dataSnapshot;
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }

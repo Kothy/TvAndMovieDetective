@@ -13,8 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +26,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Episodes extends Fragment {
     public Context ctx;
@@ -61,7 +62,7 @@ public class Episodes extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ctx=getContext();
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         MainActivity.appbar.setVisibility(View.INVISIBLE);
 
@@ -148,46 +149,48 @@ public class Episodes extends Fragment {
         }
         protected void onPostExecute(String result){
             try {
-                JSONObject jsonSeries =new JSONObject(result);
-                String seasonName=jsonSeries.getString("name");
-                String poster_path=jsonSeries.getString("poster_path");
-                Integer id=jsonSeries.getInt("id");
-                Season compa=new Season("Seasons",new ArrayList<>());
+                JSONObject jsonSeries = new JSONObject(result);
+                String seasonName = jsonSeries.getString("name");
+                String poster_path = jsonSeries.getString("poster_path");
+                Integer id = jsonSeries.getInt("id");
+                Season compa = new Season("Seasons", new ArrayList<>());
 
                 companies.add(compa);
-                for(int j=0;j<=numOfseasons;j++){
+                for (int j = 0; j <= numOfseasons; j++) {
 
-                    if (jsonSeries.has("season/"+j)){
-                        ArrayList<Episode> episodes=new ArrayList<>();
-                        JSONObject sea=jsonSeries.getJSONObject("season/"+j);
-                        JSONArray seaEps=sea.getJSONArray("episodes");
-                        String seaName=sea.getString("name");
-                        Log.d("seasonsAndEps",seaName);
-                        for(int i=0;i<seaEps.length();i++){
-                            JSONObject episod=seaEps.getJSONObject(i);
-                            String epName=episod.getString("name");
-                            Log.d("seasonsAndEps","      "+epName);
-                            String epNum=String.valueOf(episod.getInt("episode_number"));
+                    if (jsonSeries.has("season/" + j)) {
+                        ArrayList<Episode> episodes = new ArrayList<>();
+                        JSONObject sea = jsonSeries.getJSONObject("season/" + j);
+                        JSONArray seaEps = sea.getJSONArray("episodes");
+                        String seaName = sea.getString("name");
+                        Log.d("seasonsAndEps", seaName);
+                        for (int i = 0; i < seaEps.length(); i++) {
+                            JSONObject episod = seaEps.getJSONObject(i);
+                            String epName = episod.getString("name");
+                            Log.d("seasonsAndEps", "      " + epName);
+                            String epNum = String.valueOf(episod.getInt("episode_number"));
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = format.parse(episod.getString("air_date"));
 
-                            if (epNum.length()<2) epNum="0"+epNum;
-                            String seaNu=String.valueOf(j);
-                            Integer seaNumber=j;
-                            if (seaNu.length()<2) seaNu="0"+seaNu;
-                            Episode prod=new Episode(epName,seasonName,"S"+seaNu+"E"+epNum,
-                                    id,sea.getInt("season_number"),
+                            if (epNum.length() < 2) epNum = "0" + epNum;
+                            String seaNu = String.valueOf(j);
+                            Integer seaNumber = j;
+                            if (seaNu.length() < 2) seaNu = "0" + seaNu;
+                            Episode prod = new Episode(epName, seasonName, "S" + seaNu + "E" + epNum,
+                                    id, sea.getInt("season_number"),
                                     episod.getInt("id"),
                                     episod.getInt("episode_number"),
-                                    seasonName, poster_path, networks
+                                    seasonName, poster_path, networks, date
                             );
                             //Log.d("EPISODES","Series id: "+prod.series_id+" series num: "+" ep number: "+prod.ep_number);
 
-                            prod.checked=isEpisodeChecked(prod.series_id,"season_"+seaNumber,prod.ep_number);
+                            prod.checked = isEpisodeChecked(prod.series_id, "season_" + seaNumber, prod.ep_number);
                             episodes.add(prod);
                         }
-                        Season comp=new Season(seaName,episodes);
+                        Season comp = new Season(seaName, episodes);
                         companies.add(comp);
-                        Log.d("seasonsAndEps",episodes.size()+"");
-                        Log.d("seasonsAndEps","------------------------------------------------------------");
+                        Log.d("seasonsAndEps", episodes.size() + "");
+                        Log.d("seasonsAndEps", "------------------------------------------------------------");
                     }
 
                 }
@@ -195,6 +198,8 @@ public class Episodes extends Fragment {
                 recyclerView.setAdapter(adapter);
 
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
 

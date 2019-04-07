@@ -22,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +76,7 @@ public class TvSeriesResultSearch extends Fragment {
         activity = getActivity();
         fm = getFragmentManager();
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         trendingTitle = view.findViewById(R.id.textView3);
         airingTitle = view.findViewById(R.id.textView);
@@ -328,6 +327,7 @@ public class TvSeriesResultSearch extends Fragment {
             displayList2();
         }
     };
+
     public static Comparator<JSONObject> compareJSONObject() {
         Comparator comp = new Comparator<JSONObject>(){
             @Override

@@ -11,9 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Friends extends Fragment {
@@ -33,6 +37,11 @@ public class Friends extends Fragment {
     public static ArrayList<FriendsItem> myFriendsItems = new ArrayList<>();
     DatabaseReference dbRef;
     public static String maiil;
+    ArrayList<Map<String, String>> friendsActivity = new ArrayList<>();
+    ListView recentFriendsActivityLv;
+    ArrayList<String> friends=new ArrayList<>();
+    ArrayList<String> friendsEmails=new ArrayList<>();
+    SimpleAdapter simpleAdapter;
 
     @Nullable
     @Override
@@ -50,7 +59,12 @@ public class Friends extends Fragment {
         ctx = getContext();
         maiil = MainActivity.mail.replace(".","_");
 
-        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        recentFriendsActivityLv = view.findViewById(R.id.recent_activity_lv);
+        String[] from = {"text", "date"};
+        int[] to = { android.R.id.text1, android.R.id.text2 };
+
+        simpleAdapter = new SimpleAdapter(ctx, friendsActivity, android.R.layout.simple_list_item_2, from, to);
+        recentFriendsActivityLv.setAdapter(simpleAdapter);
 
         recycler = (RecyclerView) getView().findViewById(R.id.friends_recycler);
         adapter = new FriendsAdapter(getContext(), items, getFragmentManager(),getActivity());
@@ -77,12 +91,33 @@ public class Friends extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 myFriendsItems.clear();
                 data=dataSnapshot;
-                myFriendsItems.clear();
+                friends.clear();
+                friendsEmails.clear();
                 for (DataSnapshot ds: data.child(maiil+"/settings/friends").getChildren()){
                     Log.d("Friends",ds.getKey()+" "+ds.getValue().toString());
                     myFriendsItems.add(new FriendsItem(ds.getKey(), ds.getValue().toString()));
+                    friendsEmails.add(ds.getKey());
+                    friends.add(ds.getValue().toString());
 
                 }
+                //Toast.makeText(ctx, friends.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, friendsEmails.toString(), Toast.LENGTH_SHORT).show();
+                for (DataSnapshot friend: dataSnapshot.getChildren()){ // all users
+                    if (friend.hasChild("recent")){
+                        if (friendsEmails.contains(friend.getKey())){
+                            int index=friendsEmails.indexOf(friend.getKey());
+                            for (DataSnapshot recent: friend.child("recent").getChildren()){ // all recent activities
+                                HashMap <String, String> pair=new HashMap<>();
+                                pair.put("text",friends.get(index)+" "+recent.getValue().toString());
+                                pair.put("date",recent.getKey());
+                                friendsActivity.add(pair);
+                            }
+                        }
+                    }
+                }
+                simpleAdapter.notifyDataSetChanged();
+                recentFriendsActivityLv.invalidate();
+
                 adapter2.notifyDataSetChanged();
                 myFriendsRec.invalidate();
                 if (myFriendsItems.size() == 0){

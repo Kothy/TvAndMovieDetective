@@ -1,7 +1,6 @@
 package com.example.klaud.tvandmoviedetective;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -10,10 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -26,10 +22,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -42,23 +36,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 import com.facebook.login.LoginManager;
-import com.google.firebase.auth.FirebaseAuth;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class MainActivity extends AppCompatActivity
@@ -226,7 +215,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Co sa stlaci v draweri - zobrazenie
-        Toast.makeText(ctx, ""+(item.getItemId()==R.id.nav_myMovies), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, ""+(item.getItemId()==R.id.nav_myMovies), Toast.LENGTH_SHORT).show();
         if (Facebook.isLogged()) displaySelectedScreen(item.getItemId());
         return true;
     }
@@ -508,7 +497,7 @@ public class MainActivity extends AppCompatActivity
         } else if (prefs.getString("class","").contains("Series")){
             displaySelectedScreen(R.id.Tv_Series);
         } else if (prefs.getString("class","").contains("Friends")){
-            Toast.makeText(ctx, "hladam v useroch: "+query, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(ctx, "hladam v useroch: "+query, Toast.LENGTH_SHORT).show();
             Friends.searchResult(query);
         }
     }

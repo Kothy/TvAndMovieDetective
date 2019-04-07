@@ -19,7 +19,6 @@ import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +55,7 @@ public class MovieDetail  extends Fragment {
     static Context ctx;
     Button watchedButton, wantToWatchButton;
     RatingBar ratingBar;
-    Boolean run=true;
+    Boolean run=true, notInCinemasYet=true;
     DatabaseReference dbRef;
     DataSnapshot data;
     ProgressDialog progressDialog;
@@ -77,7 +75,7 @@ public class MovieDetail  extends Fragment {
         ctx=getContext();
         String maiil=MainActivity.mail.replace(".","_");
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         progressDialog =new ProgressDialog(ctx);
         progressDialog.setTitle("Please wait");
@@ -118,14 +116,16 @@ public class MovieDetail  extends Fragment {
 
                 if (data.hasChild(movieId+"/rating")){
                     String rating=data.child(movieId+"/rating").getValue().toString();
-                    Toast.makeText(ctx, "rating je:"+rating+"**", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ctx, "rating je:"+rating+"**", Toast.LENGTH_SHORT).show();
                     //ratingBar.setRating(Float.valueOf(data.child("rating").getValue().toString()));
                 }
                 if (data.hasChild(movieId+"/status") && data.child(movieId+"/status").getValue().equals("want")){
                     inList.setText("Wish list");
                     wantToWatchButton.setVisibility(View.INVISIBLE);
+                    watchedButton.setVisibility(View.VISIBLE);
                     ratingBar.setVisibility(View.GONE);
                     tv_my_rating.setVisibility(View.GONE);
+
                 }
                 else if (data.hasChild(movieId+"/status")  && data.child(movieId+"/status").getValue().equals("watched")){
                     inList.setText("Watch list");
@@ -141,7 +141,7 @@ public class MovieDetail  extends Fragment {
 
 
         ratingBar.setOnRatingBarChangeListener( (rat,num,user) ->{
-            //Toast.makeText(ctx, "You rated "+title+" "+num, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, "You rated "+title+" "+num, Toast.LENGTH_SHORT).show();
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = db.getReference("/users/"+maiil+"/movies/"+movieId);
             Map<String, Object> childUpdates = new HashMap<>();
@@ -276,6 +276,7 @@ public class MovieDetail  extends Fragment {
             return result;
         }
         protected void onPostExecute(String result){
+            //Toast.makeText(ctx, "on post execute", Toast.LENGTH_SHORT).show();
             try {
                 jsonMovie=new JSONObject(result);
                 poster_path=jsonMovie.getString("poster_path");
@@ -284,12 +285,13 @@ public class MovieDetail  extends Fragment {
                 String [] date=dateInBaseFormat.split("-");
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Date datedate = sdf.parse(dateInBaseFormat);
-                if (datedate.getTime() >= System.currentTimeMillis()){
+                if (datedate.getTime() >= System.currentTimeMillis()){// ak film ešte nebol v kinách
                     //Toast.makeText(ctx, "este nevyslo", Toast.LENGTH_SHORT).show();
-                    wantToWatchButton.setVisibility(View.INVISIBLE);
-                    ratingBar.setVisibility(View.GONE);
-                    tv_my_rating.setVisibility(View.GONE);
+                    watchedButton.setVisibility(View.GONE);
+                    notInCinemasYet=true;
                 }
+
+
                 tv_length.setText(jsonMovie.getString("runtime")+" min.");
                 tv_release_date.setText(date[2]+"."+date[1]+"."+date[0]);
                 tv_rating.setText(((int)(jsonMovie.getDouble("vote_average")*10))+"%");
@@ -395,7 +397,6 @@ public class MovieDetail  extends Fragment {
 
             adapter.notifyDataSetChanged();
             castLv.invalidate();
-            //Toast.makeText(getContext(), "dokoncil som pracu s jsonom: ", Toast.LENGTH_SHORT).show();
         }
     };
 }

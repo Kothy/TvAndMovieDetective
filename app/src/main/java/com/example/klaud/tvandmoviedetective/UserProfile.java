@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,13 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class UserProfile extends Fragment {
@@ -48,7 +45,7 @@ public class UserProfile extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ctx=getContext();
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         tvMoviesWant = view.findViewById(R.id.users_movies_want);
         tvMoviesWatched = view.findViewById(R.id.users_movies_watched);
@@ -139,7 +136,7 @@ public class UserProfile extends Fragment {
                         recycler2.invalidate();
                     }
                     if (dataSnapshot.hasChild("series")){
-                        Toast.makeText(ctx, "naslo sa series", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ctx, "naslo sa series", Toast.LENGTH_SHORT).show();
                         seriesItems.clear();
                         for (DataSnapshot ds: dataSnapshot.child("series").getChildren()){
                             SeriesItem si=new SeriesItem(ds.child("name").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));

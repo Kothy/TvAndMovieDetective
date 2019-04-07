@@ -10,17 +10,16 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHolder> {
@@ -29,7 +28,7 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
-
+    private int position;
 
     public MySeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity){
         this.contex=ctx;
@@ -37,12 +36,15 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
         this.items = imageModelArrayList;
         this.fm=fm;
         this.activity=activity;
+
     }
+
+    public int getPosition() { return position; }
+    public void setPosition(int position) { this.position = position; }
 
     @Override
     public MySeriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.my_shows_recycler_item, parent, false);
-
 
         MySeriesAdapter.ViewHolder holder = new MySeriesAdapter.ViewHolder(view);
         return holder;
@@ -64,7 +66,9 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
             String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
+
         holder.title.setText(items.get(position).getName());
+
         holder.parentLayout.setOnClickListener(click -> {
 
             Fragment fragment;
@@ -82,9 +86,7 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
             drawer.closeDrawer(GravityCompat.START);
 
         });
-        holder.contextB.setOnClickListener(click ->{
-            Toast.makeText(contex, "tu vybehne contextMenu", Toast.LENGTH_SHORT).show();
-        });
+
     }
 
     @Override
@@ -92,21 +94,30 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         TextView title, second, third;
         ImageView iv;
         ConstraintLayout parentLayout;
-        Button contextB;
+        //Button contextB;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            contextB = (Button) itemView.findViewById(R.id.button8);
+            //contextB = (Button) itemView.findViewById(R.id.button8);
             second = (TextView) itemView.findViewById(R.id.textView6);
             third = (TextView) itemView.findViewById(R.id.seaAndEpNum2);
             title = (TextView) itemView.findViewById(R.id.season2);
             iv = (ImageView) itemView.findViewById(R.id.itemImage2);
             parentLayout = (ConstraintLayout) itemView.findViewById(R.id.parent_layoutItem2);
+            parentLayout.setOnCreateContextMenuListener(this);
+
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            //menuInfo is null
+            menu.add(Menu.NONE, 1, getAdapterPosition(), "Remove");
+            menu.add(Menu.NONE, 2, getAdapterPosition(), "Mark next episode as watched");
         }
     }
 }

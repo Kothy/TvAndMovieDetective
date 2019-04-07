@@ -22,8 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +58,7 @@ public class MoviesResultSearch extends Fragment {
     public static FragmentManager fm;
     public static Activity actvity;
     public static ArrayList<DetailsForSearch> detailsPool=new ArrayList<>();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,8 +79,6 @@ public class MoviesResultSearch extends Fragment {
         this.fm=getFragmentManager();
         ctx=getContext();
         actvity=getActivity();
-
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         trendingTitle= view.findViewById(R.id.textView);
         theatresTitle = view.findViewById(R.id.textView3);

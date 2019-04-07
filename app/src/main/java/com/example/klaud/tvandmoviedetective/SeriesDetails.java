@@ -22,7 +22,7 @@ import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,11 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -83,7 +81,7 @@ public class SeriesDetails extends Fragment {
         ctx=getContext();
         tv = view.findViewById(R.id.textView40);
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         String maiil=MainActivity.mail.replace(".","_");
 
@@ -161,7 +159,7 @@ public class SeriesDetails extends Fragment {
 
         ratingBar.setOnRatingBarChangeListener( (rat,num,user) ->{
             FirebaseDatabase db = FirebaseDatabase.getInstance();
-
+            Toast.makeText(ctx, "You rated "+title+" "+num, Toast.LENGTH_SHORT).show();
             DatabaseReference dbRef = db.getReference("/users/"+maiil+"/series/"+Id);
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("name", title);
@@ -177,7 +175,7 @@ public class SeriesDetails extends Fragment {
         });
 
         addToFavouriteButton.setOnClickListener(click -> {
-            Toast.makeText(ctx, "Pridavam do Firebasu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, title+" added to your favourite tv show.", Toast.LENGTH_SHORT).show();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = database.getReference("users/"+
                     MainActivity.mail.replace(".","_")

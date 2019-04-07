@@ -3,7 +3,6 @@ package com.example.klaud.tvandmoviedetective;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,16 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHolder>{
     private LayoutInflater inflater;
@@ -51,7 +43,7 @@ public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHo
     public void onBindViewHolder(MyFriendAdapter.ViewHolder holder, int position) {
         holder.nickname.setText(items.get(position).nickname);
         holder.parentLayout.setOnClickListener(click -> {
-            Toast.makeText(contex, "presmerovanie na nahlad pouyivatela", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(contex, "presmerovanie na nahlad pouyivatela", Toast.LENGTH_SHORT).show();
 
             Fragment fragment;
             fragment = new UserProfile();

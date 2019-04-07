@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MyMoviesWatched extends Fragment {
     public Context ctx;
@@ -48,7 +49,7 @@ public class MyMoviesWatched extends Fragment {
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new GridLayoutManager(view.getContext(),3));
 
-        Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         String mail=MainActivity.mail.replace(".","_");
@@ -76,6 +77,7 @@ public class MyMoviesWatched extends Fragment {
                         dbRef.removeValue();
                     }
                 }
+                Collections.sort(items, compareMovieItems());
                 adapter.notifyDataSetChanged();
                 recycler.invalidate();
             }
@@ -89,5 +91,15 @@ public class MyMoviesWatched extends Fragment {
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
+    }
+
+    public Comparator<MovieItem> compareMovieItems() {
+        Comparator comp = new Comparator<MovieItem>(){
+            @Override
+            public int compare(MovieItem mi1, MovieItem mi2) {
+                return mi1.getName().compareTo(mi2.getName());
+            }
+        };
+        return comp;
     }
 }

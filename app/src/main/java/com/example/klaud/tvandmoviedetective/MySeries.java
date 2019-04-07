@@ -1,6 +1,7 @@
 package com.example.klaud.tvandmoviedetective;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,10 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,15 +25,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.select.Evaluator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.Comparator;
 import java.util.TreeMap;
-import java.util.TreeSet;
+
+import static android.content.ContentValues.TAG;
 
 public class MySeries extends Fragment {
     MySeriesAdapter adapter;
@@ -74,6 +75,8 @@ public class MySeries extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
+        registerForContextMenu(recycler);
+
     }
     private void showData(DataSnapshot snapshot){
         items.clear();
@@ -105,6 +108,7 @@ public class MySeries extends Fragment {
                 }
                 items.add(si);
             }
+            Collections.sort(items,compareSeriesItem());
             adapter.notifyDataSetChanged();
             recycler.invalidate();
         }
@@ -116,5 +120,52 @@ public class MySeries extends Fragment {
         if (bundle != null) {
 
         }
+    }
+
+    public static Comparator<SeriesItem> compareSeriesItem() {
+        Comparator comp = new Comparator<SeriesItem>(){
+            @Override
+            public int compare(SeriesItem si1, SeriesItem si2) {
+                return si1.getName().compareTo(si2.getName());
+            }
+        };
+        return comp;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int index=item.getOrder();
+        SeriesItem series=items.get(index);
+        switch (item.getItemId()) {
+            case 1:
+                String mail = MainActivity.mail.replace(".","_");
+                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("users/"+mail+"/series/"+items.get(index).getId());
+                dbRef.removeValue();
+                items.remove(index);
+                adapter.notifyDataSetChanged();
+                recycler.invalidate();
+                break;
+            case 2:
+                String pattern = "https://api.themoviedb.org/3/tv/%d/season/%d/episode/%d?api_key=1a9919c2a864cb40ce1e4c34f3b9e2c4&language=en-US";
+                String seasonAndEpLastSeen = series.lastSeen;
+                if (seasonAndEpLastSeen == null){
+                    EpisodeFounder ef = new EpisodeFounder();
+                    ef.execute(pattern, series.getId()+"", "1","0");
+                    while (ef.getStatus() == AsyncTask.Status.RUNNING){}
+
+                }
+                else {
+                    seasonAndEpLastSeen = seasonAndEpLastSeen.replace("S","");
+                    String [] numSeaAndEp=seasonAndEpLastSeen.split("E");
+
+                    EpisodeFounder ef = new EpisodeFounder();
+                    ef.execute(pattern, series.getId()+"", numSeaAndEp[0],numSeaAndEp[1]);
+                    //while (ef.getStatus() == AsyncTask.Status.RUNNING){}
+
+                }
+
+                break;
+        }
+        return super.onContextItemSelected(item);
     }
 }
