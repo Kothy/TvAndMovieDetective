@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,19 +157,50 @@ public class Facebook extends Fragment {
     }
 
     public static void setMailToDrawer(){
-        GraphRequest request = GraphRequest.newMeRequest(getAccessToken(), (JSONObject object, GraphResponse response) ->{
+        GraphRequest request = GraphRequest.newMeRequest(getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        //Log.d("ERROR FCB",object.toString());
+                        try {
+                            MainActivity.mail = object.getString("email");
+                            email = object.getString("email");
+                            MainActivity.editor.putString("login", email);
+                            MainActivity.editor.apply();
+
+                            View headerView = MainActivity.navigationView.getHeaderView(0);
+                            TextView navUsername = (TextView) headerView.findViewById(R.id.drawerEmailTextView);
+                            navUsername.setText(email);
+
+                            if (email!= null || !email.equals(null)) {
+                                handleLogin(email);
+                            }
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "name,email");
+        request.setParameters(parameters);
+        request.executeAsync();
+
+        /*GraphRequest request = GraphRequest.newMeRequest(getAccessToken(), (JSONObject object, GraphResponse response) -> {
             try {
-                MainActivity.mail=object.getString("email");
+                MainActivity.mail = object.getString("email");
                 email = object.getString("email");
 
-                View headerView = MainActivity.navigationView.getHeaderView(0);
-                TextView navUsername = (TextView) headerView.findViewById(R.id.drawerEmailTextView);
-                navUsername.setText(email);
+                MainActivity.editor.putString("login", email);
+                MainActivity.editor.apply();
 
-                if (email!= null || !email.equals(null)) {
-                    //Toast.makeText(MainActivity.ctx, "handlujem usera", Toast.LENGTH_SHORT).show();
-                    handleLogin(email);
-                }
+                    View headerView = MainActivity.navigationView.getHeaderView(0);
+                    TextView navUsername = (TextView) headerView.findViewById(R.id.drawerEmailTextView);
+                    navUsername.setText(email);
+
+                    if (email!= null || !email.equals(null)) {
+                        handleLogin(email);
+                    }
 
 
             } catch (JSONException e) {
@@ -178,7 +210,7 @@ public class Facebook extends Fragment {
         Bundle parameters = new Bundle();
         parameters.putString("fields", "id,name,email,gender,birthday");
         request.setParameters(parameters);
-        request.executeAsync();
+        request.executeAsync();*/
     }
     public  void openMovieFragment(){
         Fragment fragment = new MoviesResultSearch();

@@ -22,12 +22,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     private LayoutInflater inflater;
     private ArrayList<MovieItem> items;
-    private Context contex;
+    //private Context contex;
     private FragmentManager fm;
     private Activity activity;
 
     public MovieAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+        //this.contex=ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
         this.fm=fm;

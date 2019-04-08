@@ -80,6 +80,8 @@ public class MoviesResultSearch extends Fragment {
         ctx=getContext();
         actvity=getActivity();
 
+        MainActivity.appbar.setVisibility(View.INVISIBLE);
+
         trendingTitle= view.findViewById(R.id.textView);
         theatresTitle = view.findViewById(R.id.textView3);
         theatresTitle.setVisibility(View.INVISIBLE);

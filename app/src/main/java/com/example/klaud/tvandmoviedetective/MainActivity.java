@@ -18,7 +18,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,7 +38,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
-//import android.widget.Toast;
+import android.widget.Toast;
 import com.facebook.login.LoginManager;
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,8 +52,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.zip.GZIPInputStream;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DownloadManager downloadManager;
     ArrayList<Long> list = new ArrayList<>();
     ProgressDialog pd;
@@ -59,19 +60,33 @@ public class MainActivity extends AppCompatActivity
     public static SharedPreferences prefs;
     public static ArrayList<String> movies=new ArrayList<>();
     public static ArrayList<String> series=new ArrayList<>();
-    public static ArrayList<String> persons=new ArrayList<>();
+    //public static ArrayList<String> persons=new ArrayList<>();
     String st[]={"movie_ids_","tv_series_ids_","person_ids_"};
     public static NavigationView navigationView;
     public static DrawerLayout drawer;
     public static TextView noInt;
     public static String mail=null;
-    //private static FirebaseAuth mAuth;
     public static Context ctx;
     public static AppBarLayout appbar;
     public static TabLayout tabLayout;
     public static ViewPager viewPager;
     SearchView searchView;
     static FragmentManager fragManager;
+    ConstraintLayout mainLay;
+    Boolean isEmptyFragVisible=false;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Snackbar.make(mainLay, "onResume() main", Snackbar.LENGTH_LONG).show();
+        if (isInternet()){
+            if ((series.size() == 0 || movies.size() == 0)){
+                //if (!pd.isShowing()) pd.show();
+                checkIfExistFileAndUnpack();
+                //if (pd.isShowing()) pd.dismiss();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +104,8 @@ public class MainActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        mainLay = findViewById(R.id.mainLay);
 
-        //mAuth = FirebaseAuth.getInstance();
         Fragment face=new Facebook();
         pd=new ProgressDialog(this);
 
@@ -122,6 +137,7 @@ public class MainActivity extends AppCompatActivity
 
         noInt = findViewById(R.id.noInternet);
         noInt.setVisibility(View.INVISIBLE);
+        isEmptyFragVisible = false;
         try {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // toto budem este riesit
                 int hasReadContactPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -136,29 +152,88 @@ public class MainActivity extends AppCompatActivity
         downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
+        checkIfExistFileAndUnpack();
+
+        if (isInternet()) {
+            noInt.setVisibility(View.INVISIBLE);
+            isEmptyFragVisible = false;
+            opennigFragment();
+            if (Facebook.isLogged()) {
+                if (MainActivity.prefs.getString("login","").equals("")) {
+                    //Toast.makeText(ctx, "setujem z FACEBOOKU", Toast.LENGTH_SHORT).show();
+                    Facebook.setMailToDrawer();
+                }
+                else {
+                    //Toast.makeText(ctx, "setujem y preferencies", Toast.LENGTH_SHORT).show();
+                    View headerView2 = MainActivity.navigationView.getHeaderView(0);
+                    TextView navUsername2 = (TextView) headerView2.findViewById(R.id.drawerEmailTextView);
+                    navUsername.setText(MainActivity.prefs.getString("login",""));
+                }
+            }
+        }
+        handleIntent(getIntent());
+
+        new Thread(new Runnable() {
+            public void run() {
+                Boolean boo = false, foo = true;
+                Looper.prepare();
+                while (true){
+                    if (isInternet() == false && boo == false){
+                        //Toast.makeText(MainActivity.this, "toast", Toast.LENGTH_SHORT).show();
+                        boo = true;
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.content_frame, new EmptyFragment());
+                        ft.commit();
+                        foo = false;
+                        setTitle("No internet connection");
+                        appbar.setVisibility(View.INVISIBLE);
+                        Snackbar.make(mainLay, "No internet connection", Snackbar.LENGTH_LONG).show();
+                    }
+                    else if (isInternet()) boo = false;
+
+                    if (MainActivity.mail == null) MainActivity.mail = MainActivity.prefs.getString("login","");
+                    if (isInternet() && foo == false){
+                        opennigFragment();
+                        foo = true;
+
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }).start();
+
+    }
+    private void checkIfExistFileAndUnpack(){
         if (!fileExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Detective/" + "movie_ids_" + getYesterdayDate() + ".json")
                 && isInternet()){
-            //Toast.makeText(this, "subor neexistuje - stahujem a rozbalujem a nacitavam", Toast.LENGTH_LONG).show();
+            if (pd.isShowing() == false) pd.show();
             noInt.setVisibility(View.INVISIBLE);
+            isEmptyFragVisible = false;
             download();
         } else if (isInternet()) {
-            unregisterReceiver(onComplete);
-            if (unpack.getStatus() != AsyncTask.Status.RUNNING) unpack.execute(st[0] + getYesterdayDate(), st[1] + getYesterdayDate(), "load","load"); // iba nacitava reporty
-            //Toast.makeText(this, "subor existuje--*---*---*--- iba nacitavam", Toast.LENGTH_LONG).show();
+            try {
+                unregisterReceiver(onComplete);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                Log.e("Receiver Error", e.getMessage());
+            }
+            if (unpack.getStatus() != AsyncTask.Status.RUNNING && (series.size() == 0 || movies.size() == 0))
+                unpack.execute(st[0] + getYesterdayDate(), st[1] + getYesterdayDate(), "load","load"); // iba nacitava reporty
+
             noInt.setVisibility(View.INVISIBLE);
+            isEmptyFragVisible = false;
         } else {
+            isEmptyFragVisible = true;
             noInt.setVisibility(View.VISIBLE);
         }
 
         //if (isInternet()) displaySelectedScreen(R.id.movie);
-        if (isInternet()) {
-            noInt.setVisibility(View.INVISIBLE);
-            opennigFragment();
-            if (Facebook.isLogged()) {
-                Facebook.setMailToDrawer();
-            }
-        }
-        handleIntent(getIntent());
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -235,7 +310,12 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
     private void displaySelectedScreen(int itemId) {
-
+        if (!isInternet()) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            }
+            return;
+        }
         Fragment fragment = null;
         appbar.setVisibility(View.INVISIBLE);
         viewPager.setAdapter(null);
@@ -382,6 +462,7 @@ public class MainActivity extends AppCompatActivity
         cal.add(Calendar.DATE, -1);
         return dateFormat.format(cal.getTime());
     }
+
     BroadcastReceiver onComplete = new BroadcastReceiver() {
 
         public void onReceive(Context ctxt, Intent intent) {
@@ -420,7 +501,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             pd.dismiss();
-            Log.d("Movies",movies.size()+" "+persons.size()+" "+series.size());
+            Log.d("Movies",movies.size()+" "+series.size());
         }
 
         @Override

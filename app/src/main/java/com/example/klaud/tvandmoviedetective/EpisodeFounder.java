@@ -1,13 +1,10 @@
 package com.example.klaud.tvandmoviedetective;
 
 import android.os.AsyncTask;
-import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;

@@ -68,6 +68,18 @@ public class MovieDetail  extends Fragment {
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.movie_detail, container, false);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //Toast.makeText(ctx, "onStart()", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Toast.makeText(ctx, "onResume()", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
