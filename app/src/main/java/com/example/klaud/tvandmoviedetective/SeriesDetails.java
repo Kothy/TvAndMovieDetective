@@ -94,7 +94,7 @@ public class SeriesDetails extends Fragment {
 
         //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
-        String maiil=MainActivity.mail.replace(".","_");
+        String maiil=MainActivity.prefs.getString("login","").replace(".","_");
 
         progressDialog=new ProgressDialog(ctx);
         progressDialog.setTitle("Please wait");
@@ -189,7 +189,7 @@ public class SeriesDetails extends Fragment {
             Toast.makeText(ctx, title+" added to your favourite tv show.", Toast.LENGTH_SHORT).show();
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference dbRef = database.getReference("users/"+
-                    MainActivity.mail.replace(".","_")
+                    MainActivity.prefs.getString("login","").replace(".","_")
                     +"/series/"+Id);
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("name", title);

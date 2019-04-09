@@ -52,7 +52,7 @@ public class MyMovies extends Fragment {
         //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        String mail=MainActivity.mail.replace(".","_");
+        String mail=MainActivity.prefs.getString("login","").replace(".","_");
         DatabaseReference dbRef = database.getReference("users/"+mail+"/movies");
 
         dbRef.addValueEventListener(new ValueEventListener() {

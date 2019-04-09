@@ -63,7 +63,7 @@ public class MySeries extends Fragment {
         MainActivity.viewPager.setVisibility(View.GONE);
         MainActivity.tabLayout.setVisibility(View.GONE);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        String mail=MainActivity.mail.replace(".","_");
+        String mail = MainActivity.prefs.getString("login","").replace(".","_");
         DatabaseReference dbRef = database.getReference("users/"+mail+"/series");
 
         dbRef.addValueEventListener(new ValueEventListener() {

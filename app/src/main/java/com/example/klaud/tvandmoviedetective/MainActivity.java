@@ -2,6 +2,8 @@ package com.example.klaud.tvandmoviedetective;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -18,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
@@ -25,6 +28,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -38,8 +43,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.facebook.login.LoginManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +59,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DownloadManager downloadManager;
@@ -60,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static SharedPreferences prefs;
     public static ArrayList<String> movies=new ArrayList<>();
     public static ArrayList<String> series=new ArrayList<>();
-    //public static ArrayList<String> persons=new ArrayList<>();
     String st[]={"movie_ids_","tv_series_ids_","person_ids_"};
     public static NavigationView navigationView;
     public static DrawerLayout drawer;
@@ -74,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static FragmentManager fragManager;
     ConstraintLayout mainLay;
     Boolean isEmptyFragVisible=false;
+    static NotificationManager notificationManager;
+    DatabaseReference dbRef;
+    static DataSnapshot dataSnap;
 
     @Override
     public void onResume() {
@@ -81,10 +97,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Snackbar.make(mainLay, "onResume() main", Snackbar.LENGTH_LONG).show();
         if (isInternet()){
             if ((series.size() == 0 || movies.size() == 0)){
-                //if (!pd.isShowing()) pd.show();
                 checkIfExistFileAndUnpack();
-                //if (pd.isShowing()) pd.dismiss();
             }
+        }
+        //sendNotification();
+    }
+
+    public  void sendNotification(String text, String title) {
+        createNotificationChannel();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.ctx, "9999")
+                .setSmallIcon(R.drawable.ic_delete_black_24dp)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(text))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        Random rand=new Random();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.ctx);
+        notificationManager.notify((rand.nextInt((100000000 - 1) + 1) + 1), builder.build());
+
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("9999", "NotifChannel", importance);
+            channel.setDescription("Notifications for TvAndMovieDetective");
+            NotificationManager notificationManager = MainActivity.notificationManager;
+            notificationManager.createNotificationChannel(channel);
         }
     }
 
@@ -95,6 +135,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ctx=getApplicationContext();
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            notificationManager = getSystemService(NotificationManager.class);
+        }
+
+        // spustenie periodickej práce
+        PeriodicWorkRequest periodicWork = new PeriodicWorkRequest.Builder(BackService.class, 10, TimeUnit.SECONDS).build();
+        WorkManager.getInstance().enqueue(periodicWork);
+        //----------------------------------------------------
 
         fragManager=getSupportFragmentManager();
         appbar = findViewById(R.id.barWithTabs);
@@ -207,7 +256,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }).start();
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String maiil = MainActivity.prefs.getString("login","").replace(".", "_");
+        dbRef = database.getReference("users/"+maiil);
+
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataSnap=dataSnapshot;
+                //Log.d("DATABAZA", System.currentTimeMillis()+"");
+                if (dataSnap.hasChild("movies")){
+                    DataSnapshot movies = dataSnap.child("movies");
+                    for (DataSnapshot movie : movies.getChildren()){
+                        if (movie.hasChild("status") && movie.child("status").getValue().toString().equals("want")){
+                            if (movie.hasChild("release_date")){
+                                Long movieMillisec = Long.decode(movie.child("release_date").getValue().toString());
+                                if (movieMillisec > System.currentTimeMillis()){
+                                    //Log.d("DATABAZA",movie.child("title").getValue().toString());
+
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+
+                                    Date currDate = new Date(System.currentTimeMillis());
+                                    Date movieDate = new Date(movieMillisec);
+
+                                    Calendar c2 = Calendar.getInstance();
+                                    c2.setTime(currDate);
+                                    c2.add(Calendar.DATE, +2);
+                                    currDate = c2.getTime();
+
+                                    //Log.d("DATABAZA", movie.child("title").getValue().toString()+": "+ sdf.format(movieDate) + " == " + sdf.format(currDate));
+
+                                    if (sdf.format(movieDate).equals(sdf.format(currDate))){
+
+                                        sendNotification("In theatres in 2 days." , movie.child("title").getValue().toString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
     }
+
     private void checkIfExistFileAndUnpack(){
         if (!fileExist(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Detective/" + "movie_ids_" + getYesterdayDate() + ".json")
                 && isInternet()){
@@ -233,7 +328,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         //if (isInternet()) displaySelectedScreen(R.id.movie);
-
     }
 
     private void setupViewPager(ViewPager viewPager) {

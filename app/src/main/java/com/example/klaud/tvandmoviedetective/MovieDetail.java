@@ -59,6 +59,7 @@ public class MovieDetail  extends Fragment {
     DatabaseReference dbRef;
     DataSnapshot data;
     ProgressDialog progressDialog;
+    Date release_date;
 
     @Nullable
     @Override
@@ -85,7 +86,8 @@ public class MovieDetail  extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Movie Details");
         ctx=getContext();
-        String maiil=MainActivity.mail.replace(".","_");
+
+        String maiil=MainActivity.prefs.getString("login","").replace(".","_");
 
         //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
@@ -160,7 +162,8 @@ public class MovieDetail  extends Fragment {
             childUpdates.put("status", "watched");
             childUpdates.put("title", title);
             childUpdates.put("poster_path", poster_path);
-            childUpdates.put("rating",""+num);
+            childUpdates.put("rating","" + num);
+            childUpdates.put("release_date", release_date.getTime()+"");
             dbRef.updateChildren(childUpdates);
 
             dbRef = db.getReference("/users/"+maiil+"/recent/");
@@ -187,6 +190,7 @@ public class MovieDetail  extends Fragment {
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("status", "watched");
             childUpdates.put("title", title);
+            childUpdates.put("release_date", release_date.getTime()+"");
             childUpdates.put("poster_path", poster_path);
 
             dbRef.updateChildren(childUpdates);
@@ -206,6 +210,7 @@ public class MovieDetail  extends Fragment {
             childUpdates.put("status", "want");
             childUpdates.put("title", title);
             childUpdates.put("poster_path", poster_path);
+            childUpdates.put("release_date", release_date.getTime()+"");
             childUpdates.put("rating","");
             dbRef.updateChildren(childUpdates);
 
@@ -296,8 +301,9 @@ public class MovieDetail  extends Fragment {
                 String dateInBaseFormat=jsonMovie.getString("release_date");
                 String [] date=dateInBaseFormat.split("-");
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date datedate = sdf.parse(dateInBaseFormat);
-                if (datedate.getTime() >= System.currentTimeMillis()){// ak film ešte nebol v kinách
+                release_date = sdf.parse(dateInBaseFormat);
+
+                if (release_date.getTime() >= System.currentTimeMillis()){// ak film ešte nebol v kinách
                     //Toast.makeText(ctx, "este nevyslo", Toast.LENGTH_SHORT).show();
                     watchedButton.setVisibility(View.GONE);
                     notInCinemasYet=true;

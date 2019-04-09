@@ -82,7 +82,7 @@ public class Episodes extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        String mail=MainActivity.mail.replace(".","_");
+        String mail = MainActivity.prefs.getString("login","").replace(".","_");
         DatabaseReference dbRef = database.getReference("users/"+mail+"/series");
 
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {

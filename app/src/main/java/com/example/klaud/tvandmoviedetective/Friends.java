@@ -54,7 +54,7 @@ public class Friends extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Friends");
         ctx = getContext();
-        maiil = MainActivity.mail.replace(".","_");
+        maiil = MainActivity.prefs.getString("login","").replace(".","_");
 
         recentFriendsActivityLv = view.findViewById(R.id.recent_activity_lv);
         String[] from = {"text", "date"};

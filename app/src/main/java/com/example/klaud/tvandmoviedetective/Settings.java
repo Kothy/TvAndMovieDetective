@@ -46,7 +46,7 @@ public class Settings extends Fragment {
         swit = view.findViewById(R.id.switch1);
         clearRecent = view.findViewById(R.id.clear_recent_button);
 
-        if (MainActivity.mail.equals("kada11@azet.sk")){
+        if (MainActivity.prefs.getString("login","").equals("kada11@azet.sk")){
             clearRecent.setVisibility(View.VISIBLE);
         }
         else clearRecent.setVisibility(View.INVISIBLE);
