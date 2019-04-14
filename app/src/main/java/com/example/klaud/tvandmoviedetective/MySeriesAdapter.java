@@ -15,11 +15,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHolder> {
@@ -30,17 +30,22 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
     private Activity activity;
     private int position;
 
-    public MySeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+    public MySeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
 
     }
 
-    public int getPosition() { return position; }
-    public void setPosition(int position) { this.position = position; }
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     @Override
     public MySeriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,16 +59,16 @@ public class MySeriesAdapter extends RecyclerView.Adapter<MySeriesAdapter.ViewHo
     public void onBindViewHolder(MySeriesAdapter.ViewHolder holder, int position) {
 
         holder.second.setText(items.get(position).network);
-        if (items.get(position).lastSeen==null){
+        if (items.get(position).lastSeen == null) {
             holder.third.setText("Not seen any episode");
         } else {
-            holder.third.setText("Last seen episode: "+items.get(position).lastSeen);
+            holder.third.setText("Last seen episode: " + items.get(position).lastSeen);
         }
 
-        if (items.get(position).equals("null")){
+        if (items.get(position).equals("null")) {
             holder.iv.setImageResource(R.drawable.nopicture);
         } else {
-            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+            String url = String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
 

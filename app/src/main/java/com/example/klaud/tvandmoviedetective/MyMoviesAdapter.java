@@ -17,34 +17,37 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
-public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHolder>{
+public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHolder> {
 
+    boolean resize = false;
     private LayoutInflater inflater;
     private ArrayList<MovieItem> items;
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
     private int position;
-    boolean resize=false;
 
-    public MyMoviesAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+    public MyMoviesAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
     }
-    public MyMoviesAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity, boolean boo){
-        this.contex=ctx;
+
+    public MyMoviesAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity, boolean boo) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
-        resize=boo;
+        this.fm = fm;
+        this.activity = activity;
+        resize = boo;
     }
 
     public int getPosition() {
@@ -64,20 +67,20 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (items.get(position).getPoster_path()!=null && items.get(position).getPoster_path().equals("null")){
+        if (items.get(position).getPoster_path() != null && items.get(position).getPoster_path().equals("null")) {
             holder.iv.setImageResource(items.get(position).getImage_drawable());
         } else {
-            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+            String url = String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
 
         holder.time.setText(items.get(position).getName());
-        holder.parentLayout.setOnClickListener(click ->{
+        holder.parentLayout.setOnClickListener(click -> {
             Fragment fragment = null;
             fragment = new MovieDetail();
             Bundle bundle = new Bundle();
             bundle.putString("id", items.get(position).getId().toString());
-            bundle.putString("title",items.get(position).getName());
+            bundle.putString("title", items.get(position).getName());
 
             fragment.setArguments(bundle);
             if (fragment != null) {
@@ -89,8 +92,8 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
             drawer.closeDrawer(GravityCompat.START);
         });
 
-        holder.parentLayout.setOnLongClickListener((click) ->{
-            String mail=MainActivity.mail.replace(".","_");
+        holder.parentLayout.setOnLongClickListener((click) -> {
+            String mail = MainActivity.mail.replace(".", "_");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(contex);
             builder.setMessage("Are you sure you want to remove this item ?")
@@ -103,13 +106,14 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
                     })
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            FirebaseDatabase.getInstance().getReference("/users/"+mail+"/movies/"+items.get(position).getId()).removeValue();
+                            FirebaseDatabase.getInstance().getReference("/users/" + mail + "/movies/" + items.get(position).getId()).removeValue();
                             items.remove(position);
                             notifyDataSetChanged();
                             if (MyMovies.recycler != null) MyMovies.recycler.invalidate();
-                            if (MyMoviesWatched.recycler != null) MyMoviesWatched.recycler.invalidate();
+                            if (MyMoviesWatched.recycler != null)
+                                MyMoviesWatched.recycler.invalidate();
                         }
-            });
+                    });
             AlertDialog alert = builder.create();
             alert.show();
 
@@ -123,7 +127,7 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView time;
         ImageView iv;
@@ -134,9 +138,9 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.ViewHo
             time = (TextView) itemView.findViewById(R.id.tvTitle);
             iv = (ImageView) itemView.findViewById(R.id.itemImage);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
-            if (resize){
-                iv.getLayoutParams().height=180;
-                iv.getLayoutParams().width=160;
+            if (resize) {
+                iv.getLayoutParams().height = 180;
+                iv.getLayoutParams().width = 160;
             }
 
         }

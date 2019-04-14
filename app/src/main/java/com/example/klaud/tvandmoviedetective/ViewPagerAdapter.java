@@ -3,6 +3,7 @@ package com.example.klaud.tvandmoviedetective;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +30,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         mFragmentTitleList.add(title);
         notifyDataSetChanged();
     }
-    public void removeAll(){
+
+    public void removeAll() {
         mFragmentTitleList.clear();
         mFragmentList.clear();
         notifyDataSetChanged();
     }
+
     @Override
-    public int getItemPosition (Object object)
-    {
+    public int getItemPosition(Object object) {
         int index = mFragmentList.indexOf(object);
         if (index == -1)
             return POSITION_NONE;

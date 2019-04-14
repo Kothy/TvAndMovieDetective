@@ -19,16 +19,18 @@ public class EmptyFragment extends Fragment {
         MainActivity.appbar.setVisibility(View.VISIBLE);
         return inflater.inflate(R.layout.empty, container, false);
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //getActivity().setTitle("");
-        ctx=getContext();
+        ctx = getContext();
 
 
     }
+
     @Override
-    public void onActivityCreated (Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
 

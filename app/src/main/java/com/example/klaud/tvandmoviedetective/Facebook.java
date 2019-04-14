@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -28,87 +30,29 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Facebook extends Fragment {
+    private static final String EMAIL = "email";
+    public static AccessToken accessToken;
+    public static String email = "";
+    public static FirebaseAuth mAuth;
+    static TextView drawerTV;
     CallbackManager callbackManager;
     LoginButton loginButton;
-    public static AccessToken accessToken;
-    private static final String EMAIL = "email";
-    public static String email="";
-    static TextView drawerTV;
-    public static FirebaseAuth mAuth;
     Context ctx;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.facebook, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Log in");
-        loginButton = (LoginButton) view.findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email","public_profile");
-        loginButton.setFragment(this);
-        drawerTV = view.findViewById(R.id.drawerEmailTextView);
-        callbackManager = CallbackManager.Factory.create();
-        ctx =view.getContext();
-        mAuth = FirebaseAuth.getInstance();
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                accessToken= AccessToken.getCurrentAccessToken();
-                setMailToDrawer();
-
-                /*ProgressDialog pd=new ProgressDialog(ctx);
-
-                pd.setTitle("Logging in...");
-                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                pd.setCancelable(false);
-                pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
-                pd.setMax(100);
-                pd.show();*/
-
-                //while (MainActivity.mail== null || MainActivity.mail.equals("")){}
-
-                //pd.dismiss();
-                openMovieFragment();
-            }
-
-            @Override
-            public void onCancel() {
-                //Toast.makeText(getContext(), "Prihlasenie sa zrusilo", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                //Toast.makeText(getContext(), "Exception vyhodeny", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-    @Override
-    public void onActivityCreated (Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-    }
-    @Override
-     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-
-    }
-    public static AccessToken getAccessToken(){
+    public static AccessToken getAccessToken() {
         return AccessToken.getCurrentAccessToken();
     }
 
-    public static Boolean isLogged(){
-        AccessToken at= AccessToken.getCurrentAccessToken();
+    public static Boolean isLogged() {
+        AccessToken at = AccessToken.getCurrentAccessToken();
         return at != null && !at.isExpired();
     }
 
@@ -121,8 +65,7 @@ public class Facebook extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             //Toast.makeText(ctx, "prihlaseny uspesne", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
+                        } else {
                             handleRegister(mai);
                             //Toast.makeText(ctx, "pouzivatel asi este neexistuje alebo chyba", Toast.LENGTH_SHORT).show();
                         }
@@ -133,8 +76,7 @@ public class Facebook extends Fragment {
 
     private static void handleRegister(String mai) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("users/"+MainActivity.mail.replace(".","_")+"/settings");
-        handleLogin(mai);
+        DatabaseReference dbRef = database.getReference("users/" + MainActivity.mail.replace(".", "_") + "/settings");
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("private", "false");
@@ -148,15 +90,32 @@ public class Facebook extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             //Toast.makeText(ctx, "Uspesne zaregistrovany pouzivatel", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            //Toast.makeText(ctx, "Uzivatel asi uz existuje alebo nastala chyba", Toast.LENGTH_SHORT).show();
+
+                            //Toast.makeText(MainActivity.ctx, mai+" mail v registracii", Toast.LENGTH_SHORT).show();
+                            String mail = mai.replace(".","_").replace("@","~");
+                            FirebaseMessaging.getInstance().subscribeToTopic(mail)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            String msg = "Subscription completed";
+                                            if (!task.isSuccessful()) {
+                                                Log.e("Subscription", "Subscription failed");
+                                            } else {
+                                                Log.d("Subscription", msg);
+                                            }
+
+                                        }
+                                    });
+
+                        } else {
+                            Toast.makeText(MainActivity.ctx, "Uzivatel asi uz existuje alebo nastala chyba", Toast.LENGTH_SHORT).show();
+                            handleLogin(mai);
                         }
                     }
                 });
     }
 
-    public static void setMailToDrawer(){
+    public static void setMailToDrawer() {
         GraphRequest request = GraphRequest.newMeRequest(getAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
@@ -172,11 +131,11 @@ public class Facebook extends Fragment {
                             TextView navUsername = (TextView) headerView.findViewById(R.id.drawerEmailTextView);
                             navUsername.setText(email);
 
-                            if (email!= null || !email.equals(null)) {
-                                handleLogin(email);
-                            }
-                        }
-                        catch (JSONException e) {
+                            //Toast.makeText(MainActivity.ctx, ""+email, Toast.LENGTH_SHORT).show();
+
+                            handleRegister(email);
+
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -186,33 +145,60 @@ public class Facebook extends Fragment {
         request.setParameters(parameters);
         request.executeAsync();
 
-        /*GraphRequest request = GraphRequest.newMeRequest(getAccessToken(), (JSONObject object, GraphResponse response) -> {
-            try {
-                MainActivity.mail = object.getString("email");
-                email = object.getString("email");
+    }
 
-                MainActivity.editor.putString("login", email);
-                MainActivity.editor.apply();
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.facebook, container, false);
+    }
 
-                    View headerView = MainActivity.navigationView.getHeaderView(0);
-                    TextView navUsername = (TextView) headerView.findViewById(R.id.drawerEmailTextView);
-                    navUsername.setText(email);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Log in");
+        loginButton = (LoginButton) view.findViewById(R.id.login_button);
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.setFragment(this);
+        drawerTV = view.findViewById(R.id.drawerEmailTextView);
+        callbackManager = CallbackManager.Factory.create();
+        ctx = view.getContext();
+        mAuth = FirebaseAuth.getInstance();
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                accessToken = AccessToken.getCurrentAccessToken();
+                setMailToDrawer();
 
-                    if (email!= null || !email.equals(null)) {
-                        handleLogin(email);
-                    }
+                openMovieFragment();
+            }
 
+            @Override
+            public void onCancel() {
+                //Toast.makeText(getContext(), "Prihlasenie sa zrusilo", Toast.LENGTH_SHORT).show();
+            }
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+            @Override
+            public void onError(FacebookException exception) {
+                //Toast.makeText(getContext(), "Exception vyhodeny", Toast.LENGTH_SHORT).show();
             }
         });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,email,gender,birthday");
-        request.setParameters(parameters);
-        request.executeAsync();*/
+
     }
-    public  void openMovieFragment(){
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    public void openMovieFragment() {
         Fragment fragment = new MoviesResultSearch();
         if (fragment != null) {
             FragmentTransaction ft = getFragmentManager().beginTransaction();

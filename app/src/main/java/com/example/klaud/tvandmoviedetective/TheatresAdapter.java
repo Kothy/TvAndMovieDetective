@@ -17,8 +17,8 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
     private ArrayList<TheatresItem> items;
     private Context contex;
 
-    public TheatresAdapter(Context ctx, ArrayList<TheatresItem> imageModelArrayList){
-        this.contex=ctx;
+    public TheatresAdapter(Context ctx, ArrayList<TheatresItem> imageModelArrayList) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
     }
@@ -38,7 +38,7 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
         holder.times.setText(items.get(position).times.toString());
         holder.title.setText(items.get(position).title);
         //holder.cl.setBackgroundColor(contex.getResources().getColor(R.color.gray));
-        holder.karticka.setOnClickListener( click ->{
+        holder.karticka.setOnClickListener(click -> {
             Toast.makeText(contex, "tu bude presmerovanie na film", Toast.LENGTH_SHORT).show();
         });
     }
@@ -48,9 +48,9 @@ public class TheatresAdapter extends RecyclerView.Adapter<TheatresAdapter.ViewHo
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title, length, pg, times,date;
+        TextView title, length, pg, times, date;
         CardView karticka;
         ConstraintLayout cl;
 

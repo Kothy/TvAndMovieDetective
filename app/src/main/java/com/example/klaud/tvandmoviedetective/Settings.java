@@ -10,12 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Switch;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +29,14 @@ public class Settings extends Fragment {
     Button button, clearRecent;
     Switch swit;
     DataSnapshot data;
+    //TextView numberOfDays;
+    NumberPicker numberPicker;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
-        MainActivity.editor.putString("class","Settings");
+        MainActivity.editor.putString("prev class", MainActivity.prefs.getString("class", ""));
+        MainActivity.editor.putString("class", "Settings");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.settings, container, false);
     }
@@ -46,22 +51,29 @@ public class Settings extends Fragment {
         swit = view.findViewById(R.id.switch1);
         clearRecent = view.findViewById(R.id.clear_recent_button);
 
-        if (MainActivity.prefs.getString("login","").equals("kada11@azet.sk")){
-            clearRecent.setVisibility(View.VISIBLE);
-        }
-        else clearRecent.setVisibility(View.INVISIBLE);
+        numberPicker = view.findViewById(R.id.numberPicker);
+        numberPicker.setMaxValue(30);
+        numberPicker.setMinValue(1);
 
-        clearRecent.setOnClickListener( click ->{
-            if (data != null){
-                for (DataSnapshot ds: data.getChildren()){
-                    if (ds.hasChild("recent")){
+        numberPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            //numberOfDays.setText(newVal+"");
+        });
+
+        if (MainActivity.prefs.getString("login", "").equals("kada11@azet.sk")) {
+            clearRecent.setVisibility(View.VISIBLE);
+        } else clearRecent.setVisibility(View.INVISIBLE);
+
+        clearRecent.setOnClickListener(click -> {
+            if (data != null) {
+                for (DataSnapshot ds : data.getChildren()) {
+                    if (ds.hasChild("recent")) {
 
                         ArrayList<DataSnapshot> children = new ArrayList<>();
-                        for (DataSnapshot child: ds.child("recent").getChildren()){
+                        for (DataSnapshot child : ds.child("recent").getChildren()) {
                             children.add(child);
                         }
                         //Toast.makeText(ctx, "pocet deti: "+children.size(), Toast.LENGTH_SHORT).show();
-                        while(children.size() > 5){
+                        while (children.size() > 5) {
                             children.get(0).getRef().removeValue();
                             children.remove(0);
                         }
@@ -73,44 +85,51 @@ public class Settings extends Fragment {
 
         //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
-        button.setOnClickListener(click ->{
+        button.setOnClickListener(click -> {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            String mail=MainActivity.mail.replace(".","_");
-            DatabaseReference dbRef = database.getReference("users/"+mail+"/settings");
+            String mail = MainActivity.mail.replace(".", "_");
+            DatabaseReference dbRef = database.getReference("users/" + mail + "/settings");
             //Toast.makeText(ctx, et.getText()+" "+swit.isChecked(), Toast.LENGTH_SHORT).show();
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("nickname", et.getText().toString());
-            childUpdates.put("private",swit.isChecked()+"");
+            childUpdates.put("private", swit.isChecked() + "");
+            childUpdates.put("days_before", numberPicker.getValue() + "");
             dbRef.updateChildren(childUpdates);
         });
     }
 
     @Override
-    public void onActivityCreated (Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
-        if (bundle != null) { }
+        if (bundle != null) {
+        }
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        String mail=MainActivity.mail.replace(".","_");
-        DatabaseReference dbRef = database.getReference("users/"+mail+"/settings");
+        String mail = MainActivity.mail.replace(".", "_");
+        DatabaseReference dbRef = database.getReference("users/" + mail + "/settings");
 
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("nickname") && !dataSnapshot.child("nickname").getValue().toString().equals("")){
+                if (dataSnapshot.hasChild("nickname") && !dataSnapshot.child("nickname").getValue().toString().equals("")) {
                     et.setText(dataSnapshot.child("nickname").getValue().toString());
                 }
-                if (dataSnapshot.hasChild("private")){
+                if (dataSnapshot.hasChild("private")) {
                     if (dataSnapshot.child("private").getValue().equals("false")) {
                         swit.setChecked(false);
-                    }
-                    else {
+                    } else {
                         swit.setChecked(true);
                     }
                 }
+                if (dataSnapshot.hasChild("days_before")) {
+                    int days = Integer.valueOf(dataSnapshot.child("days_before").getValue().toString());
+                    numberPicker.setValue(days);
+                } else numberPicker.setValue(2);
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
         });
 
         dbRef = database.getReference("users/");
@@ -118,10 +137,12 @@ public class Settings extends Fragment {
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                data=dataSnapshot;
+                data = dataSnapshot;
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
         });
     }
 }

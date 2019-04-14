@@ -3,7 +3,7 @@ package com.example.klaud.tvandmoviedetective;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,27 +12,30 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import java.util.ArrayList;
+
+;
 
 public class Theatres extends Fragment {
 
     public static Context ctx;
+    public static RecyclerView recycler;
+    public static TheatresAdapter rec_adapter;
+    public static ArrayList<TheatresItem> items = new ArrayList<>();
     static Spinner spinnerCities, spinnerTheatres;
-    static ArrayList<String> theatres=new ArrayList<>();
-    static ArrayList<String> urlForTheatres=new ArrayList<>();
+    static ArrayList<String> theatres = new ArrayList<>();
+    static ArrayList<String> urlForTheatres = new ArrayList<>();
     static ArrayAdapter<String> adapter2;
     static ArrayAdapter<String> adapter;
     static String city;
-    public static RecyclerView recycler;
-    public static TheatresAdapter rec_adapter;
-    public static ArrayList<TheatresItem> items=new ArrayList<>();
     static TextView noProgram;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
-        MainActivity.editor.putString("class","Theatres");
+        MainActivity.editor.putString("prev class", MainActivity.prefs.getString("class", ""));
+        MainActivity.editor.putString("class", "Theatres");
         MainActivity.editor.apply();
         return inflater.inflate(R.layout.theatres_layout, container, false);
     }
@@ -41,12 +44,12 @@ public class Theatres extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Theatres");
-        ctx=getContext();
+        ctx = getContext();
 
         //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
         theatres.clear();
-        String[] cities={"Choose city", "Bratislava",
+        String[] cities = {"Choose city", "Bratislava",
                 "Košice", "Trnava", "Banská Bystrica", "Nitra",
                 "Prešov", "Trenčín", "Žilina", "Bánovce nad Bebravou",
                 "Banská Štiavnica", "Bardejovské Kúpele", "Brezno", "Bytča",
@@ -63,7 +66,7 @@ public class Theatres extends Fragment {
                 "Rimavská Sobota", "Ružomberok", "Sabinov", "Senec",
                 "Senica", "Sereď", "Skalica", "Snina",
                 "Sobrance", "Spišská N. Ves", "Stará Ľubovňa",
-                "Stupava","Svidník","Šaľa",
+                "Stupava", "Svidník", "Šaľa",
                 "Štúrovo", "Tatranská Lomnica", "Topoľčany", "Trebišov",
                 "Trenčianske Teplice", "Turčianske Teplice",
                 "Turzovka", "Tvrdošín", "Veľký Krtíš", "Vráble",
@@ -74,15 +77,15 @@ public class Theatres extends Fragment {
 
         theatres.add("Choose theatre");
 
-        noProgram= view.findViewById(R.id.no_program);
+        noProgram = view.findViewById(R.id.no_program);
         noProgram.setVisibility(View.INVISIBLE);
 
-        adapter= new ArrayAdapter<>(ctx, R.layout.view_spinner_item, cities);
+        adapter = new ArrayAdapter<>(ctx, R.layout.view_spinner_item, cities);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCities.setAdapter(adapter);
         spinnerCities.setOnItemSelectedListener(new CustomOnItemSelectedListenerCities());
 
-        adapter2= new ArrayAdapter<>(ctx, R.layout.view_spinner_item, theatres);
+        adapter2 = new ArrayAdapter<>(ctx, R.layout.view_spinner_item, theatres);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTheatres.setAdapter(adapter2);
         spinnerTheatres.setOnItemSelectedListener(new CustomOnItemSelectedListenerTheatres());
@@ -97,9 +100,10 @@ public class Theatres extends Fragment {
     }
 
     @Override
-    public void onActivityCreated (Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
-        if (bundle != null) { }
+        if (bundle != null) {
+        }
     }
 }

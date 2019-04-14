@@ -1,30 +1,35 @@
 package com.example.klaud.tvandmoviedetective;
 
 public class SeriesItem {
+    public String release_date;
+    public String network;
+    public String lastSeen = null;
     private String name;
     private int image_drawable;
     private int id;
     private String poster_path;
-    public String release_date;
-    public String network;
-    public String lastSeen=null;
+
+    public SeriesItem(String nam, int img, int idd) {
+        name = nam;
+        image_drawable = img;
+        id = idd;
+    }
 
     public String getPoster_path() {
         return poster_path;
     }
+
     public void setPoster_path(String poster_path) {
         this.poster_path = poster_path;
     }
 
-    public SeriesItem (String nam, int img, int idd){
-        name=nam;
-        image_drawable=img;
-        id=idd;
+    public Integer getId() {
+        return id;
     }
 
-    public Integer getId(){ return id; }
-
-    public void setId(int i){ id=i; }
+    public void setId(int i) {
+        id = i;
+    }
 
     public String getName() {
         return name;

@@ -3,6 +3,7 @@ package com.example.klaud.tvandmoviedetective;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,23 +13,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
-public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHolder>{
+public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHolder> {
     private LayoutInflater inflater;
     private ArrayList<FriendsItem> items;
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
 
-    public MyFriendAdapter(Context ctx, ArrayList<FriendsItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+    public MyFriendAdapter(Context ctx, ArrayList<FriendsItem> imageModelArrayList, FragmentManager fm, Activity activity) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHo
             fragment = new UserProfile();
             Bundle bundle = new Bundle();
             bundle.putString("email", items.get(position).email);
-            bundle.putString("nickname",items.get(position).nickname);
+            bundle.putString("nickname", items.get(position).nickname);
 
             fragment.setArguments(bundle);
 
@@ -68,15 +69,15 @@ public class MyFriendAdapter extends RecyclerView.Adapter<MyFriendAdapter.ViewHo
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView nickname;
-        LinearLayout parentLayout;
+        ConstraintLayout parentLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            nickname = (TextView) itemView.findViewById(R.id.friends_name);
-            parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem55);
+            nickname = (TextView) itemView.findViewById(R.id.friends_name2);
+            parentLayout = (ConstraintLayout) itemView.findViewById(R.id.const_parent);
         }
     }
 }

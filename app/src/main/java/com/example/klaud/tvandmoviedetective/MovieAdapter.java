@@ -15,25 +15,27 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
     private ArrayList<MovieItem> items;
     //private Context contex;
     private FragmentManager fm;
     private Activity activity;
+    private int position;
 
-    public MovieAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity){
+    public MovieAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity) {
         //this.contex=ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
     }
-    private int position;
 
     public int getPosition() {
         return position;
@@ -42,6 +44,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     public void setPosition(int position) {
         this.position = position;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.recycler_item_layout, parent, false);
@@ -51,21 +54,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (items.get(position).getPoster_path()!=null && items.get(position).getPoster_path().equals("null")){
+        if (items.get(position).getPoster_path() != null && items.get(position).getPoster_path().equals("null")) {
             holder.iv.setImageResource(items.get(position).getImage_drawable());
         } else {
-            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+            String url = String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
 
         holder.time.setText(items.get(position).getName());
-        holder.parentLayout.setOnClickListener(click ->{
+        holder.parentLayout.setOnClickListener(click -> {
             //Toast.makeText(contex, items.get(position).getName(), Toast.LENGTH_LONG).show();
             Fragment fragment = null;
             fragment = new MovieDetail();
             Bundle bundle = new Bundle();
             bundle.putString("id", items.get(position).getId().toString());
-            bundle.putString("title",items.get(position).getName());
+            bundle.putString("title", items.get(position).getName());
 
             fragment.setArguments(bundle);
             if (fragment != null) {
@@ -98,7 +101,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView time;
         ImageView iv;
@@ -106,9 +109,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
         public ViewHolder(View itemView) {
             super(itemView);
-                time = (TextView) itemView.findViewById(R.id.tvTitle);
-                iv = (ImageView) itemView.findViewById(R.id.itemImage);
-                parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
+            time = (TextView) itemView.findViewById(R.id.tvTitle);
+            iv = (ImageView) itemView.findViewById(R.id.itemImage);
+            parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
 
         }
     }

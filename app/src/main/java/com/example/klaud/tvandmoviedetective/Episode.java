@@ -6,9 +6,20 @@ import android.os.Parcelable;
 import java.util.Date;
 
 public class Episode implements Parcelable {
+    public static final Creator<Episode> CREATOR = new Creator<Episode>() {
+        @Override
+        public Episode createFromParcel(Parcel in) {
+            return new Episode(in);
+        }
+
+        @Override
+        public Episode[] newArray(int size) {
+            return new Episode[size];
+        }
+    };
     public final String name;
     public String company;
-    public Boolean checked=false;
+    public Boolean checked = false;
     public String sea;
     public Integer season_id;
     public Integer episode_id;
@@ -33,24 +44,15 @@ public class Episode implements Parcelable {
         this.airDate = air;
     }
 
-    public void reverseChecked() { this.checked = !this.checked; }
-
     protected Episode(Parcel in) {
         name = in.readString();
     }
 
-    public static final Creator<Episode> CREATOR = new Creator<Episode>() {
-        @Override
-        public Episode createFromParcel(Parcel in) {
-            return new Episode(in);
-        }
+    public void reverseChecked() {
+        this.checked = !this.checked;
+    }
 
-        @Override
-        public Episode[] newArray(int size) {
-            return new Episode[size];
-        }
-    };
-    public String toString(){
+    public String toString() {
         return sea;
     }
 

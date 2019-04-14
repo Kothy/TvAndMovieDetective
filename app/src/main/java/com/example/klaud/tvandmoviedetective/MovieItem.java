@@ -2,11 +2,17 @@ package com.example.klaud.tvandmoviedetective;
 
 public class MovieItem {
 
+    public String release_date;
     private String name;
     private int image_drawable;
     private int id;
     private String poster_path;
-    public String release_date;
+
+    public MovieItem(String nam, int img, int idd) {
+        name = nam;
+        image_drawable = img;
+        id = idd;
+    }
 
     public String getPoster_path() {
         return poster_path;
@@ -16,14 +22,13 @@ public class MovieItem {
         this.poster_path = poster_path;
     }
 
-    public MovieItem (String nam, int img, int idd){
-        name=nam;
-        image_drawable=img;
-        id=idd;
+    public Integer getId() {
+        return id;
     }
-    public Integer getId(){ return id; }
 
-    public void setId(int i){ id=i; }
+    public void setId(int i) {
+        id = i;
+    }
 
     public String getName() {
         return name;

@@ -15,32 +15,34 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder> {
+    public Boolean resize = false;
     private LayoutInflater inflater;
     private ArrayList<SeriesItem> items;
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
-    public Boolean resize=false;
 
-    public SeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+    public SeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
     }
 
-    public SeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity,boolean boo){
-        this.contex=ctx;
+    public SeriesAdapter(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity, boolean boo) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
-        this.resize=boo;
+        this.fm = fm;
+        this.activity = activity;
+        this.resize = boo;
     }
 
     @Override
@@ -56,14 +58,13 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder
         if (items.get(position).getPoster_path().equals("null")) {
             //Toast.makeText(contex, "poster path je null", Toast.LENGTH_SHORT).show();
             holder.iv.setImageResource(items.get(position).getImage_drawable());
-        }
-        else {
-            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+        } else {
+            String url = String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
 
         holder.time.setText(items.get(position).getName());
-        holder.parentLayout.setOnClickListener(click ->{
+        holder.parentLayout.setOnClickListener(click -> {
 
             Fragment fragment = null;
             fragment = new SeriesDetails();
@@ -85,7 +86,7 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView time;
         ImageView iv;
@@ -97,9 +98,9 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.ViewHolder
             iv = (ImageView) itemView.findViewById(R.id.itemImage);
             parentLayout = (LinearLayout) itemView.findViewById(R.id.parent_layoutItem);
 
-            if (resize){
-                iv.getLayoutParams().height=180;
-                iv.getLayoutParams().width=160;
+            if (resize) {
+                iv.getLayoutParams().height = 180;
+                iv.getLayoutParams().width = 160;
             }
         }
     }

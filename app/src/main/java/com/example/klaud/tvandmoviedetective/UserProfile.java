@@ -12,38 +12,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 public class UserProfile extends Fragment {
-    Context ctx;
-    String nick, email;
-    ArrayList<MovieItem> watchedItems=new ArrayList<>();
-    ArrayList<MovieItem> wantItems=new ArrayList<>();
-    ArrayList<SeriesItem> seriesItems=new ArrayList<>();
-    public static RecyclerView recycler,recycler2,recycler3;
+    public static RecyclerView recycler, recycler2, recycler3;
     public static MyMoviesAdapter adapter, adapter2;
     private static SeriesAdapter adapter3;
+    Context ctx;
+    String nick, email;
+    ArrayList<MovieItem> watchedItems = new ArrayList<>();
+    ArrayList<MovieItem> wantItems = new ArrayList<>();
+    ArrayList<SeriesItem> seriesItems = new ArrayList<>();
     ScrollView scrollView;
-    TextView tvMoviesWatched,tvMoviesWant,tvSeries;
+    TextView tvMoviesWatched, tvMoviesWant, tvSeries;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        MainActivity.editor.putString("prev class",MainActivity.prefs.getString("class",""));
-        MainActivity.editor.putString("class","User profile");
+        MainActivity.editor.putString("prev class", MainActivity.prefs.getString("class", ""));
+        MainActivity.editor.putString("class", "User profile");
         MainActivity.editor.apply();
 
         return inflater.inflate(R.layout.user_profile, container, false);
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ctx=getContext();
+        ctx = getContext();
 
         //Toast.makeText(ctx, "prev class: "+ MainActivity.prefs.getString("prev class",""), Toast.LENGTH_SHORT).show();
 
@@ -66,11 +69,11 @@ public class UserProfile extends Fragment {
         recycler2.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
         recycler3 = (RecyclerView) getView().findViewById(R.id.users_series);
-        adapter3 = new SeriesAdapter(getContext(), seriesItems,getFragmentManager(),getActivity(),true);
+        adapter3 = new SeriesAdapter(getContext(), seriesItems, getFragmentManager(), getActivity(), true);
         recycler3.setAdapter(adapter3);
         recycler3.setLayoutManager(new LinearLayoutManager(this.getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        SeriesItem sm=new SeriesItem("harry",R.drawable.nopicture,0);
+        SeriesItem sm = new SeriesItem("harry", R.drawable.nopicture, 0);
         sm.setPoster_path("null");
 
         seriesItems.add(sm);
@@ -79,55 +82,55 @@ public class UserProfile extends Fragment {
 
 
     }
+
     @Override
-    public void onActivityCreated (Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             nick = bundle.getString("nickname");
             email = bundle.getString("email");
-            MainActivity.editor.putString("nickBP",nick);
-            MainActivity.editor.putString("emailBP",email);
+            MainActivity.editor.putString("nickBP", nick);
+            MainActivity.editor.putString("emailBP", email);
             MainActivity.editor.apply();
 
-            getActivity().setTitle(nick+"'s profile");
+            getActivity().setTitle(nick + "'s profile");
 
-            tvSeries.setText(nick+"'s series");
-            tvMoviesWatched.setText(nick+"'s movies watched");
-            tvMoviesWant.setText(nick+"'s movies want to watch");
+            tvSeries.setText(nick + "'s series");
+            tvMoviesWatched.setText(nick + "'s movies watched");
+            tvMoviesWant.setText(nick + "'s movies want to watch");
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference dbRef = database.getReference("users/"+email);
+            DatabaseReference dbRef = database.getReference("users/" + email);
 
             dbRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     watchedItems.clear();
                     wantItems.clear();
-                    if (dataSnapshot.hasChild("movies")){
-                        for (DataSnapshot ds: dataSnapshot.child("movies").getChildren()){
-                            if (ds.child("status").getValue().toString().equals("watched")){
-                                MovieItem mi=new MovieItem(ds.child("title").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
+                    if (dataSnapshot.hasChild("movies")) {
+                        for (DataSnapshot ds : dataSnapshot.child("movies").getChildren()) {
+                            if (ds.child("status").getValue().toString().equals("watched")) {
+                                MovieItem mi = new MovieItem(ds.child("title").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
                                 //MovieItem mi=new MovieItem("Watched", R.drawable.nopicture, Integer.decode(ds.getKey()));
-                                if (! ds.child("poster_path").getValue().toString().equals("null")){
+                                if (!ds.child("poster_path").getValue().toString().equals("null")) {
                                     mi.setPoster_path(ds.child("poster_path").getValue().toString());
                                 }
                                 watchedItems.add(mi);
-                            }
-                            else if (ds.child("status").getValue().toString().equals("want")){
-                                MovieItem mi=new MovieItem(ds.child("title").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
+                            } else if (ds.child("status").getValue().toString().equals("want")) {
+                                MovieItem mi = new MovieItem(ds.child("title").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
                                 //MovieItem mi=new MovieItem("Want", R.drawable.nopicture, Integer.decode(ds.getKey()));
-                                if (! ds.child("poster_path").getValue().toString().equals("null")){
+                                if (!ds.child("poster_path").getValue().toString().equals("null")) {
                                     mi.setPoster_path(ds.child("poster_path").getValue().toString());
                                 }
                                 wantItems.add(mi);
 
                             }
                         }
-                        if (wantItems.size()==0){
+                        if (wantItems.size() == 0) {
                             tvMoviesWant.setVisibility(View.GONE);
                         }
-                        if (watchedItems.size()==0){
+                        if (watchedItems.size() == 0) {
                             tvMoviesWatched.setVisibility(View.GONE);
                         }
                         adapter.notifyDataSetChanged();
@@ -135,22 +138,22 @@ public class UserProfile extends Fragment {
                         adapter2.notifyDataSetChanged();
                         recycler2.invalidate();
                     }
-                    if (dataSnapshot.hasChild("series")){
+                    if (dataSnapshot.hasChild("series")) {
                         //Toast.makeText(ctx, "naslo sa series", Toast.LENGTH_SHORT).show();
                         seriesItems.clear();
-                        for (DataSnapshot ds: dataSnapshot.child("series").getChildren()){
-                            SeriesItem si=new SeriesItem(ds.child("name").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
+                        for (DataSnapshot ds : dataSnapshot.child("series").getChildren()) {
+                            SeriesItem si = new SeriesItem(ds.child("name").getValue().toString(), R.drawable.nopicture, Integer.decode(ds.getKey()));
                             si.setPoster_path(ds.child("poster_path").getValue().toString());
                             seriesItems.add(si);
 
                         }
-                        if (seriesItems.size()==0){
+                        if (seriesItems.size() == 0) {
                             tvSeries.setVisibility(View.GONE);
                         }
                         adapter3.notifyDataSetChanged();
                         recycler3.invalidate();
                     }
-                    if (watchedItems.size()==0 && wantItems.size()==0 && seriesItems.size()==0){
+                    if (watchedItems.size() == 0 && wantItems.size() == 0 && seriesItems.size() == 0) {
                         tvMoviesWant.setVisibility(View.GONE);
                         tvMoviesWant.setText("User have nothing to show");
                         tvSeries.setVisibility(View.GONE);
@@ -160,14 +163,16 @@ public class UserProfile extends Fragment {
                 }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) { }
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
             });
 
 
         }
     }
+
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
     }
 

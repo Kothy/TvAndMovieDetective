@@ -13,27 +13,31 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
-public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapter.ViewHolder>{
+;
+
+public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
     private ArrayList<MovieItem> items;
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
+    private int position;
 
-    public ResultSearchAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+    public ResultSearchAdapter(Context ctx, ArrayList<MovieItem> imageModelArrayList, FragmentManager fm, Activity activity) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
     }
-    private int position;
 
     public int getPosition() {
         return position;
@@ -42,6 +46,7 @@ public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapte
     public void setPosition(int position) {
         this.position = position;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.recycler_search_item, parent, false);
@@ -52,17 +57,18 @@ public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.time.setText(items.get(position).getName());
-        if (items.get(position).release_date==null){
+        if (items.get(position).release_date == null) {
             holder.year.setText("");
         } else holder.year.setText(items.get(position).release_date);
 
-        if (items.get(position).getPoster_path().equals("null")) holder.iv.setImageResource(R.drawable.nopicture);
+        if (items.get(position).getPoster_path().equals("null"))
+            holder.iv.setImageResource(R.drawable.nopicture);
         else {
-            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+            String url = String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
-        holder.parentLayout.setOnClickListener(click ->{
-            for (DetailsForSearch ds: MoviesResultSearch.detailsPool){
+        holder.parentLayout.setOnClickListener(click -> {
+            for (DetailsForSearch ds : MoviesResultSearch.detailsPool) {
                 ds.cancel(true);
             }
 
@@ -70,7 +76,7 @@ public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapte
             fragment = new MovieDetail();
             Bundle bundle = new Bundle();
             bundle.putString("id", items.get(position).getId().toString());
-            bundle.putString("title",items.get(position).getName());// toto vlozi title s malymi pismenkami
+            bundle.putString("title", items.get(position).getName());// toto vlozi title s malymi pismenkami
 
             fragment.setArguments(bundle);
             if (fragment != null) {
@@ -89,9 +95,9 @@ public class ResultSearchAdapter extends RecyclerView.Adapter<ResultSearchAdapte
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView time,year;
+        TextView time, year;
         ImageView iv;
         ConstraintLayout parentLayout;
 

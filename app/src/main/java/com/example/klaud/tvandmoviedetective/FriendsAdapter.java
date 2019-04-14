@@ -15,25 +15,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder>{
+public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
     private LayoutInflater inflater;
     private ArrayList<FriendsItem> items;
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
 
-    public FriendsAdapter(Context ctx, ArrayList<FriendsItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+    public FriendsAdapter(Context ctx, ArrayList<FriendsItem> imageModelArrayList, FragmentManager fm, Activity activity) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
     }
 
     @Override
@@ -48,11 +50,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     public void onBindViewHolder(FriendsAdapter.ViewHolder holder, int position) {
 
         holder.nickname.setText(items.get(position).nickname);
-        holder.followButton.setOnClickListener(click ->{
+        holder.followButton.setOnClickListener(click -> {
             //Toast.makeText(contex, "followuj kamoša", Toast.LENGTH_SHORT).show();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference dbRef = database.getReference("users/"+MainActivity.mail.replace(".","_")+"/settings/friends");
+            DatabaseReference dbRef = database.getReference("users/" + MainActivity.mail.replace(".", "_") + "/settings/friends");
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put(items.get(position).email, items.get(position).nickname);
             dbRef.updateChildren(childUpdates);
@@ -65,7 +67,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
             Bundle bundle = new Bundle();
             bundle.putString("email", items.get(position).email);
-            bundle.putString("nickname",items.get(position).nickname);
+            bundle.putString("nickname", items.get(position).nickname);
 
             fragment.setArguments(bundle);
 
@@ -84,7 +86,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView nickname;
         ConstraintLayout parentLayout;

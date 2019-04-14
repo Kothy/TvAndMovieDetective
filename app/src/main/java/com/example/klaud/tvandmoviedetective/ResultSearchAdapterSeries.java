@@ -15,25 +15,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
-public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearchAdapterSeries.ViewHolder>{
+public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearchAdapterSeries.ViewHolder> {
 
     private LayoutInflater inflater;
     private ArrayList<SeriesItem> items;
     private Context contex;
     private FragmentManager fm;
     private Activity activity;
+    private int position;
 
-    public ResultSearchAdapterSeries(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity){
-        this.contex=ctx;
+    public ResultSearchAdapterSeries(Context ctx, ArrayList<SeriesItem> imageModelArrayList, FragmentManager fm, Activity activity) {
+        this.contex = ctx;
         this.inflater = LayoutInflater.from(ctx);
         this.items = imageModelArrayList;
-        this.fm=fm;
-        this.activity=activity;
+        this.fm = fm;
+        this.activity = activity;
     }
-    private int position;
 
     public int getPosition() {
         return position;
@@ -42,6 +44,7 @@ public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearch
     public void setPosition(int position) {
         this.position = position;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.recycler_search_item, parent, false);
@@ -52,25 +55,26 @@ public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearch
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.time.setText(items.get(position).getName());
-        if (items.get(position).release_date==null){
+        if (items.get(position).release_date == null) {
             holder.year.setText("");
         } else holder.year.setText(items.get(position).release_date);
 
-        if (items.get(position).getPoster_path().equals("null")) holder.iv.setImageResource(R.drawable.nopicture);
+        if (items.get(position).getPoster_path().equals("null"))
+            holder.iv.setImageResource(R.drawable.nopicture);
         else {
-            String url=String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
+            String url = String.format("https://image.tmdb.org/t/p/w300%s", items.get(position).getPoster_path());
             Picasso.get().load(url).into(holder.iv);
         }
-        holder.parentLayout.setOnClickListener(click ->{
+        holder.parentLayout.setOnClickListener(click -> {
             //Toast.makeText(contex, items.get(position).getPoster_path(), Toast.LENGTH_SHORT).show();
-            for (DetailsForSearch ds:TvSeriesResultSearch.searchPool){
+            for (DetailsForSearch ds : TvSeriesResultSearch.searchPool) {
                 ds.cancel(true);
             }
             Fragment fragment = null;
             fragment = new SeriesDetails();
             Bundle bundle = new Bundle();
             bundle.putString("id", items.get(position).getId().toString());
-            bundle.putString("title",items.get(position).getName());
+            bundle.putString("title", items.get(position).getName());
 
             fragment.setArguments(bundle);
             if (fragment != null) {
@@ -89,9 +93,9 @@ public class ResultSearchAdapterSeries extends RecyclerView.Adapter<ResultSearch
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView time,year;
+        TextView time, year;
         ImageView iv;
         ConstraintLayout parentLayout;
 
